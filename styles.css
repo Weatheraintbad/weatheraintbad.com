@@ -603,6 +603,15 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
+}
+
+/* 确保所有项目图片容器中的img元素都有正确的尺寸 */
+.work-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .work-item:hover .work-image {

@@ -33,10 +33,45 @@ const addFadeInClasses = () => {
     });
 };
 
+// 图片加载失败处理函数
+function handleImageError(img) {
+    // 创建纯黑色的SVG占位图片 (360x200 像素)
+    const placeholderSvg = `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzYwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDM2MCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzNjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMDAwMDAwIi8+CjxwYXRoIGQ9Ik0xODAgMTAwTDE4MCAxMDBaIiBmaWxsPSIjMjIyMjIyIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIxMDAiIHk9IjgwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgo8cmVjdCB3aWR0aD0iMTYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjgwIiB5PSIyNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI0ZGRiI+5Zu+54mH5Lqn5pyN5L+hPC90ZXh0Pgo8L3N2Zz4KPC9zdmc+`;
+    img.src = placeholderSvg;
+    img.style.objectFit = 'cover';
+    img.width = 360;
+    img.height = 200;
+}
+
+// 为所有图片添加错误处理
+function addImageErrorHandlers() {
+    const allImages = document.querySelectorAll('img');
+    allImages.forEach(img => {
+        // 确保所有图片都有正确的尺寸
+        if (!img.width || img.width !== 360) {
+            img.width = 360;
+        }
+        if (!img.height || img.height !== 200) {
+            img.height = 200;
+        }
+
+        // 如果图片没有src或者src为空，直接设置占位图
+        if (!img.src || img.src === '' || img.src === window.location.href) {
+            const placeholderSvg = `data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzYwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDM2MCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzNjAiIGhlaWdodD0iMjAwIiBmaWxsPSIjMDAwMDAwIi8+CjxwYXRoIGQ9Ik0xODAgMTAwTDE4MCAxMDBaIiBmaWxsPSIjMjIyMjIyIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIxMDAiIHk9IjgwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjQwIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgo8cmVjdCB3aWR0aD0iMTYwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjgwIiB5PSIyNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iI0ZGRiI+5Zu+54mH5Lqn5pyN5L+hPC90ZXh0Pgo8L3N2Zz4KPC9zdmc+`;
+            img.src = placeholderSvg;
+        }
+        // 添加错误事件监听器
+        img.addEventListener('error', function() {
+            handleImageError(this);
+        });
+    });
+}
+
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
     addFadeInClasses();
     fadeInOnScroll();
+    addImageErrorHandlers();
 });
 
 // 滚动时触发动画
@@ -230,7 +265,7 @@ function initGreeting() {
     // 确保过渡样式已应用，第一行没有延迟，第二行有0.1秒延迟
     // 动画速度从0.8秒增加到1.2秒
     greetingElement.style.transition = 'opacity 1.2s ease-in-out, transform 1.2s ease-in-out';
-    welcomeElement.style.transition = 'opacity 1.2s ease-in-out 0.1s, transform 1.2s ease-in-out 0.1s';
+    welcomeElement.style.transition = 'opacity 1.2s ease-in-out 0.1s, transform 1.2s ease-in-out 0.3s';
 
     // 初始显示
     greetingElement.textContent = greetings[timePeriod][languages[0]];
@@ -243,8 +278,8 @@ function initGreeting() {
     // 初始化后立即更新语言索引，这样第一次调用updateGreeting时会显示下一种语言
     currentLangIndex = (currentLangIndex + 1) % languages.length;
 
-    // 延长切换间隔到10秒
-    greetingInterval = setInterval(updateGreeting, 10000);
+    // 延长切换间隔到8秒
+    greetingInterval = setInterval(updateGreeting, 8000);
 }
 
 // 页面加载动画
