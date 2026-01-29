@@ -25,13 +25,16 @@
     <!-- 英雄区 -->
     <section id="home" class="hero">
         <div class="hero-content">
-            <h1 class="hero-title">
-                <span class="title-line greeting-line" id="greeting"></span>
-                <span class="title-line welcome-line" id="welcome"></span>
-            </h1>
-            <p class="hero-subtitle">Creative Developer & Designer</p>
+            <!-- 标题容器 - 固定高度，确保标题切换时下方组件位置不变 -->
+            <div class="hero-title-container">
+                <h1 class="hero-title">
+                    <span class="title-line greeting-line" id="greeting"></span>
+                    <span class="title-line welcome-line" id="welcome"></span>
+                </h1>
+            </div>
+            <p class="hero-subtitle">Design & Develop</p>
             <div class="hero-cta">
-                <a href="#contact" class="btn btn-primary">联系我</a>
+                <a href="#about" class="btn btn-primary">了解更多</a>
                 <a href="#work" class="btn btn-secondary">查看作品</a>
             </div>
         </div>
@@ -51,11 +54,10 @@
                         <div class="profile-placeholder">
                             <img src="https://s3.bmp.ovh/2026/01/29/QAYOLg9Y.jpg" alt="touxiang.jpg" />
                         </div>
+                        <h2 class="profile-name">Weatheraintbad</h2>
                     </div>
                 </div>
                 <div class="about-text">
-                    <h2 class="section-title">Weatheraintbad</h2>
-                    <p>我是一个热爱创造的开发者和设计师，专注于构建美观、实用的数字产品。</p>
                     <div class="about-stats">
                         <div class="stat-item">
                             <h3>6</h3>
@@ -66,6 +68,7 @@
                             <p>下载量</p>
                         </div>
                     </div>
+                    <p>设计并开发了包括移动应用、网页应用、游戏模组在内的多个数字产品</p>
                 </div>
             </div>
         </div>
@@ -93,7 +96,7 @@
                         </svg>
                     </div>
                     <h3>前端开发</h3>
-                    <p>HTML, CSS, JavaScript, React, Vue, 响应式设计</p>
+                    <p>HTML, CSS, JavaScript, Vue, 响应式设计</p>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">
@@ -104,7 +107,7 @@
                         </svg>
                     </div>
                     <h3>平面设计</h3>
-                    <p>海报设计, 标志设计, 品牌视觉, 排版设计</p>
+                    <p>海报设计, 品牌视觉, 排版设计</p>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">
@@ -113,7 +116,7 @@
                         </svg>
                     </div>
                     <h3>游戏模组开发</h3>
-                    <p>Minecraft模组, Unity插件, 游戏逻辑设计</p>
+                    <p>Minecraft模组, 游戏逻辑设计</p>
                 </div>
             </div>
         </div>
@@ -122,20 +125,20 @@
     <!-- 作品 -->
     <section id="work" class="work">
         <div class="container">
-            <h2 class="section-title">部分项目</h2>
+            <h2 class="section-title">项目概览</h2>
             <div class="work-grid">
                 <div class="work-item">
                     <div class="work-image">
-                        <img width="360" height="200" alt="banner-DesktopPolaroid" src="https://s3.bmp.ovh/2026/01/29/ifzkqQt3.png" />
+                        <img width="360" height="200" alt="banner-DesktopPolaroid" src="https://github.com/user-attachments/assets/58e22afc-d6a8-4e14-9e54-141e581e9892" />
                     </div>
                     <div class="work-info">
                         <h3>拍立得桌面贴</h3>
-                        <p>一款可以将照片制作成拍立得（宝丽来）风格照片并贴在电脑桌面的MacOS应用 (开发中) </p>
+                        <p>一款可以将照片制作成拍立得/宝丽来风格照片并贴在电脑桌面的MacOS应用 (开发中) </p>
                     </div>
                 </div>
                 <div class="work-item">
                     <div class="work-image">
-                        <img width="360" height="200" alt="banner-stardewhud" src="https://s3.bmp.ovh/2026/01/29/05bgkibj.png" />
+                        <img width="360" height="200" alt="banner-stardewhud" src="https://github.com/user-attachments/assets/00481c66-5193-456a-ab27-abc5a43fd1c7" />
                     </div>
                     <div class="work-info">
                         <h3>Stardew HUD</h3>
@@ -185,11 +188,11 @@
     <!-- 联系 -->
     <section id="contact" class="contact">
         <div class="container">
-            <h2 class="section-title">Get In Touch</h2>
+            <h2 class="section-title">联系方式</h2>
             <div class="contact-content">
                 <div class="contact-info">
                     <h3>联系信息</h3>
-                    <p>我目前正在寻找新的项目机会，如果你有任何想法或合作意向，欢迎随时联系我。</p>
+                    <p>欢迎随时联系</p>
                     <div class="contact-details">
                         <div class="contact-item">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -258,6 +261,15 @@
             </div>
         </div>
     </footer>
+
+    <!-- 加载动画 -->
+    <div class="loader-overlay" id="loader">
+        <div class="loader-decoration">
+            <div class="floating-element el-1"></div>
+            <div class="floating-element el-2"></div>
+            <div class="floating-element el-3"></div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>

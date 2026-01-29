@@ -142,55 +142,30 @@ if (aboutSection) {
     observer.observe(aboutSection);
 }
 
-// 多语言问候数据
+// 多语言问候数据（仅保留中英文）
 const greetings = {
     morning: {
         zh: '早上好',
-        en: 'Good Morning',
-        ru: 'Доброе утро',
-        ja: 'おはよう',
-        ko: '좋은 아침',
-        es: 'Buenos días',
-        fr: 'Bonjour'
+        en: 'Good Morning'
     },
     afternoon: {
         zh: '下午好',
-        en: 'Good Afternoon',
-        ru: 'Добрый день',
-        ja: 'こんにちは',
-        ko: '좋은 오후',
-        es: 'Buenas tardes',
-        fr: 'Bonjour'
+        en: 'Good Afternoon'
     },
     evening: {
         zh: '晚上好',
-        en: 'Good Evening',
-        ru: 'Добрый вечер',
-        ja: 'こんばんは',
-        ko: '좋은 저녁',
-        es: 'Buenas noches',
-        fr: 'Bonsoir'
+        en: 'Good Evening'
     },
     night: {
         zh: '夜深了',
-        en: 'Good Night',
-        ru: 'Спокойной ночи',
-        ja: 'おやすみ',
-        ko: '좋은 밤',
-        es: 'Buenas noches',
-        fr: 'Bonne nuit'
+        en: 'Good Night'
     }
 };
 
-// 欢迎语数据
+// 欢迎语数据（仅保留中英文）
 const welcomeMessages = {
-    zh: '欢迎来到Weatheraintbad的主页',
-    en: 'Welcome to Weatheraintbad\'s Homepage',
-    ru: 'Добро пожаловать на домашнюю страницу Weatheraintbad',
-    ja: 'Weatheraintbadのホームページへようこそ',
-    ko: 'Weatheraintbad의 홈페이지에 오신 것을 환영합니다',
-    es: 'Bienvenido a la página de Weatheraintbad',
-    fr: 'Bienvenue sur la page de Weatheraintbad'
+    zh: '欢迎来到 Weatheraintbad 的主页',
+    en: 'Welcome to Weatheraintbad\'s Homepage'
 };
 
 // 获取当前时间段
@@ -207,8 +182,8 @@ function getTimePeriod() {
     }
 }
 
-// 语言列表
-const languages = ['zh', 'en', 'ru', 'ja', 'ko', 'es', 'fr'];
+// 语言列表（仅保留中英文）
+const languages = ['zh', 'en'];
 let currentLangIndex = 0;
 let greetingInterval;
 
@@ -218,22 +193,32 @@ function updateGreeting() {
     const greetingElement = document.getElementById('greeting');
     const welcomeElement = document.getElementById('welcome');
 
-    // 添加淡出动画
-    greetingElement.style.opacity = '0';
-    welcomeElement.style.opacity = '0';
+    // 确保过渡样式已应用，第一行没有延迟，第二行有0.1秒延迟
+    // 动画速度从0.8秒增加到1.2秒
+    greetingElement.style.transition = 'opacity 1.2s ease-in-out, transform 1.2s ease-in-out';
+    welcomeElement.style.transition = 'opacity 1.2s ease-in-out 0.1s, transform 1.2s ease-in-out 0.1s';
 
+    // 添加淡出动画（移动幅度从20px减小到10px）
+    greetingElement.style.opacity = '0';
+    greetingElement.style.transform = 'translateY(10px)';
+    welcomeElement.style.opacity = '0';
+    welcomeElement.style.transform = 'translateY(10px)';
+
+    // 延长时间间隔到1秒，确保上一个标题完全消失
     setTimeout(() => {
         // 更新文本
         greetingElement.textContent = greetings[timePeriod][languages[currentLangIndex]];
         welcomeElement.textContent = welcomeMessages[languages[currentLangIndex]];
 
-        // 添加淡入动画
+        // 添加淡入动画（小幅度上升并渐显）
         greetingElement.style.opacity = '1';
+        greetingElement.style.transform = 'translateY(0)';
         welcomeElement.style.opacity = '1';
+        welcomeElement.style.transform = 'translateY(0)';
 
         // 更新语言索引
         currentLangIndex = (currentLangIndex + 1) % languages.length;
-    }, 500);
+    }, 1000);
 }
 
 // 初始化问候语
@@ -242,33 +227,53 @@ function initGreeting() {
     const greetingElement = document.getElementById('greeting');
     const welcomeElement = document.getElementById('welcome');
 
+    // 确保过渡样式已应用，第一行没有延迟，第二行有0.1秒延迟
+    // 动画速度从0.8秒增加到1.2秒
+    greetingElement.style.transition = 'opacity 1.2s ease-in-out, transform 1.2s ease-in-out';
+    welcomeElement.style.transition = 'opacity 1.2s ease-in-out 0.1s, transform 1.2s ease-in-out 0.1s';
+
     // 初始显示
     greetingElement.textContent = greetings[timePeriod][languages[0]];
     welcomeElement.textContent = welcomeMessages[languages[0]];
     greetingElement.style.opacity = '1';
     welcomeElement.style.opacity = '1';
+    greetingElement.style.transform = 'translateY(0)';
+    welcomeElement.style.transform = 'translateY(0)';
 
-    // 开始循环切换 - 减慢速度
-    greetingInterval = setInterval(updateGreeting, 5000);
+    // 初始化后立即更新语言索引，这样第一次调用updateGreeting时会显示下一种语言
+    currentLangIndex = (currentLangIndex + 1) % languages.length;
+
+    // 延长切换间隔到10秒
+    greetingInterval = setInterval(updateGreeting, 10000);
 }
 
 // 页面加载动画
 window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.5s ease-in';
+    const loader = document.getElementById('loader');
 
+    // 确保页面内容加载完成后再隐藏加载动画
     setTimeout(() => {
-        document.body.style.opacity = '1';
+        loader.classList.add('hidden');
         // 初始化问候语
         initGreeting();
-    }, 100);
+
+        // 加载动画完全消失后再触发页面内容的显示
+        setTimeout(() => {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease-in';
+
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        }, 800); // 等待加载动画完全消失（0.8秒）
+    }, 1500); // 1.5秒后隐藏加载动画，确保标题和其他资源加载完成
 });
 
-// 添加问候语和欢迎语的过渡动画
+// 添加问候语和欢迎语的过渡动画（包含位移）
 const style = document.createElement('style');
 style.textContent = `
     #greeting, #welcome {
-        transition: opacity 0.5s ease-in-out;
+        transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
     }
 `;
 document.head.appendChild(style);
@@ -278,16 +283,20 @@ const createParticles = () => {
     const heroDecoration = document.querySelector('.hero-decoration');
     if (!heroDecoration) return;
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 15; i++) {
         const particle = document.createElement('div');
         particle.style.position = 'absolute';
-        particle.style.width = '2px';
-        particle.style.height = '2px';
-        particle.style.backgroundColor = 'rgba(255, 140, 0, 0.3)';
+        const size = 15 + Math.random() * 30; // 稍大的模糊圆形
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.backgroundColor = `rgba(255, 140, 0, ${0.1 + Math.random() * 0.2})`;
         particle.style.borderRadius = '50%';
         particle.style.left = `${Math.random() * 100}%`;
         particle.style.top = `${Math.random() * 100}%`;
-        particle.style.animation = `float ${10 + Math.random() * 10}s infinite ease-in-out`;
+        particle.style.filter = 'blur(3px)'; // 模糊效果
+        // 随机移动和闪烁动画
+        const duration = 15 + Math.random() * 20;
+        particle.style.animation = `particleFloat ${duration}s infinite ease-in-out, particleBlink ${2 + Math.random() * 3}s infinite ease-in-out`;
         particle.style.animationDelay = `${Math.random() * 5}s`;
         heroDecoration.appendChild(particle);
     }
