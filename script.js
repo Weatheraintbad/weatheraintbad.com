@@ -142,6 +142,116 @@ if (aboutSection) {
     observer.observe(aboutSection);
 }
 
+// 多语言问候数据
+const greetings = {
+    morning: {
+        zh: '早上好',
+        en: 'Good Morning',
+        ru: 'Доброе утро',
+        ja: 'おはよう',
+        ko: '좋은 아침',
+        es: 'Buenos días',
+        fr: 'Bonjour'
+    },
+    afternoon: {
+        zh: '下午好',
+        en: 'Good Afternoon',
+        ru: 'Добрый день',
+        ja: 'こんにちは',
+        ko: '좋은 오후',
+        es: 'Buenas tardes',
+        fr: 'Bonjour'
+    },
+    evening: {
+        zh: '晚上好',
+        en: 'Good Evening',
+        ru: 'Добрый вечер',
+        ja: 'こんばんは',
+        ko: '좋은 저녁',
+        es: 'Buenas noches',
+        fr: 'Bonsoir'
+    },
+    night: {
+        zh: '夜深了',
+        en: 'Good Night',
+        ru: 'Спокойной ночи',
+        ja: 'おやすみ',
+        ko: '좋은 밤',
+        es: 'Buenas noches',
+        fr: 'Bonne nuit'
+    }
+};
+
+// 欢迎语数据
+const welcomeMessages = {
+    zh: '欢迎来到Weatheraintbad的主页',
+    en: 'Welcome to Weatheraintbad\'s Homepage',
+    ru: 'Добро пожаловать на домашнюю страницу Weatheraintbad',
+    ja: 'Weatheraintbadのホームページへようこそ',
+    ko: 'Weatheraintbad의 홈페이지에 오신 것을 환영합니다',
+    es: 'Bienvenido a la página de Weatheraintbad',
+    fr: 'Bienvenue sur la page de Weatheraintbad'
+};
+
+// 获取当前时间段
+function getTimePeriod() {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+        return 'morning';
+    } else if (hour >= 12 && hour < 18) {
+        return 'afternoon';
+    } else if (hour >= 18 && hour < 22) {
+        return 'evening';
+    } else {
+        return 'night';
+    }
+}
+
+// 语言列表
+const languages = ['zh', 'en', 'ru', 'ja', 'ko', 'es', 'fr'];
+let currentLangIndex = 0;
+let greetingInterval;
+
+// 更新问候语和欢迎语
+function updateGreeting() {
+    const timePeriod = getTimePeriod();
+    const greetingElement = document.getElementById('greeting');
+    const welcomeElement = document.getElementById('welcome');
+
+    // 添加淡出动画
+    greetingElement.style.opacity = '0';
+    welcomeElement.style.opacity = '0';
+
+    setTimeout(() => {
+        // 更新文本
+        greetingElement.textContent = greetings[timePeriod][languages[currentLangIndex]];
+        welcomeElement.textContent = welcomeMessages[languages[currentLangIndex]];
+
+        // 添加淡入动画
+        greetingElement.style.opacity = '1';
+        welcomeElement.style.opacity = '1';
+
+        // 更新语言索引
+        currentLangIndex = (currentLangIndex + 1) % languages.length;
+    }, 500);
+}
+
+// 初始化问候语
+function initGreeting() {
+    const timePeriod = getTimePeriod();
+    const greetingElement = document.getElementById('greeting');
+    const welcomeElement = document.getElementById('welcome');
+
+    // 初始显示
+    greetingElement.textContent = greetings[timePeriod][languages[0]];
+    welcomeElement.textContent = welcomeMessages[languages[0]];
+    greetingElement.style.opacity = '1';
+    welcomeElement.style.opacity = '1';
+
+    // 开始循环切换 - 减慢速度
+    greetingInterval = setInterval(updateGreeting, 5000);
+}
+
 // 页面加载动画
 window.addEventListener('load', () => {
     document.body.style.opacity = '0';
@@ -149,8 +259,19 @@ window.addEventListener('load', () => {
 
     setTimeout(() => {
         document.body.style.opacity = '1';
+        // 初始化问候语
+        initGreeting();
     }, 100);
 });
+
+// 添加问候语和欢迎语的过渡动画
+const style = document.createElement('style');
+style.textContent = `
+    #greeting, #welcome {
+        transition: opacity 0.5s ease-in-out;
+    }
+`;
+document.head.appendChild(style);
 
 // 动态背景效果
 const createParticles = () => {
@@ -162,7 +283,7 @@ const createParticles = () => {
         particle.style.position = 'absolute';
         particle.style.width = '2px';
         particle.style.height = '2px';
-        particle.style.backgroundColor = 'rgba(0, 255, 209, 0.3)';
+        particle.style.backgroundColor = 'rgba(255, 140, 0, 0.3)';
         particle.style.borderRadius = '50%';
         particle.style.left = `${Math.random() * 100}%`;
         particle.style.top = `${Math.random() * 100}%`;

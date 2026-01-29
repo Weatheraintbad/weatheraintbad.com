@@ -26,8 +26,8 @@
     <section id="home" class="hero">
         <div class="hero-content">
             <h1 class="hero-title">
-                <span class="title-line">Hello,</span>
-                <span class="title-line">I'm Weatheraintbad</span>
+                <span class="title-line greeting-line" id="greeting"></span>
+                <span class="title-line welcome-line" id="welcome"></span>
             </h1>
             <p class="hero-subtitle">Creative Developer & Designer</p>
             <div class="hero-cta">
@@ -46,27 +46,25 @@
     <section id="about" class="about">
         <div class="container">
             <div class="about-content">
+                <div class="about-image">
+                    <div class="profile-card">
+                        <div class="profile-placeholder">
+                            <img src="https://s3.bmp.ovh/2026/01/29/QAYOLg9Y.jpg" alt="touxiang.jpg" />
+                        </div>
+                    </div>
+                </div>
                 <div class="about-text">
-                    <h2 class="section-title">关于我</h2>
+                    <h2 class="section-title">Weatheraintbad</h2>
                     <p>我是一个热爱创造的开发者和设计师，专注于构建美观、实用的数字产品。</p>
                     <div class="about-stats">
                         <div class="stat-item">
-                            <h3>1+</h3>
-                            <p>年经验</p>
-                        </div>
-                        <div class="stat-item">
-                            <h3>6+</h3>
-                            <p>项目完成</p>
+                            <h3>6</h3>
+                            <p>项目</p>
                         </div>
                         <div class="stat-item">
                             <h3>2000+</h3>
                             <p>下载量</p>
                         </div>
-                    </div>
-                </div>
-                <div class="about-image">
-                    <div class="profile-card">
-                        <div class="profile-placeholder"></div>
                     </div>
                 </div>
             </div>
@@ -76,8 +74,18 @@
     <!-- 技能 -->
     <section id="skills" class="skills">
         <div class="container">
-            <h2 class="section-title">Skills</h2>
+            <h2 class="section-title">技能</h2>
             <div class="skills-grid">
+                <div class="skill-card">
+                    <div class="skill-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                            <polyline points="14,2 14,8 20,8"></polyline>
+                        </svg>
+                    </div>
+                    <h3>产品策划</h3>
+                    <p>需求分析, 竞品研究, 产品规划, PRD编写</p>
+                </div>
                 <div class="skill-card">
                     <div class="skill-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -85,7 +93,7 @@
                         </svg>
                     </div>
                     <h3>前端开发</h3>
-                    <p>HTML, CSS, JavaScript, React, Vue</p>
+                    <p>HTML, CSS, JavaScript, React, Vue, 响应式设计</p>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">
@@ -95,8 +103,8 @@
                             <polyline points="21 15 16 10 5 21"></polyline>
                         </svg>
                     </div>
-                    <h3>设计</h3>
-                    <p>UI/UX设计, 平面设计, 动效设计</p>
+                    <h3>平面设计</h3>
+                    <p>海报设计, 标志设计, 品牌视觉, 排版设计</p>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">
@@ -104,18 +112,8 @@
                             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
                         </svg>
                     </div>
-                    <h3>后端开发</h3>
-                    <p>Node.js, Python, 数据库设计</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                    </div>
-                    <h3>项目管理</h3>
-                    <p>敏捷开发, 团队协作, 产品规划</p>
+                    <h3>游戏模组开发</h3>
+                    <p>Minecraft模组, Unity插件, 游戏逻辑设计</p>
                 </div>
             </div>
         </div>
@@ -124,34 +122,60 @@
     <!-- 作品 -->
     <section id="work" class="work">
         <div class="container">
-            <h2 class="section-title">Selected Work</h2>
+            <h2 class="section-title">部分项目</h2>
             <div class="work-grid">
                 <div class="work-item">
-                    <div class="work-image"></div>
+                    <div class="work-image">
+                        <img width="360" height="200" alt="banner-DesktopPolaroid" src="https://s3.bmp.ovh/2026/01/29/ifzkqQt3.png" />
+                    </div>
                     <div class="work-info">
-                        <h3>项目名称 1</h3>
-                        <p>Web应用开发</p>
+                        <h3>拍立得桌面贴</h3>
+                        <p>一款可以将照片制作成拍立得（宝丽来）风格照片并贴在电脑桌面的MacOS应用 (开发中) </p>
                     </div>
                 </div>
                 <div class="work-item">
-                    <div class="work-image"></div>
+                    <div class="work-image">
+                        <img width="360" height="200" alt="banner-stardewhud" src="https://s3.bmp.ovh/2026/01/29/05bgkibj.png" />
+                    </div>
                     <div class="work-info">
-                        <h3>项目名称 2</h3>
-                        <p>移动应用设计</p>
+                        <h3>Stardew HUD</h3>
+                        <p>为游戏《我的世界》制作的星露谷物语风格HUD显示组件模组</p>
                     </div>
                 </div>
                 <div class="work-item">
-                    <div class="work-image"></div>
+                    <div class="work-image">
+                        <img src="" alt="项目图片" class="work-img">
+                    </div>
                     <div class="work-info">
-                        <h3>项目名称 3</h3>
-                        <p>品牌视觉设计</p>
+                        <h3>Totem of Luck</h3>
+                        <p>为游戏《我的世界》制作的幸运图腾模组</p>
                     </div>
                 </div>
                 <div class="work-item">
-                    <div class="work-image"></div>
+                    <div class="work-image">
+                        <img src="" alt="项目图片" class="work-img">
+                    </div>
                     <div class="work-info">
                         <h3>项目名称 4</h3>
                         <p>数据分析平台</p>
+                    </div>
+                </div>
+                <div class="work-item">
+                    <div class="work-image">
+                        <img src="" alt="项目图片" class="work-img">
+                    </div>
+                    <div class="work-info">
+                        <h3>项目名称 5</h3>
+                        <p>待添加项目描述</p>
+                    </div>
+                </div>
+                <div class="work-item">
+                    <div class="work-image">
+                        <img src="" alt="项目图片" class="work-img">
+                    </div>
+                    <div class="work-info">
+                        <h3>项目名称 6</h3>
+                        <p>待添加项目描述</p>
                     </div>
                 </div>
             </div>
@@ -172,20 +196,20 @@
                                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                                 <polyline points="22,6 12,13 2,6"></polyline>
                             </svg>
-                            <span>email@example.com</span>
+                            <span>weatheraintbad@foxmail.com</span>
                         </div>
                         <div class="contact-item">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                             </svg>
-                            <span>+86 123 4567 8900</span>
+                            <span>+86 139 2826 9110</span>
                         </div>
                         <div class="contact-item">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                                 <circle cx="12" cy="10" r="3"></circle>
                             </svg>
-                            <span>中国, 北京</span>
+                            <span>中国, 佛山</span>
                         </div>
                     </div>
                 </div>
@@ -230,7 +254,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Weatheraintbad. All rights reserved.</p>
+                <p>&copy; 2026 Weatheraintbad. All rights reserved.</p>
             </div>
         </div>
     </footer>
