@@ -1,11 +1,13 @@
-// 导航栏滚动效果
+// 导航栏滚动效果 - 支持深色/浅色主题
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
+    const isLightTheme = window.matchMedia('(prefers-color-scheme: light)').matches;
+
     if (window.scrollY > 100) {
-        navbar.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
-        navbar.style.boxShadow = '0 5px 30px rgba(0, 0, 0, 0.5)';
+        navbar.style.backgroundColor = isLightTheme ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.95)';
+        navbar.style.boxShadow = isLightTheme ? '0 5px 30px rgba(0, 0, 0, 0.1)' : '0 5px 30px rgba(0, 0, 0, 0.5)';
     } else {
-        navbar.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        navbar.style.backgroundColor = isLightTheme ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)';
         navbar.style.boxShadow = 'none';
     }
 });
@@ -123,11 +125,58 @@ function addImageErrorHandlers() {
     });
 }
 
+// 主题切换功能
+function initThemeToggle() {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (!themeToggle) return;
+
+    // 检查用户是否有手动设置的主题
+    const savedTheme = localStorage.getItem('theme');
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+
+    // 初始化主题
+    if (savedTheme === 'light') {
+        document.documentElement.classList.add('light-theme');
+    } else if (savedTheme === 'dark') {
+        document.documentElement.classList.remove('light-theme');
+    } else {
+        // 跟随系统设置
+        if (prefersLight) {
+            document.documentElement.classList.add('light-theme');
+        }
+    }
+
+    // 监听主题切换按钮点击
+    themeToggle.addEventListener('click', () => {
+        const isLight = document.documentElement.classList.contains('light-theme');
+        if (isLight) {
+            document.documentElement.classList.remove('light-theme');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.classList.add('light-theme');
+            localStorage.setItem('theme', 'light');
+        }
+    });
+
+    // 监听系统颜色方案变化
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+        // 只有在用户未手动设置主题时才跟随系统变化
+        if (!localStorage.getItem('theme')) {
+            if (e.matches) {
+                document.documentElement.classList.add('light-theme');
+            } else {
+                document.documentElement.classList.remove('light-theme');
+            }
+        }
+    });
+}
+
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
     addFadeInClasses();
     fadeInOnScroll();
     addImageErrorHandlers();
+    initThemeToggle(); // 初始化主题切换
 });
 
 // 滚动时触发动画
