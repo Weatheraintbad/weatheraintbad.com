@@ -231,7 +231,7 @@ function updateGreeting() {
     // 确保过渡样式已应用，第一行没有延迟，第二行有0.1秒延迟
     // 动画速度从0.8秒增加到1.2秒
     greetingElement.style.transition = 'opacity 1.2s ease-in-out, transform 1.2s ease-in-out';
-    welcomeElement.style.transition = 'opacity 1.2s ease-in-out 0.1s, transform 1.2s ease-in-out 0.1s';
+    welcomeElement.style.transition = 'opacity 1.2s ease-in-out 0.3s, transform 1.2s ease-in-out 0.3s';
 
     // 添加淡出动画（移动幅度从20px减小到10px）
     greetingElement.style.opacity = '0';

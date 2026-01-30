@@ -92,7 +92,7 @@
 :root {
     --primary-color: #ffffff;          /* 主文字颜色 */
     --secondary-color: #888888;        /* 次要文字颜色 */
-    --accent-color: #ff8c00;           /* 强调色 - 橙色 */
+    --accent-color: #faa755;           /* 强调色 - 橙色 */
     --bg-primary: #000000;             /* 主背景色 - 黑色 */
     --bg-secondary: #0a0a0a;          /* 次要背景色 */
     --bg-card: #1a1a1a;               /* 卡片背景色 */
@@ -263,6 +263,31 @@ body {
     font-weight: 300;
     opacity: 0;
     animation: fadeIn 1s ease-out 0.6s forwards;
+}
+
+/* 英雄区社交媒体图标样式 */
+.hero-social {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeIn 1s ease-out 0.6s forwards;
+}
+
+.hero-social a {
+    color: var(--secondary-color);
+    transition: var(--transition);
+}
+
+.hero-social a:hover {
+    color: var(--accent-color);
+    transform: translateY(-3px);
+}
+
+.hero-social svg {
+    width: 32px;
+    height: 32px;
 }
 
 /* 行动号召按钮样式 */
@@ -643,22 +668,97 @@ body {
 }
 
 /* 联系内容布局 */
+/* 增加二维码组件距离页面左侧的距离，让布局更加美观 */
 .contact-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    justify-content: center;
     gap: 4rem;
+    align-items: center;
+    padding-left: 350px; /* 增加左侧间距，使二维码远离页面左边缘 */
+}
+
+/* 移动端联系部分布局调整 */
+@media (max-width: 768px) {
+    .contact-content {
+        padding-left: 0; /* 移动端去掉左侧间距 */
+        flex-direction: column; /* 二维码和联系信息垂直排列 */
+        gap: 2rem; /* 减小间距 */
+    }
+}
+
+.contact-info {
+    max-width: 600px;
+    width: 100%;
+}
+
+/* 二维码样式 */
+.contact-qr {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.qr-code {
+    width: 180px;
+    height: 180px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.qr-code:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255, 140, 0, 0.1);
+}
+
+.qr-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: var(--secondary-color);
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+}
+
+.qr-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+.qr-placeholder svg {
+    width: 80px;
+    height: 80px;
+    opacity: 0.5;
+}
+
+.qr-placeholder p {
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: auto;
 }
 
 .contact-info h3 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
     font-weight: 600;
+    text-align: left;
 }
 
 .contact-info p {
     color: var(--secondary-color);
     margin-bottom: 2rem;
     line-height: 1.8;
+    text-align: left;
 }
 
 /* 联系详情样式 */
@@ -666,6 +766,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    align-items: flex-start;
 }
 
 .contact-item {
@@ -673,6 +774,7 @@ body {
     align-items: center;
     gap: 1rem;
     color: var(--secondary-color);
+    justify-content: flex-start;
 }
 
 .contact-item svg {
@@ -728,6 +830,13 @@ body {
     flex-wrap: wrap;
     gap: 2rem;
     margin-bottom: 2rem;
+}
+
+.footer-copyright {
+    flex: 1;
+    text-align: center;
+    color: var(--secondary-color);
+    font-size: 0.9rem;
 }
 
 .footer-logo {
