@@ -327,29 +327,32 @@ const languages = ['zh', 'en'];
 let currentLangIndex = 0;
 let greetingInterval;
 
-// 更新问候语和欢迎语 - 更华丽的动画
+// 更新问候语和欢迎语 - 修复动画卡顿问题
 function updateGreeting() {
     const timePeriod = getTimePeriod();
     const greetingElement = document.getElementById('greeting');
     const welcomeElement = document.getElementById('welcome');
 
-    // 更华丽的过渡样式
+    // 设置过渡样式
     greetingElement.style.transition = 'opacity 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
     welcomeElement.style.transition = 'opacity 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s, transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s';
 
-    // 更大幅度的淡出动画
+    // 淡出动画
     greetingElement.style.opacity = '0';
     greetingElement.style.transform = 'translateY(30px) scale(0.9)';
     welcomeElement.style.opacity = '0';
     welcomeElement.style.transform = 'translateY(30px) scale(0.9)';
 
-    // 延长时间间隔到1.2秒，确保上一个标题完全消失
+    // 确保上一个标题完全淡出后再更新文字
     setTimeout(() => {
         // 更新文本
         greetingElement.textContent = greetings[timePeriod][languages[currentLangIndex]];
         welcomeElement.textContent = welcomeMessages[languages[currentLangIndex]];
 
-        // 更华丽的淡入动画
+        // 强制浏览器重排，确保文字更新后再执行淡入动画
+        const dummy = greetingElement.offsetHeight;
+
+        // 淡入动画
         greetingElement.style.opacity = '1';
         greetingElement.style.transform = 'translateY(0) scale(1)';
         welcomeElement.style.opacity = '1';
@@ -357,7 +360,7 @@ function updateGreeting() {
 
         // 更新语言索引
         currentLangIndex = (currentLangIndex + 1) % languages.length;
-    }, 1200);
+    }, 1500);
 }
 
 // 初始化问候语 - 更华丽的动画
