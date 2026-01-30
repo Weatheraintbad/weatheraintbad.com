@@ -206,7 +206,7 @@ if (contactForm) {
         e.preventDefault();
 
         // 简单的表单验证
-        const name = contactForm.querySelector('input[type="text"]').value;
+const name = contactForm.querySelector('input[type="text"]').value;
         const email = contactForm.querySelector('input[type="email"]').value;
         const message = contactForm.querySelector('textarea').value;
 if (name && email && message) {
@@ -223,7 +223,7 @@ workItems.forEach(item => {
     item.addEventListener('mouseenter', () => {
         const image = item.querySelector('.work-image');
         if (image) {
-            image.style.transform = 'scale(1.05)';
+image.style.transform = 'scale(1.05)';
 }
     });
 
@@ -250,7 +250,7 @@ const animateNumbers = () => {
         const duration = 2000; // 动画持续时间
         const increment = target / (duration / 16); // 每帧增量
 
-        const timer = setInterval(() => {
+const timer = setInterval(() => {
             count += increment;
             if (count >= target) {
                 item.textContent = target + '+';
@@ -417,8 +417,7 @@ function initGreeting() {
     const timePeriod = getTimePeriod();
     const greetingElement = document.getElementById('greeting');
     const welcomeElement = document.getElementById('welcome');
-
-    // 更华丽的过渡样式
+// 更华丽的过渡样式
     greetingElement.style.transition = 'opacity 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
     welcomeElement.style.transition = 'opacity 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s, transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s';
 
@@ -508,11 +507,7 @@ createParticles();
 
 // 滚动到"关于我"部分的函数
 function scrollToAboutSection() {
-    const aboutSection = document.getElementById('about');
-    if (aboutSection) {
-        // 使用自定义滚动函数替代原生的smooth behavior
-        scrollToElement(aboutSection, 1200); // 增加动画时间以获得更平滑的效果
-    }
+    smoothScrollTo('about');
 }
 
 // 自定义滚动函数，支持平滑缓动效果
@@ -562,6 +557,20 @@ function smoothScrollTo(targetId, callback) {
     }
 }
 
+// 确保在页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', function() {
+    // 检查URL哈希并滚动到相应部分
+    const hash = window.location.hash;
+    if (hash) {
+        const targetElement = document.querySelector(hash);
+        if (targetElement) {
+            setTimeout(() => {
+                scrollToElement(targetElement, 1200);
+            }, 100);
+        }
+    }
+});
+
 // 监听滚动事件以启用从英雄区到关于我部分的单向切换
 let scrollTimer = null;
 let hasScrolledToAbout = false; // 追踪是否已经从英雄区滚动到了关于我部分
@@ -570,10 +579,10 @@ let hasScrolledToAbout = false; // 追踪是否已经从英雄区滚动到了关
 function isHeroFullyVisible() {
     const homeSection = document.getElementById('home');
     if (!homeSection) return false;
-    
+
     const rect = homeSection.getBoundingClientRect();
     const windowHeight = window.innerHeight;
-    
+
     // 英雄区完整显示意味着它的高度小于或等于视窗高度
     // 并且它完全在视窗内
     return rect.top >= 0 && rect.bottom <= windowHeight && rect.height <= windowHeight;
@@ -585,33 +594,33 @@ window.addEventListener('wheel', function(e) {
         e.preventDefault();
         return;
     }
-    
+
     const delta = e.deltaY;
     const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    
+
     // 清除之前的计时器
     if (scrollTimer) {
         clearTimeout(scrollTimer);
     }
-    
+
     // 防止过度触发
     scrollTimer = setTimeout(() => {
         isScrolling = false;
     }, 1200); // 延迟时间与动画时间匹配
-    
+
     const homeSection = document.getElementById('home');
     const aboutSection = document.getElementById('about');
-    
+
     if (!homeSection || !aboutSection) return;
-    
+
     const homeRect = homeSection.getBoundingClientRect();
-    
+
     // 判断当前是否在英雄区
     const isInHome = homeRect.top <= 0 && homeRect.bottom >= 0;
-    
+
     // 检查英雄区是否完整显示
     const heroFullyVisible = isHeroFullyVisible();
-    
+
     // 只有在英雄区且向下滚动时才触发切换
     if (delta > 0 && isInHome && !hasScrolledToAbout) {
         e.preventDefault();
@@ -622,44 +631,6 @@ window.addEventListener('wheel', function(e) {
     }
     // 其他情况允许正常滚动
 }, { passive: false });
-
-// 同时监控滚动状态，当页面下滑且英雄区没有完整显示时自动滚动到关于我部分
-let lastScrollTop = 0;
-let scrollDirection = '';
-
-window.addEventListener('scroll', function() {
-    if (isScrolling || hasScrolledToAbout) return;
-    
-    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const homeSection = document.getElementById('home');
-    const aboutSection = document.getElementById('about');
-    
-    if (!homeSection || !aboutSection) return;
-    
-    // 确定滚动方向
-    if (currentScrollTop > lastScrollTop) {
-        scrollDirection = 'down';
-    } else if (currentScrollTop < lastScrollTop) {
-        scrollDirection = 'up';
-    }
-    lastScrollTop = currentScrollTop;
-    
-    const homeRect = homeSection.getBoundingClientRect();
-    const isInHome = homeRect.top <= 0 && homeRect.bottom >= 0;
-    
-    // 检查英雄区是否完整显示
-    const heroFullyVisible = isHeroFullyVisible();
-    
-    // 当页面正在下滑且英雄区没有完整显示时，自动滚动到关于我部分
-    if (scrollDirection === 'down' && isInHome && !heroFullyVisible && !hasScrolledToAbout) {
-        // 防止重复触发
-        if (!isScrolling) {
-            smoothScrollTo('about', () => {
-                hasScrolledToAbout = true;
-            });
-        }
-    }
-});
 
 // 同样支持触摸设备上的滚动切换（仅从英雄区到关于我部分）
 let touchStartY = 0;
@@ -676,19 +647,19 @@ document.addEventListener('touchend', e => {
 
 function handleSwipeGesture() {
     const homeSection = document.getElementById('home');
-    
+
     if (!homeSection) return;
-    
+
     const homeRect = homeSection.getBoundingClientRect();
-    
+
     // 判断当前是否在英雄区
     const isInHome = homeRect.top <= 0 && homeRect.bottom >= 0;
-    
+
     // 检查英雄区是否完整显示
     const heroFullyVisible = isHeroFullyVisible();
-    
+
     const deltaY = touchStartY - touchEndY;
-    
+
     // 只有在英雄区且向下滑动时才触发切换
     if (deltaY > 50 && isInHome && !heroFullyVisible && !hasScrolledToAbout) { // 向上滑动（向下滚动）
         smoothScrollTo('about', () => {
@@ -698,17 +669,3 @@ function handleSwipeGesture() {
     }
     // 其他情况允许正常滚动
 }
-
-// 确保在页面加载完成后初始化
-document.addEventListener('DOMContentLoaded', function() {
-    // 检查URL哈希并滚动到相应部分
-    const hash = window.location.hash;
-    if (hash) {
-        const targetElement = document.querySelector(hash);
-        if (targetElement) {
-            setTimeout(() => {
-                scrollToElement(targetElement, 1200);
-            }, 100);
-        }
-    }
-});

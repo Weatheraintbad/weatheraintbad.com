@@ -268,7 +268,7 @@
    基础样式
    ============================================= */
 html {
-    scroll-behavior: smooth;          /* 平滑滚动 */
+    scroll-behavior: auto;          /* 平滑滚动 */
 }
 
 body {
@@ -606,7 +606,7 @@ body {
    基础样式
    ============================================= */
 html {
-    scroll-behavior: smooth;          /* 平滑滚动 */
+    scroll-behavior: auto;          /* 平滑滚动 */
 }
 
 body {
@@ -1594,7 +1594,7 @@ body {
 
 /* 磁吸滚动效果 */
 html {
-    scroll-behavior: smooth; /* 平滑滚动 */
+    scroll-behavior: auto; /* 平滑滚动 */
 }
 
 /* 优化英雄区滚动体验 */
