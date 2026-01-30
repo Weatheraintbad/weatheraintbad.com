@@ -327,58 +327,56 @@ const languages = ['zh', 'en'];
 let currentLangIndex = 0;
 let greetingInterval;
 
-// 更新问候语和欢迎语
+// 更新问候语和欢迎语 - 更华丽的动画
 function updateGreeting() {
     const timePeriod = getTimePeriod();
     const greetingElement = document.getElementById('greeting');
     const welcomeElement = document.getElementById('welcome');
 
-    // 确保过渡样式已应用，第一行没有延迟，第二行有0.1秒延迟
-    // 动画速度从0.8秒增加到1.2秒
-    greetingElement.style.transition = 'opacity 1.2s ease-in-out, transform 1.2s ease-in-out';
-    welcomeElement.style.transition = 'opacity 1.2s ease-in-out 0.3s, transform 1.2s ease-in-out 0.3s';
+    // 更华丽的过渡样式
+    greetingElement.style.transition = 'opacity 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    welcomeElement.style.transition = 'opacity 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s, transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s';
 
-    // 添加淡出动画（移动幅度从20px减小到10px）
+    // 更大幅度的淡出动画
     greetingElement.style.opacity = '0';
-    greetingElement.style.transform = 'translateY(10px)';
+    greetingElement.style.transform = 'translateY(30px) scale(0.9)';
     welcomeElement.style.opacity = '0';
-    welcomeElement.style.transform = 'translateY(10px)';
+    welcomeElement.style.transform = 'translateY(30px) scale(0.9)';
 
-    // 延长时间间隔到1秒，确保上一个标题完全消失
+    // 延长时间间隔到1.2秒，确保上一个标题完全消失
     setTimeout(() => {
         // 更新文本
         greetingElement.textContent = greetings[timePeriod][languages[currentLangIndex]];
         welcomeElement.textContent = welcomeMessages[languages[currentLangIndex]];
 
-        // 添加淡入动画（小幅度上升并渐显）
+        // 更华丽的淡入动画
         greetingElement.style.opacity = '1';
-        greetingElement.style.transform = 'translateY(0)';
+        greetingElement.style.transform = 'translateY(0) scale(1)';
         welcomeElement.style.opacity = '1';
-        welcomeElement.style.transform = 'translateY(0)';
+        welcomeElement.style.transform = 'translateY(0) scale(1)';
 
         // 更新语言索引
         currentLangIndex = (currentLangIndex + 1) % languages.length;
-    }, 1000);
+    }, 1200);
 }
 
-// 初始化问候语
+// 初始化问候语 - 更华丽的动画
 function initGreeting() {
     const timePeriod = getTimePeriod();
     const greetingElement = document.getElementById('greeting');
     const welcomeElement = document.getElementById('welcome');
 
-    // 确保过渡样式已应用，第一行没有延迟，第二行有0.1秒延迟
-    // 动画速度从0.8秒增加到1.2秒
-    greetingElement.style.transition = 'opacity 1.2s ease-in-out, transform 1.2s ease-in-out';
-    welcomeElement.style.transition = 'opacity 1.2s ease-in-out 0.1s, transform 1.2s ease-in-out 0.3s';
+    // 更华丽的过渡样式
+    greetingElement.style.transition = 'opacity 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+    welcomeElement.style.transition = 'opacity 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s, transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s';
 
     // 初始显示
     greetingElement.textContent = greetings[timePeriod][languages[0]];
     welcomeElement.textContent = welcomeMessages[languages[0]];
     greetingElement.style.opacity = '1';
     welcomeElement.style.opacity = '1';
-    greetingElement.style.transform = 'translateY(0)';
-    welcomeElement.style.transform = 'translateY(0)';
+    greetingElement.style.transform = 'translateY(0) scale(1)';
+    welcomeElement.style.transform = 'translateY(0) scale(1)';
 
     // 初始化后立即更新语言索引，这样第一次调用updateGreeting时会显示下一种语言
     currentLangIndex = (currentLangIndex + 1) % languages.length;

@@ -780,6 +780,15 @@ body {
     background-color: var(--bg-secondary);
 }
 
+/* 作品描述文字 */
+.work-description {
+    text-align: center;
+    color: var(--secondary-color);
+    margin-bottom: 4rem;
+    font-size: 1.5rem;
+    font-weight: 300;
+}
+
 /* 作品网格布局 */
 .work-grid {
     display: grid;
@@ -1264,9 +1273,9 @@ body {
         gap: 1rem;
     }
 
-    /* 移动端英雄区标题 */
+    /* 移动端英雄区标题 - 调大字体大小，保持与网页端一致的缩放逻辑 */
     .hero-title {
-        font-size: 2.5rem;
+        font-size: clamp(2.8rem, 10vw, 5rem);
     }
 
     /* 移动端布局调整 */
@@ -1373,9 +1382,9 @@ body {
         display: none;
     }
 
-    /* 小屏幕英雄区标题 */
+    /* 小屏幕英雄区标题 - 调大字体大小，保持与网页端一致的缩放逻辑 */
     .hero-title {
-        font-size: 2rem;
+        font-size: clamp(2.5rem, 12vw, 5rem);
     }
 
     /* 关于我区域进一步优化 */
