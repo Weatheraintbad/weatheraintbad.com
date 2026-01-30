@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>平面设计 - Weatheraintbad</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 设计作品页面样式 */
+        .design-container {
+            min-height: 100vh;
+            padding: 100px 20px 50px;
+            background-color: var(--bg-primary);
+        }
+
+        .design-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+        }
+
+        .design-header h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .design-header p {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--secondary-color);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 作品网格布局 */
+        .design-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 作品卡片 */
+        .design-card {
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+        }
+
+        .design-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 140, 0, 0.1);
+        }
+
+        /* 图片容器 */
+        .design-image-container {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-card));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .design-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .design-card:hover .design-image-container img {
+            transform: scale(1.05);
+        }
+
+        /* 作品信息 */
+        .design-info {
+            padding: 1.5rem;
+        }
+
+        .design-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .design-info p {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+
+        /* 返回按钮 */
+        .back-button {
+            display: inline-block;
+            margin-top: 3rem;
+            padding: 12px 24px;
+            background-color: var(--accent-color);
+            color: var(--bg-primary);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .back-button:hover {
+            background-color: transparent;
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .design-container {
+                padding: 80px 15px 40px;
+            }
+
+            .design-header {
+                margin-bottom: 3rem;
+            }
+
+            .design-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .design-image-container {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Weatheraintbad.com</div>
+            <ul class="nav-menu">
+                <li><a href="index.html#home">首页</a></li>
+                <li><a href="index.html#about">关于</a></li>
+                <li><a href="index.html#skills">技能</a></li>
+                <li><a href="index.html#work">作品</a></li>
+                <li><a href="index.html#contact">联系</a></li>
+            </ul>
+            <!-- 主题切换按钮 -->
+            <button id="theme-toggle" class="theme-toggle" aria-label="切换主题">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="design-container">
+        <div class="container">
+            <div class="design-header">
+                <h1>平面设计</h1>
+                <p>海报设计 | 品牌视觉 | 排版设计</p>
+            </div>
+
+            <div class="design-grid">
+                <!-- 作品 1 -->
+                <div class="design-card">
+                    <div class="design-image-container">
+                        <img src="images/design-poster1.png" alt="海报设计 1" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+                    </div>
+                    <div class="design-info">
+                        <h3>创意海报设计</h3>
+                        <p>现代风格的创意海报，采用渐变色彩和几何图形设计</p>
+                    </div>
+                </div>
+
+                <!-- 作品 2 -->
+                <div class="design-card">
+                    <div class="design-image-container">
+                        <img src="images/design-poster2.png" alt="海报设计 2" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+                    </div>
+                    <div class="design-info">
+                        <h3>活动宣传海报</h3>
+                        <p>色彩鲜艳的活动宣传海报，突出主题和关键信息</p>
+                    </div>
+                </div>
+
+                <!-- 作品 3 -->
+                <div class="design-card">
+                    <div class="design-image-container">
+                        <img src="images/design-poster3.png" alt="海报设计 3" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+                    </div>
+                    <div class="design-info">
+                        <h3>品牌形象海报</h3>
+                        <p>简洁大气的品牌形象海报，传达专业与信赖感</p>
+                    </div>
+                </div>
+
+                <!-- 作品 4 -->
+                <div class="design-card">
+                    <div class="design-image-container">
+                        <img src="images/design-poster4.png" alt="海报设计 4" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+                    </div>
+                    <div class="design-info">
+                        <h3>产品推广海报</h3>
+                        <p>突出产品特点的推广海报，吸引目标受众关注</p>
+                    </div>
+                </div>
+
+                <!-- 作品 5 -->
+                <div class="design-card">
+                    <div class="design-image-container">
+                        <img src="images/design-poster5.png" alt="海报设计 5" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+                    </div>
+                    <div class="design-info">
+                        <h3>音乐节海报</h3>
+                        <p>充满活力的音乐节海报，体现音乐与青春的氛围</p>
+                    </div>
+                </div>
+
+                <!-- 作品 6 -->
+                <div class="design-card">
+                    <div class="design-image-container">
+                        <img src="images/design-poster6.png" alt="海报设计 6" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+                    </div>
+                    <div class="design-info">
+                        <h3>艺术展览海报</h3>
+                        <p>简约而富有艺术感的展览海报，展现作品的内涵</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 返回按钮 -->
+            <div style="text-align: center;">
+                <a href="index.html#skills" class="back-button">返回技能页面</a>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        // 页面加载动画
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.classList.add('hidden');
+            }, 500);
+        });
+    </script>
+</body>
+</html>

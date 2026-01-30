@@ -88,6 +88,12 @@
             <div class="floating-element el-2"></div>
             <div class="floating-element el-3"></div>
         </div>
+        <!-- 滚动指示器 -->
+        <div class="scroll-indicator" onclick="scrollToAboutSection()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </div>
     </section>
 
     <!-- 关于我 -->
@@ -109,7 +115,7 @@
                             <p>项目</p>
                         </div>
                         <div class="stat-item">
-                            <h3>2000+</h3>
+                            <h3>2500+</h3>
                             <p>下载量</p>
                         </div>
                     </div>
@@ -122,7 +128,7 @@
     <!-- 技能 -->
     <section id="skills" class="skills">
         <div class="container">
-            <h2 class="section-title">技能</h2>
+            <h2 class="section-title">专业能力</h2>
             <div class="skills-grid">
                 <div class="skill-card">
                     <div class="skill-icon">
@@ -143,17 +149,19 @@
                     <h3>前端开发</h3>
                     <p>HTML, CSS, JavaScript, Vue, 响应式设计</p>
                 </div>
-                <div class="skill-card">
-                    <div class="skill-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                            <polyline points="21 15 16 10 5 21"></polyline>
-                        </svg>
+                <a href="design.html" class="skill-link">
+                    <div class="skill-card">
+                        <div class="skill-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                        </div>
+                        <h3>平面设计</h3>
+                        <p>海报设计, 品牌视觉, 排版设计</p>
                     </div>
-                    <h3>平面设计</h3>
-                    <p>海报设计, 品牌视觉, 排版设计</p>
-                </div>
+                </a>
                 <div class="skill-card">
                     <div class="skill-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

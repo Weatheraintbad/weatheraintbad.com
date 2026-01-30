@@ -163,6 +163,20 @@
         background-color: rgba(250, 167, 85, 0.08);
     }
 
+    /* 英雄区模糊层调整 */
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 50% 50%, rgba(250, 167, 85, 0.03) 0%, transparent 70%);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 0;
+    }
+
     /* 加载动画背景调整 */
     .loader-overlay {
         background: rgba(255, 255, 255, 0.9);
@@ -227,6 +241,357 @@
 
 .light-theme .hero-decoration div {
     background-color: rgba(250, 167, 85, 0.08);
+}
+
+.light-theme .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(250, 167, 85, 0.03) 0%, transparent 70%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 0;
+}
+
+.light-theme .loader-overlay {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.light-theme .loader-decoration .floating-element {
+    background: radial-gradient(circle, rgba(250, 167, 85, 0.1) 0%, transparent 70%);
+}
+
+/* ============================================
+   基础样式
+   ============================================= */
+html {
+    scroll-behavior: smooth;          /* 平滑滚动 */
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--primary-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* 容器样式 - 居中布局 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ============================================
+   导航栏样式
+   ============================================= */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1000;
+    transition: var(--transition);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+    width: 100%; /* 确保容器宽度铺满 */
+}
+
+/* 导航菜单居中 */
+.nav-menu {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* 品牌logo样式 */
+.logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    letter-spacing: -0.5px;
+    transition: var(--transition);
+}
+
+.logo:hover {
+    color: var(--accent-color);
+}
+
+/* 主题切换按钮样式 */
+.theme-toggle {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--secondary-color);
+}
+
+.theme-toggle:hover {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+/* ============================================
+   英雄区装饰元素
+   ============================================= */
+.hero-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.floating-element {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 140, 0, 0.1) 0%, transparent 70%);
+    animation: float 20s infinite ease-in-out;
+    filter: blur(15px); /* 添加模糊效果 */
+}
+
+/* 浅色模式下的浮动元素 */
+.light-theme .floating-element {
+    background: radial-gradient(circle, rgba(250, 167, 85, 0.08) 0%, transparent 70%);
+    filter: blur(20px); /* 浅色模式下可以适当增加模糊度，使其更柔和 */
+}
+
+.el-1 {
+    width: 300px;
+    height: 300px;
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.el-2 {
+    width: 200px;
+    height: 200px;
+    bottom: 20%;
+    right: 15%;
+    animation-delay: -5s;
+}
+
+.el-3 {
+    width: 150px;
+    height: 150px;
+    top: 50%;
+    right: 30%;
+    animation-delay: -10s;
+}
+
+}
+
+@keyframes loaderFloat {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    33% {
+        transform: translate(80px, -80px) scale(1.2);
+    }
+    66% {
+        transform: translate(-50px, 50px) scale(0.8);
+    }
+}
+
+/* ============================================
+   全局样式重置
+   ============================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ============================================
+   根变量定义 - 深色主题配色
+   ============================================= */
+:root {
+    --primary-color: #ffffff;          /* 主文字颜色 */
+    --secondary-color: #888888;        /* 次要文字颜色 */
+    --accent-color: #faa755;           /* 强调色 - 橙色 */
+    --bg-primary: #000000;             /* 主背景色 - 黑色 */
+    --bg-secondary: #0a0a0a;          /* 次要背景色 */
+    --bg-card: #1a1a1a;               /* 卡片背景色 */
+    --border-color: #2a2a2a;          /* 边框颜色 */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 平滑过渡动画 */
+}
+
+/* ============================================
+   浅色主题配色
+   ============================================= */
+/* 设备颜色模式自动切换 */
+@media (prefers-color-scheme: light) {
+    :root {
+        --primary-color: #000000;          /* 主文字颜色 - 黑色 */
+        --secondary-color: #333333;        /* 次要文字颜色 - 深黑色 */
+        --accent-color: #faa755;           /* 强调色 - 橙色保持不变 */
+        --bg-primary: #ffffff;             /* 主背景色 - 白色 */
+        --bg-secondary: #f8f8f8;          /* 次要背景色 - 浅灰色 */
+        --bg-card: #f0f0f0;               /* 卡片背景色 - 稍深的浅灰色 */
+        --border-color: #e0e0e0;          /* 边框颜色 - 浅灰色 */
+    }
+
+    /* 导航栏背景调整 */
+    .navbar {
+        background-color: #ffffff !important; /* 纯白色背景 */
+        border-bottom: 1px solid var(--border-color) !important;
+    }
+
+    .navbar.scrolled {
+        background-color: #ffffff !important; /* 纯白色背景 */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    /* 导航菜单文字颜色调整 */
+    .nav-menu a {
+        color: var(--secondary-color);
+    }
+
+    .nav-menu a:hover {
+        color: var(--accent-color);
+    }
+
+    /* 文字渐变移除 */
+    .hero-title .title-line:nth-child(2) {
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: var(--accent-color) !important;
+        background-clip: text !important;
+    }
+
+    .stat-item h3 {
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: var(--accent-color) !important;
+        background-clip: text !important;
+    }
+
+    /* 浅色模式二维码图片切换 */
+    .qr-placeholder img[src*="qrcode-WeChat-clean.png"] {
+        content: url('images/qrcode-WeChat-black.png');
+    }
+
+    /* 英雄区装饰元素调整 */
+    .floating-element {
+        background: radial-gradient(circle, rgba(250, 167, 85, 0.08) 0%, transparent 70%);
+    }
+
+    /* 粒子装饰调整 */
+    .hero-decoration div {
+        background-color: rgba(250, 167, 85, 0.08);
+    }
+
+    /* 英雄区模糊层调整 */
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 50% 50%, rgba(250, 167, 85, 0.03) 0%, transparent 70%);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 0;
+    }
+
+    /* 加载动画背景调整 */
+    .loader-overlay {
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .loader-decoration .floating-element {
+        background: radial-gradient(circle, rgba(250, 167, 85, 0.1) 0%, transparent 70%);
+    }
+}
+
+/* 手动主题切换支持 */
+.light-theme {
+    --primary-color: #000000 !important;          /* 主文字颜色 - 黑色 */
+    --secondary-color: #333333 !important;        /* 次要文字颜色 - 深黑色 */
+    --accent-color: #faa755 !important;           /* 强调色 - 橙色保持不变 */
+    --bg-primary: #ffffff !important;             /* 主背景色 - 白色 */
+    --bg-secondary: #f8f8f8 !important;          /* 次要背景色 - 浅灰色 */
+    --bg-card: #f0f0f0 !important;               /* 卡片背景色 - 稍深的浅灰色 */
+    --border-color: #e0e0e0 !important;          /* 边框颜色 - 浅灰色 */
+}
+
+/* 浅色模式导航栏调整 */
+.light-theme .navbar {
+    background-color: #ffffff !important; /* 纯白色背景 */
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.light-theme .navbar.scrolled {
+    background-color: #ffffff !important; /* 纯白色背景 */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+.light-theme .nav-menu a {
+    color: var(--secondary-color) !important;
+}
+
+.light-theme .nav-menu a:hover {
+    color: var(--accent-color) !important;
+}
+
+/* 浅色模式文字渐变移除 */
+.light-theme .hero-title .title-line:nth-child(2) {
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: var(--accent-color) !important;
+    background-clip: text !important;
+}
+
+.light-theme .stat-item h3 {
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: var(--accent-color) !important;
+    background-clip: text !important;
+}
+
+/* 浅色模式二维码图片切换 */
+.light-theme .qr-placeholder img[src*="qrcode-WeChat-clean.png"] {
+    content: url('images/qrcode-WeChat-black.png');
+}
+
+.light-theme .floating-element {
+    background: radial-gradient(circle, rgba(250, 167, 85, 0.08) 0%, transparent 70%);
+    filter: blur(20px);
+}
+
+.light-theme .hero-decoration div {
+    background-color: rgba(250, 167, 85, 0.08);
+}
+
+.light-theme .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(250, 167, 85, 0.03) 0%, transparent 70%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 0;
 }
 
 .light-theme .loader-overlay {
@@ -548,6 +913,7 @@ body {
     border-radius: 50%;
     background: radial-gradient(circle, rgba(255, 140, 0, 0.1) 0%, transparent 70%);
     animation: float 20s infinite ease-in-out;
+    filter: blur(15px);
 }
 
 .el-1 {
@@ -733,6 +1099,13 @@ body {
     gap: 2rem;
 }
 
+/* 技能卡片链接 */
+.skill-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
 /* 技能卡片样式 */
 .skill-card {
     background-color: var(--bg-card);
@@ -741,6 +1114,10 @@ body {
     border: 1px solid var(--border-color);
     transition: var(--transition);
     text-align: center;
+    height: 100%; /* 确保所有技能卡片高度一致 */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .skill-card:hover {
@@ -1179,6 +1556,20 @@ body {
     }
 }
 
+/* 英雄区模糊层 */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(250, 167, 85, 0.03) 0%, transparent 70%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 0;
+}
+
 /* 粒子闪烁动画 */
 @keyframes particleBlink {
     0%, 100% {
@@ -1186,6 +1577,54 @@ body {
     }
     50% {
         opacity: 0.3;
+    }
+}
+
+/* 磁吸滚动效果 */
+html {
+    scroll-behavior: smooth; /* 平滑滚动 */
+}
+
+/* 优化英雄区滚动体验 */
+.hero {
+    /* 添加渐变效果，提示用户可以滚动 */
+    background: linear-gradient(to bottom, var(--bg-primary) 0%, var(--bg-primary) 90%, var(--bg-secondary) 100%);
+    /* 添加底部阴影，增强深度感 */
+    box-shadow: inset 0 -5px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* 滚动指示器 */
+.scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bounce 2s infinite;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.scroll-indicator svg {
+    width: 40px;
+    height: 40px;
+    color: var(--accent-color);
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.scroll-indicator:hover svg {
+    opacity: 1;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+    }
+    40% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+    60% {
+        transform: translateX(-50%) translateY(-5px);
     }
 }
 

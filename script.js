@@ -143,6 +143,8 @@ function initThemeToggle() {
         // 跟随系统设置
         if (prefersLight) {
             document.documentElement.classList.add('light-theme');
+        } else {
+            document.documentElement.classList.remove('light-theme');
         }
     }
 
@@ -207,8 +209,7 @@ if (contactForm) {
         const name = contactForm.querySelector('input[type="text"]').value;
         const email = contactForm.querySelector('input[type="email"]').value;
         const message = contactForm.querySelector('textarea').value;
-
-        if (name && email && message) {
+if (name && email && message) {
             // 显示成功消息
             alert('消息发送成功！我会尽快回复你。');
             contactForm.reset();
@@ -304,7 +305,7 @@ const greetings = {
 
 // 欢迎语数据（仅保留中英文）
 const welcomeMessages = {
-    zh: '欢迎光临',
+    zh: '欢迎',
     en: 'Welcome'
 };
 
@@ -423,14 +424,24 @@ document.head.appendChild(style);
 const createParticles = () => {
     const heroDecoration = document.querySelector('.hero-decoration');
     if (!heroDecoration) return;
-
+    
+    // 检测当前主题
+    const isLightTheme = document.documentElement.classList.contains('light-theme');
+    
     for (let i = 0; i < 15; i++) {
         const particle = document.createElement('div');
         particle.style.position = 'absolute';
         const size = 15 + Math.random() * 30; // 稍大的模糊圆形
         particle.style.width = `${size}px`;
         particle.style.height = `${size}px`;
-        particle.style.backgroundColor = `rgba(255, 140, 0, ${0.1 + Math.random() * 0.2})`;
+        
+        // 根据主题设置不同的透明度范围
+        const opacityRange = isLightTheme ? 
+            [0.05, 0.15] : // 浅色主题使用较低透明度
+            [0.1, 0.3];   // 深色主题使用较高透明度
+        const opacity = opacityRange[0] + Math.random() * (opacityRange[1] - opacityRange[0]);
+        
+        particle.style.backgroundColor = `rgba(250, 167, 85, ${opacity})`;
         particle.style.borderRadius = '50%';
         particle.style.left = `${Math.random() * 100}%`;
         particle.style.top = `${Math.random() * 100}%`;
@@ -444,3 +455,148 @@ const createParticles = () => {
 };
 
 createParticles();
+
+// 滚动到"关于我"部分的函数
+function scrollToAboutSection() {
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+        // 使用自定义滚动函数替代原生的smooth behavior
+        scrollToElement(aboutSection, 1000); // 1秒动画时间，更快
+    }
+}
+
+// 自定义滚动函数，支持线性平滑效果
+function scrollToElement(element, duration = 800) {
+    const targetPosition = element.offsetTop - 80; // 减去导航栏高度
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    let startTime = null;
+
+    function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+
+        // 使用线性缓动函数，提供更平滑的滚动效果
+        const linearProgress = progress;
+        window.scrollTo(0, startPosition + distance * linearProgress);
+
+        if (progress < 1) {
+            requestAnimationFrame(animation);
+        }
+    }
+
+    requestAnimationFrame(animation);
+}
+
+// 单页滚动切换功能 - 仅从英雄区到关于我部分
+let isScrolling = false;
+
+function smoothScrollTo(targetId, callback) {
+    if (isScrolling) return;
+    isScrolling = true;
+    
+    const targetElement = document.getElementById(targetId);
+    if (targetElement) {
+        scrollToElement(targetElement, 500); // 1秒动画时间，更快
+        
+        // 防止快速连续滚动
+        setTimeout(() => {
+            isScrolling = false;
+            if (callback) callback();
+        }, 500); // 与动画时间匹配
+    }
+}
+
+// 监听滚动事件以启用从英雄区到关于我部分的单向切换
+let scrollTimer = null;
+let hasScrolledToAbout = false; // 追踪是否已经从英雄区滚动到了关于我部分
+
+window.addEventListener('wheel', function(e) {
+    if (isScrolling) {
+        e.preventDefault();
+        return;
+    }
+    
+    const delta = e.deltaY;
+    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    // 清除之前的计时器
+    if (scrollTimer) {
+        clearTimeout(scrollTimer);
+    }
+    
+    // 防止过度触发
+    scrollTimer = setTimeout(() => {
+        isScrolling = false;
+    }, 500); // 延迟时间与动画时间匹配
+    
+    const homeSection = document.getElementById('home');
+    const aboutSection = document.getElementById('about');
+    
+    if (!homeSection || !aboutSection) return;
+    
+    const homeRect = homeSection.getBoundingClientRect();
+    
+    // 判断当前是否在英雄区
+    const isInHome = homeRect.top <= 0 && homeRect.bottom >= 0;
+    
+    // 只有在英雄区且向下滚动时才触发切换
+    if (delta > 0 && isInHome && !hasScrolledToAbout) {
+        e.preventDefault();
+        smoothScrollTo('about', () => {
+            // 滚动完成后标记为已切换，允许自由滚动
+            hasScrolledToAbout = true;
+        });
+    }
+    // 其他情况允许正常滚动
+}, { passive: false });
+
+// 同样支持触摸设备上的滚动切换（仅从英雄区到关于我部分）
+let touchStartY = 0;
+let touchEndY = 0;
+
+document.addEventListener('touchstart', e => {
+    touchStartY = e.changedTouches[0].screenY;
+}, false);
+
+document.addEventListener('touchend', e => {
+    touchEndY = e.changedTouches[0].screenY;
+    handleSwipeGesture();
+}, false);
+
+function handleSwipeGesture() {
+    const homeSection = document.getElementById('home');
+    
+    if (!homeSection) return;
+    
+    const homeRect = homeSection.getBoundingClientRect();
+    
+    // 判断当前是否在英雄区
+    const isInHome = homeRect.top <= 0 && homeRect.bottom >= 0;
+    
+    const deltaY = touchStartY - touchEndY;
+    
+    // 只有在英雄区且向下滑动时才触发切换
+    if (deltaY > 50 && isInHome && !hasScrolledToAbout) { // 向上滑动（向下滚动）
+        smoothScrollTo('about', () => {
+            // 滚动完成后标记为已切换，允许自由滚动
+            hasScrolledToAbout = true;
+        });
+    }
+    // 其他情况允许正常滚动
+}
+
+// 确保在页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', function() {
+    // 检查URL哈希并滚动到相应部分
+    const hash = window.location.hash;
+    if (hash) {
+        const targetElement = document.querySelector(hash);
+        if (targetElement) {
+            setTimeout(() => {
+                scrollToElement(targetElement, 800);
+            }, 100);
+        }
+    }
+});
