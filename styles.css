@@ -727,7 +727,8 @@ body {
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95rem;
-    font-family: 'Times New Roman', 'Noto Serif SC', serif; /* 英文使用Times New Roman，中文使用思源宋体 */
+    /* 优化字体声明，确保Times New Roman和Noto Serif SC的优先级正确 */
+    font-family: 'Times New Roman', 'Noto Serif SC', Times, serif;
     transition: var(--transition);
     position: relative;
 }
@@ -738,7 +739,8 @@ body {
     font-weight: 700;
     line-height: 1.1;
     letter-spacing: -2px;
-    font-family: 'Times New Roman', 'Noto Serif SC', serif; /* 英文使用Times New Roman，中文使用思源宋体 */
+    /* 优化字体声明，确保Times New Roman和Noto Serif SC的优先级正确 */
+    font-family: 'Times New Roman', 'Noto Serif SC', Times, serif;
 }
 
 .nav-menu a::after {
