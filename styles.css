@@ -428,7 +428,7 @@ body {
    ============================================= */
 :root {
     --primary-color: #ffffff;          /* 主文字颜色 */
-    --secondary-color: #888888;        /* 次要文字颜色 */
+--secondary-color: #888888;        /* 次要文字颜色 */
     --accent-color: #faa755;           /* 强调色 - 橙色 */
     --bg-primary: #000000;             /* 主背景色 - 黑色 */
     --bg-secondary: #0a0a0a;          /* 次要背景色 */
@@ -721,13 +721,24 @@ body {
     gap: 2rem;
 }
 
+/* 导航栏链接字体设置 */
 .nav-menu a {
     color: var(--secondary-color);
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95rem;
+    font-family: 'Times New Roman', 'Noto Serif SC', serif; /* 英文使用Times New Roman，中文使用思源宋体 */
     transition: var(--transition);
     position: relative;
+}
+
+/* 英雄区标题字体设置 */
+.hero-title {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -2px;
+    font-family: 'Times New Roman', 'Noto Serif SC', serif; /* 英文使用Times New Roman，中文使用思源宋体 */
 }
 
 .nav-menu a::after {
@@ -1027,7 +1038,6 @@ body {
     overflow: hidden;
     transition: var(--transition);
 }
-
 .profile-card:hover {
     border-color: var(--accent-color);
     transform: translateY(-10px);
@@ -1162,7 +1172,7 @@ body {
     text-align: center;
     color: var(--secondary-color);
     margin-bottom: 4rem;
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: 300;
 }
 

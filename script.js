@@ -224,7 +224,7 @@ workItems.forEach(item => {
         const image = item.querySelector('.work-image');
         if (image) {
             image.style.transform = 'scale(1.05)';
-        }
+}
     });
 
     item.addEventListener('mouseleave', () => {
@@ -283,30 +283,60 @@ if (aboutSection) {
     observer.observe(aboutSection);
 }
 
-// 多语言问候数据（仅保留中英文）
+// 多语言问候数据（包含中英文、俄语、韩语、日语、法语、德语、西班牙语）
 const greetings = {
     morning: {
         zh: '早上好',
-        en: 'Good Morning'
+        en: 'Good Morning',
+        ru: 'Доброе утро',
+        ko: '좋은 아침',
+        ja: 'おはようございます',
+        fr: 'Bonjour',
+        de: 'Guten Morgen',
+        es: 'Buenos días'
     },
     afternoon: {
         zh: '下午好',
-        en: 'Good Afternoon'
+        en: 'Good Afternoon',
+        ru: 'Добрый день',
+        ko: '좋은 오후',
+        ja: 'こんにちは',
+        fr: 'Bon après-midi',
+        de: 'Guten Tag',
+        es: 'Buenas tardes'
     },
     evening: {
         zh: '晚上好',
-        en: 'Good Evening'
+        en: 'Good Evening',
+        ru: 'Добрый вечер',
+        ko: '좋은 저녁',
+        ja: 'こんばんは',
+        fr: 'Bonsoir',
+        de: 'Guten Abend',
+        es: 'Buenas noches'
     },
     night: {
         zh: '夜深了',
-        en: 'Good Night'
+        en: 'Good Night',
+        ru: 'Доброй ночи',
+        ko: '안녕히 주무세요',
+        ja: 'おやすみなさい',
+        fr: 'Bonne nuit',
+        de: 'Gute Nacht',
+        es: 'Buenas noches'
     }
 };
 
-// 欢迎语数据（仅保留中英文）
+// 欢迎语数据（包含中英文、俄语、韩语、日语、法语、德语、西班牙语）
 const welcomeMessages = {
     zh: '欢迎',
-    en: 'Welcome'
+    en: 'Welcome',
+    ru: 'Добро пожаловать',
+    ko: '환영합니다',
+    ja: 'ようこそ',
+    fr: 'Bienvenue',
+    de: 'Willkommen',
+    es: 'Bienvenido'
 };
 
 // 获取当前时间段
@@ -323,9 +353,13 @@ function getTimePeriod() {
     }
 }
 
-// 语言列表（仅保留中英文）
-const languages = ['zh', 'en'];
-let currentLangIndex = 0;
+// 语言列表 - 仅保留中文，用于奇数次切换
+const chineseLang = ['zh'];
+
+// 外语列表 - 用于偶数次切换
+const foreignLanguages = ['en', 'ru', 'ko', 'ja', 'fr', 'de', 'es'];
+let switchCount = 0; // 切换次数计数器
+let foreignLangIndex = 0; // 外语索引
 let greetingInterval;
 
 // 更新问候语和欢迎语 - 修复动画卡顿问题
@@ -346,9 +380,25 @@ function updateGreeting() {
 
     // 确保上一个标题完全淡出后再更新文字
     setTimeout(() => {
+        let currentLang;
+        
+        // 增加切换次数
+        switchCount++;
+        
+        // 判断当前是奇数次还是偶数次切换
+        if (switchCount % 2 === 1) {
+            // 奇数次切换显示中文
+            currentLang = chineseLang[0];
+        } else {
+            // 偶数次切换在外国语中循环
+            currentLang = foreignLanguages[foreignLangIndex];
+            // 更新外语索引
+            foreignLangIndex = (foreignLangIndex + 1) % foreignLanguages.length;
+        }
+        
         // 更新文本
-        greetingElement.textContent = greetings[timePeriod][languages[currentLangIndex]];
-        welcomeElement.textContent = welcomeMessages[languages[currentLangIndex]];
+        greetingElement.textContent = greetings[timePeriod][currentLang];
+        welcomeElement.textContent = welcomeMessages[currentLang];
 
         // 强制浏览器重排，确保文字更新后再执行淡入动画
         const dummy = greetingElement.offsetHeight;
@@ -358,9 +408,7 @@ function updateGreeting() {
         greetingElement.style.transform = 'translateY(0) scale(1)';
         welcomeElement.style.opacity = '1';
         welcomeElement.style.transform = 'translateY(0) scale(1)';
-
-        // 更新语言索引
-        currentLangIndex = (currentLangIndex + 1) % languages.length;
+        
     }, 1500);
 }
 
@@ -374,16 +422,18 @@ function initGreeting() {
     greetingElement.style.transition = 'opacity 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
     welcomeElement.style.transition = 'opacity 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s, transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s';
 
-    // 初始显示
-    greetingElement.textContent = greetings[timePeriod][languages[0]];
-    welcomeElement.textContent = welcomeMessages[languages[0]];
+    // 初始显示（奇数次，显示中文）
+    const initialLang = chineseLang[0];
+    greetingElement.textContent = greetings[timePeriod][initialLang];
+    welcomeElement.textContent = welcomeMessages[initialLang];
     greetingElement.style.opacity = '1';
     welcomeElement.style.opacity = '1';
     greetingElement.style.transform = 'translateY(0) scale(1)';
     welcomeElement.style.transform = 'translateY(0) scale(1)';
 
-    // 初始化后立即更新语言索引，这样第一次调用updateGreeting时会显示下一种语言
-    currentLangIndex = (currentLangIndex + 1) % languages.length;
+    // 设置初始切换次数和外语索引
+    switchCount = 1; // 初始显示中文算第一次切换
+    foreignLangIndex = 0;
 
     // 延长切换间隔到8秒
     greetingInterval = setInterval(updateGreeting, 8000);
@@ -461,25 +511,29 @@ function scrollToAboutSection() {
     const aboutSection = document.getElementById('about');
     if (aboutSection) {
         // 使用自定义滚动函数替代原生的smooth behavior
-        scrollToElement(aboutSection, 1000); // 1秒动画时间，更快
+        scrollToElement(aboutSection, 1200); // 增加动画时间以获得更平滑的效果
     }
 }
 
-// 自定义滚动函数，支持线性平滑效果
-function scrollToElement(element, duration = 800) {
+// 自定义滚动函数，支持平滑缓动效果
+function scrollToElement(element, duration = 1200) {
     const targetPosition = element.offsetTop - 80; // 减去导航栏高度
     const startPosition = window.pageYOffset;
     const distance = targetPosition - startPosition;
     let startTime = null;
 
+    // 缓动函数 - 使用easeInOutCubic提供更平滑的滚动体验
+    function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    }
+
     function animation(currentTime) {
         if (startTime === null) startTime = currentTime;
         const timeElapsed = currentTime - startTime;
         const progress = Math.min(timeElapsed / duration, 1);
+        const easedProgress = easeInOutCubic(progress);
 
-        // 使用线性缓动函数，提供更平滑的滚动效果
-        const linearProgress = progress;
-        window.scrollTo(0, startPosition + distance * linearProgress);
+        window.scrollTo(0, startPosition + distance * easedProgress);
 
         if (progress < 1) {
             requestAnimationFrame(animation);
@@ -498,13 +552,13 @@ function smoothScrollTo(targetId, callback) {
     
     const targetElement = document.getElementById(targetId);
     if (targetElement) {
-        scrollToElement(targetElement, 500); // 1秒动画时间，更快
+        scrollToElement(targetElement, 1200); // 使用更长的时间和更平滑的缓动
         
         // 防止快速连续滚动
         setTimeout(() => {
             isScrolling = false;
             if (callback) callback();
-        }, 500); // 与动画时间匹配
+        }, 1200); // 与动画时间匹配
     }
 }
 
@@ -512,6 +566,20 @@ function smoothScrollTo(targetId, callback) {
 let scrollTimer = null;
 let hasScrolledToAbout = false; // 追踪是否已经从英雄区滚动到了关于我部分
 
+// 添加一个函数来检测英雄区是否完整显示
+function isHeroFullyVisible() {
+    const homeSection = document.getElementById('home');
+    if (!homeSection) return false;
+    
+    const rect = homeSection.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    
+    // 英雄区完整显示意味着它的高度小于或等于视窗高度
+    // 并且它完全在视窗内
+    return rect.top >= 0 && rect.bottom <= windowHeight && rect.height <= windowHeight;
+}
+
+// 监听滚动事件以启用从英雄区到关于我部分的单向切换
 window.addEventListener('wheel', function(e) {
     if (isScrolling) {
         e.preventDefault();
@@ -529,7 +597,7 @@ window.addEventListener('wheel', function(e) {
     // 防止过度触发
     scrollTimer = setTimeout(() => {
         isScrolling = false;
-    }, 500); // 延迟时间与动画时间匹配
+    }, 1200); // 延迟时间与动画时间匹配
     
     const homeSection = document.getElementById('home');
     const aboutSection = document.getElementById('about');
@@ -541,6 +609,9 @@ window.addEventListener('wheel', function(e) {
     // 判断当前是否在英雄区
     const isInHome = homeRect.top <= 0 && homeRect.bottom >= 0;
     
+    // 检查英雄区是否完整显示
+    const heroFullyVisible = isHeroFullyVisible();
+    
     // 只有在英雄区且向下滚动时才触发切换
     if (delta > 0 && isInHome && !hasScrolledToAbout) {
         e.preventDefault();
@@ -551,6 +622,44 @@ window.addEventListener('wheel', function(e) {
     }
     // 其他情况允许正常滚动
 }, { passive: false });
+
+// 同时监控滚动状态，当页面下滑且英雄区没有完整显示时自动滚动到关于我部分
+let lastScrollTop = 0;
+let scrollDirection = '';
+
+window.addEventListener('scroll', function() {
+    if (isScrolling || hasScrolledToAbout) return;
+    
+    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const homeSection = document.getElementById('home');
+    const aboutSection = document.getElementById('about');
+    
+    if (!homeSection || !aboutSection) return;
+    
+    // 确定滚动方向
+    if (currentScrollTop > lastScrollTop) {
+        scrollDirection = 'down';
+    } else if (currentScrollTop < lastScrollTop) {
+        scrollDirection = 'up';
+    }
+    lastScrollTop = currentScrollTop;
+    
+    const homeRect = homeSection.getBoundingClientRect();
+    const isInHome = homeRect.top <= 0 && homeRect.bottom >= 0;
+    
+    // 检查英雄区是否完整显示
+    const heroFullyVisible = isHeroFullyVisible();
+    
+    // 当页面正在下滑且英雄区没有完整显示时，自动滚动到关于我部分
+    if (scrollDirection === 'down' && isInHome && !heroFullyVisible && !hasScrolledToAbout) {
+        // 防止重复触发
+        if (!isScrolling) {
+            smoothScrollTo('about', () => {
+                hasScrolledToAbout = true;
+            });
+        }
+    }
+});
 
 // 同样支持触摸设备上的滚动切换（仅从英雄区到关于我部分）
 let touchStartY = 0;
@@ -575,10 +684,13 @@ function handleSwipeGesture() {
     // 判断当前是否在英雄区
     const isInHome = homeRect.top <= 0 && homeRect.bottom >= 0;
     
+    // 检查英雄区是否完整显示
+    const heroFullyVisible = isHeroFullyVisible();
+    
     const deltaY = touchStartY - touchEndY;
     
     // 只有在英雄区且向下滑动时才触发切换
-    if (deltaY > 50 && isInHome && !hasScrolledToAbout) { // 向上滑动（向下滚动）
+    if (deltaY > 50 && isInHome && !heroFullyVisible && !hasScrolledToAbout) { // 向上滑动（向下滚动）
         smoothScrollTo('about', () => {
             // 滚动完成后标记为已切换，允许自由滚动
             hasScrolledToAbout = true;
@@ -595,7 +707,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const targetElement = document.querySelector(hash);
         if (targetElement) {
             setTimeout(() => {
-                scrollToElement(targetElement, 800);
+                scrollToElement(targetElement, 1200);
             }, 100);
         }
     }
