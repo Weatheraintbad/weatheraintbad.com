@@ -223,7 +223,7 @@ body {
 }
 
 .welcome-line {
-    font-size: 0.8em;
+    font-size: 1.2em;
 }
 
 /* 主标题容器 - 固定高度，确保标题切换时下方组件位置不变 */
@@ -309,6 +309,8 @@ body {
     transition: var(--transition);
     border: 1px solid transparent;
     cursor: pointer;
+    min-width: 120px; /* 设置固定最小宽度，确保按钮宽度一致 */
+    text-align: center; /* 确保文字居中对齐 */
 }
 
 /* 主按钮样式 */
@@ -1023,7 +1025,7 @@ body {
     }
 
     .btn {
-        width: 100%;
-        max-width: 250px;
+        width: 200px; /* 设置固定宽度，确保按钮宽度一致 */
+        max-width: none; /* 取消最大宽度限制 */
     }
 }

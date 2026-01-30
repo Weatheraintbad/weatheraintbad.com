@@ -199,8 +199,8 @@ const greetings = {
 
 // 欢迎语数据（仅保留中英文）
 const welcomeMessages = {
-    zh: '欢迎来到 Weatheraintbad 的主页',
-    en: 'Welcome to Weatheraintbad\'s Homepage'
+    zh: '欢迎光临',
+    en: 'Welcome'
 };
 
 // 获取当前时间段
