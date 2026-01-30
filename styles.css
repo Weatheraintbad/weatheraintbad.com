@@ -960,17 +960,78 @@ body {
 }
 
 /* ============================================
-   滚动动画样式
+   滚动动画样式 - 双向响应效果
    ============================================= */
 .fade-in-section {
     opacity: 0;
-    transform: translateY(30px);
-    transition: var(--transition);
+    transform: translateY(60px) scale(0.95); /* 更大的位移和缩放 */
+    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 更平滑的缓动函数 - 双向过渡 */
 }
 
 .fade-in-section.is-visible {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+}
+
+/* 技能卡片动画增强 - 双向响应 */
+.skill-card {
+    opacity: 0;
+    transform: translateY(50px) rotateX(-10deg);
+    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 移除固定延迟，使用交错延迟类 */
+}
+
+.skill-card.is-visible {
+    opacity: 1;
+    transform: translateY(0) rotateX(0);
+}
+
+/* 作品项目动画增强 - 双向响应 */
+.work-item {
+    opacity: 0;
+    transform: translateY(50px) rotateY(-10deg);
+    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 移除固定延迟，使用交错延迟类 */
+}
+
+.work-item.is-visible {
+    opacity: 1;
+    transform: translateY(0) rotateY(0);
+}
+
+/* 技能卡片和作品项目的交错动画 - 双向响应 */
+.skill-card:nth-child(1) { transition-delay: 0.05s; }
+.skill-card:nth-child(2) { transition-delay: 0.1s; }
+.skill-card:nth-child(3) { transition-delay: 0.15s; }
+.skill-card:nth-child(4) { transition-delay: 0.2s; }
+
+.work-item:nth-child(1) { transition-delay: 0.05s; }
+.work-item:nth-child(2) { transition-delay: 0.1s; }
+.work-item:nth-child(3) { transition-delay: 0.15s; }
+.work-item:nth-child(4) { transition-delay: 0.2s; }
+.work-item:nth-child(5) { transition-delay: 0.25s; }
+.work-item:nth-child(6) { transition-delay: 0.3s; }
+
+/* 统计数字动画增强 - 双向响应 */
+.stat-item h3 {
+    opacity: 0;
+    transform: translateY(30px) scale(0.8);
+    transition: opacity 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.stat-item.is-visible h3 {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* 个人资料卡片动画增强 - 双向响应 */
+.profile-card {
+    opacity: 0;
+    transform: translateY(50px) rotateZ(-5deg);
+    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.profile-card.is-visible {
+    opacity: 1;
+    transform: translateY(0) rotateZ(0);
 }
 
 /* ============================================
@@ -994,10 +1055,83 @@ body {
         gap: 2rem;
     }
 
+    /* 关于我区域优化 */
+    .about {
+        padding: 80px 0;
+    }
+
+    .about-text h2 {
+        font-size: 2rem;
+    }
+
+    .profile-card {
+        width: 250px;
+        height: 350px;
+    }
+
+    .profile-placeholder {
+        width: 120px;
+        height: 120px;
+    }
+
+    .profile-name {
+        font-size: 1.3rem;
+    }
+
+    /* 技能区域优化 */
+    .skills {
+        padding: 80px 0;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .skills-grid {
+        gap: 1.5rem;
+    }
+
+    .skill-card {
+        padding: 2rem 1.2rem;
+    }
+
+    .skill-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+
+    .skill-card h3 {
+        font-size: 1.1rem;
+    }
+
+    /* 作品区域优化 */
+    .work {
+        padding: 80px 0;
+    }
+
+    .work-grid {
+        gap: 1.5rem;
+    }
+
+    .work-image {
+        height: 180px;
+    }
+
+    /* 联系区域优化 */
+    .contact {
+        padding: 80px 0;
+    }
+
     /* 移动端统计数据布局 */
     .about-stats {
         grid-template-columns: 1fr;
         gap: 1rem;
+    }
+
+    .stat-item h3 {
+        font-size: 3rem;
     }
 
     /* 移动端页脚布局 */
@@ -1016,6 +1150,95 @@ body {
     /* 小屏幕导航菜单隐藏 */
     .nav-menu {
         display: none;
+    }
+
+    /* 小屏幕英雄区标题 */
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    /* 关于我区域进一步优化 */
+    .about {
+        padding: 60px 0;
+    }
+
+    .about-text h2 {
+        font-size: 1.8rem;
+    }
+
+    .profile-card {
+        width: 220px;
+        height: 320px;
+    }
+
+    .profile-placeholder {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 1.5rem;
+    }
+
+    .profile-name {
+        font-size: 1.2rem;
+    }
+
+    /* 技能区域进一步优化 */
+    .skills {
+        padding: 60px 0;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .skills-grid {
+        gap: 1.2rem;
+    }
+
+    .skill-card {
+        padding: 1.8rem 1rem;
+    }
+
+    .skill-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.2rem;
+    }
+
+    .skill-card h3 {
+        font-size: 1rem;
+    }
+
+    /* 作品区域进一步优化 */
+    .work {
+        padding: 60px 0;
+    }
+
+    .work-grid {
+        gap: 1.2rem;
+    }
+
+    .work-image {
+        height: 160px;
+    }
+
+    .work-info h3 {
+        font-size: 1rem;
+    }
+
+    /* 联系区域进一步优化 */
+    .contact {
+        padding: 60px 0;
+    }
+
+    .qr-code {
+        width: 150px;
+        height: 150px;
+    }
+
+    /* 统计数据进一步优化 */
+    .stat-item h3 {
+        font-size: 2.5rem;
     }
 
     /* 小屏幕按钮布局 */

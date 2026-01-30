@@ -10,17 +10,73 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// 滚动时的淡入动画
+// 滚动时的动画 - 双向响应
 const fadeInOnScroll = () => {
+    // 原始的淡入区域 - 双向响应
     const fadeElements = document.querySelectorAll('.fade-in-section');
     fadeElements.forEach(element => {
         const elementTop = element.getBoundingClientRect().top;
+        const elementBottom = element.getBoundingClientRect().bottom;
         const elementVisible = 150;
 
-        if (elementTop < window.innerHeight - elementVisible) {
+        if (elementTop < window.innerHeight - elementVisible && elementBottom > elementVisible) {
             element.classList.add('is-visible');
+        } else {
+            element.classList.remove('is-visible');
         }
     });
+
+    // 技能卡片动画 - 双向响应
+    const skillCards = document.querySelectorAll('.skill-card');
+    skillCards.forEach(card => {
+        const cardTop = card.getBoundingClientRect().top;
+        const cardBottom = card.getBoundingClientRect().bottom;
+        const cardVisible = 100;
+        if (cardTop < window.innerHeight - cardVisible && cardBottom > cardVisible) {
+            card.classList.add('is-visible');
+        } else {
+            card.classList.remove('is-visible');
+        }
+    });
+
+    // 作品项目动画 - 双向响应
+    const workItems = document.querySelectorAll('.work-item');
+    workItems.forEach(item => {
+        const itemTop = item.getBoundingClientRect().top;
+        const itemBottom = item.getBoundingClientRect().bottom;
+        const itemVisible = 100;
+        if (itemTop < window.innerHeight - itemVisible && itemBottom > itemVisible) {
+            item.classList.add('is-visible');
+        } else {
+            item.classList.remove('is-visible');
+        }
+    });
+
+    // 统计数字动画 - 双向响应
+    const statItems = document.querySelectorAll('.stat-item');
+    statItems.forEach(item => {
+        const itemTop = item.getBoundingClientRect().top;
+        const itemBottom = item.getBoundingClientRect().bottom;
+        const itemVisible = 100;
+        if (itemTop < window.innerHeight - itemVisible && itemBottom > itemVisible) {
+            item.classList.add('is-visible');
+        } else {
+            item.classList.remove('is-visible');
+        }
+    });
+
+    // 个人资料卡片动画 - 双向响应
+    const profileCard = document.querySelector('.profile-card');
+    if (profileCard) {
+        const cardTop = profileCard.getBoundingClientRect().top;
+        const cardBottom = profileCard.getBoundingClientRect().bottom;
+        const cardVisible = 100;
+        if (cardTop < window.innerHeight - cardVisible && cardBottom > cardVisible) {
+            profileCard.classList.add('is-visible');
+        } else {
+            profileCard.classList.remove('is-visible');
+        }
+    }
 };
 
 // 为需要淡入动画的元素添加类
