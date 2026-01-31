@@ -250,7 +250,7 @@ const animateNumbers = () => {
         const duration = 2000; // 动画持续时间
         const increment = target / (duration / 16); // 每帧增量
 
-const timer = setInterval(() => {
+        const timer = setInterval(() => {
             count += increment;
             if (count >= target) {
                 item.textContent = target + '+';
