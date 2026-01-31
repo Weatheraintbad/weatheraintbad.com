@@ -13,12 +13,90 @@
             box-sizing: border-box;
         }
 
+        /* 主题切换按钮样式 */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            width: 48px;
+            height: 48px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            stroke: #d63384;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .theme-toggle .sun-icon {
+            display: block;
+        }
+
+        .theme-toggle .moon-icon {
+            display: none;
+        }
+
+        .light-theme .theme-toggle .sun-icon {
+            display: none;
+        }
+
+        .light-theme .theme-toggle .moon-icon {
+            display: block;
+        }
+
+        /* 浅色模式样式（默认） */
         body {
             font-family: 'Noto Serif SC', serif;
             background: linear-gradient(135deg, #fff0f5 0%, #ffe4e6 50%, #fce7f3 100%);
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            transition: background 0.3s ease;
+        }
+
+        /* 暗色模式样式 */
+        .light-theme body {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #2d2d2d 100%);
+        }
+
+        .light-theme .yo-title {
+            color: #ff69b4;
+            text-shadow: 3px 3px 0px rgba(255, 105, 180, 0.4),
+                        6px 6px 0px rgba(255, 20, 147, 0.3);
+        }
+
+        .light-theme .yo-subtitle {
+            color: #ff1493;
+            text-shadow: 2px 2px 0px rgba(255, 20, 147, 0.3);
+        }
+
+        .light-theme .yo-decoration {
+            color: #ff69b4;
+        }
+
+        .light-theme .theme-toggle {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .light-theme .theme-toggle svg {
+            stroke: #ff69b4;
         }
 
         /* 爱心背景 */
@@ -303,6 +381,24 @@
     </style>
 </head>
 <body>
+    <!-- 主题切换按钮 -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="切换主题">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
     <!-- 爱心背景 -->
     <div class="heart-background">
         <div class="heart" style="top: 10%; left: 20%; width: 200px; height: 200px; animation-delay: 0s;"></div>
@@ -336,6 +432,53 @@
     </div>
 
     <script>
+        // 主题切换功能
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            if (!themeToggle) return;
+
+            // 检查用户是否有手动设置的主题
+            const savedTheme = localStorage.getItem('yo-theme');
+            const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+
+            // 初始化主题
+            if (savedTheme === 'light') {
+                document.documentElement.classList.add('light-theme');
+            } else if (savedTheme === 'dark') {
+                document.documentElement.classList.remove('light-theme');
+            } else {
+                if (prefersLight) {
+                    document.documentElement.classList.add('light-theme');
+                } else {
+                    document.documentElement.classList.remove('light-theme');
+                }
+            }
+
+            // 监听主题切换按钮点击
+            themeToggle.addEventListener('click', () => {
+                const isLight = document.documentElement.classList.contains('light-theme');
+                if (isLight) {
+                    document.documentElement.classList.remove('light-theme');
+                    localStorage.setItem('yo-theme', 'dark');
+                } else {
+                    document.documentElement.classList.add('light-theme');
+                    localStorage.setItem('yo-theme', 'light');
+                }
+            });
+
+            // 监听系统主题变化
+            window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+                // 只有在用户未手动设置主题时才跟随系统变化
+                if (!localStorage.getItem('yo-theme')) {
+                    if (e.matches) {
+                        document.documentElement.classList.add('light-theme');
+                    } else {
+                        document.documentElement.classList.remove('light-theme');
+                    }
+                }
+            });
+        }
+
         // 创建更多爱心背景
         function createHearts() {
             const heartBackground = document.querySelector('.heart-background');
@@ -354,79 +497,23 @@
         }
 
         // 创建更多星星
-<!--        function createStars() {-->
-<!--            const body = document.body;-->
-<!--            for (let i = 0; i < 10; i++) {-->
-<!--                const star = document.createElement('div');-->
-<!--                star.className = 'star';-->
-<!--                star.style.top = Math.random() * 100 + '%';-->
-<!--                star.style.left = Math.random() * 100 + '%';-->
-<!--                star.style.width = Math.random() * 3 + 2 + 'px';-->
-<!--                star.style.height = star.style.width;-->
-<!--                star.style.animationDelay = (Math.random() * -3) + 's';-->
-<!--                star.style.filter = 'blur(20px)';-->
-<!--                star.style.webkitFilter = 'blur(20px)';-->
-<!--                body.appendChild(star);-->
-<!--            }-->
-<!--        }-->
-
-        // 点击按钮效果
-        function showLove() {
-            const button = document.querySelector('.yo-button');
-            button.textContent = '❤️ 爱心已传递！ ❤️';
-            button.style.background = 'linear-gradient(135deg, #ff1493, #c71585)';
-            
-            // 创建爱心爆炸效果
-            for (let i = 0; i < 20; i++) {
-                createFloatingHeart();
+        function createStars() {
+            const body = document.body;
+            for (let i = 0; i < 10; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 2 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = (Math.random() * -3) + 's';
+                body.appendChild(star);
             }
-            
-            setTimeout(() => {
-                button.textContent = '❤️ 点击传递爱心 ❤️';
-                button.style.background = 'linear-gradient(135deg, #ff69b4, #d63384)';
-            }, 2000);
         }
-
-        // 创建漂浮爱心
-        function createFloatingHeart() {
-            const heart = document.createElement('div');
-            heart.innerHTML = '❤️';
-            heart.style.position = 'fixed';
-            heart.style.fontSize = Math.random() * 20 + 20 + 'px';
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.top = '100vh';
-            heart.style.zIndex = '1000';
-            heart.style.pointerEvents = 'none';
-            heart.style.animation = `floatUp ${Math.random() * 2 + 3}s ease-in forwards`;
-            heart.style.filter = 'blur(20px)';
-            heart.style.webkitFilter = 'blur(20px)';
-            heart.style.opacity = '0.8';
-            
-            document.body.appendChild(heart);
-            
-            setTimeout(() => {
-                heart.remove();
-            }, 5000);
-        }
-
-        // 添加漂浮动画
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes floatUp {
-                0% {
-                    transform: translateY(0) rotate(0deg);
-                    opacity: 0.8;
-                }
-                100% {
-                    transform: translateY(-100vh) rotate(360deg);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
+            initThemeToggle(); // 初始化主题切换
             createHearts();
             createStars();
         });
