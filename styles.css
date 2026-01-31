@@ -693,7 +693,7 @@ body {
 .theme-toggle svg {
     width: 20px;
     height: 20px;
-    transition: var(--transition);
+transition: var(--transition);
 }
 
 /* 深色主题下的月亮图标隐藏，太阳图标显示 */
@@ -991,10 +991,19 @@ body {
 /* 统计数据样式 */
 .about-stats {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
     margin-top: 2rem;
-    margin-bottom: 3rem; /* 增加底部间距，使文字下移 */
+    margin-bottom: 3rem;
+    justify-items: center; /* 确保网格项居中 */
+}
+
+@media (max-width: 768px) {
+    .about-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        justify-items: center; /* 移动端也保持居中 */
+    }
 }
 
 .stat-item {
@@ -1003,13 +1012,16 @@ body {
 
 /* 统计数字样式 */
 .stat-item h3 {
-    font-size: 3.5rem; /* 增大数字大小 */
+    font-size: 3.5rem;
     font-weight: 700;
     background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin-bottom: 0.5rem;
+    min-width: 120px; /* 添加固定最小宽度，根据最大数字长度调整 */
+    text-align: center; /* 确保文本居中对齐 */
+    display: inline-block; /* 确保宽度设置生效 */
 }
 
 /* 统计标签样式 */
@@ -1050,7 +1062,7 @@ body {
     content: '';
     position: absolute;
     top: 0;
-    left: 0;
+left: 0;
     width: 100%;
     height: 100%;
     background: linear-gradient(135deg, rgba(255, 140, 0, 0.1) 0%, transparent 100%);
@@ -1086,6 +1098,7 @@ body {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 50%; /* 添加这一行确保图片也是圆形 */
 }
 
 /* ============================================
@@ -1107,7 +1120,7 @@ body {
 /* 技能网格布局 */
 .skills-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
 }
 
@@ -1498,7 +1511,7 @@ body {
 
 .footer-social svg {
     width: 24px;
-    height: 24px;
+height: 24px;
 }
 
 .footer-bottom {
@@ -1515,7 +1528,7 @@ body {
 @keyframes fadeIn {
     from {
         opacity: 0;
-    }
+}
     to {
         opacity: 1;
     }
@@ -1557,12 +1570,12 @@ body {
 
 /* 粒子浮动动画 */
 @keyframes particleFloat {
-    0%, 100% {
+0%, 100% {
         transform: translate(0, 0) scale(1);
     }
     33% {
         transform: translate(80px, -80px) scale(1.2);
-    }
+}
     66% {
         transform: translate(-50px, 50px) scale(0.8);
     }
@@ -1705,7 +1718,7 @@ html {
 
 /* 个人资料卡片动画增强 - 双向响应 */
 .profile-card {
-    opacity: 0;
+opacity: 0;
     transform: translateY(50px) rotateZ(-5deg);
     transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
@@ -1719,7 +1732,7 @@ html {
    响应式设计
    ============================================= */
 @media (max-width: 768px) {
-    /* 移动端导航菜单 */
+/* 移动端导航菜单 */
     .nav-menu {
         gap: 1rem;
     }
@@ -1745,18 +1758,26 @@ html {
         font-size: 2rem;
     }
 
-    .profile-card {
-        width: 250px;
-        height: 350px;
-    }
+    @media (max-width: 768px) {
+        .profile-card {
+            width: 350px; /* 增加宽度 */
+            height: 150px; /* 减少高度 */
+            flex-direction: row; /* 改为横向布局 */
+            padding: 0 1rem; /* 添加内边距 */
+        }
 
-    .profile-placeholder {
-        width: 120px;
-        height: 120px;
-    }
+        .profile-placeholder {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 0; /* 移除底部边距 */
+            margin-right: 1rem; /* 添加右侧边距 */
+        }
 
-    .profile-name {
-        font-size: 1.3rem;
+        .profile-name {
+            font-size: 1.3rem;
+            margin: 0;
+            align-self: center; /* 垂直居中 */
+        }
     }
 
     /* 技能区域优化 */
@@ -1807,12 +1828,15 @@ html {
 
     /* 移动端统计数据布局 */
     .about-stats {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr); /* 改为每行显示2个计数器 */
         gap: 1rem;
     }
 
-    .stat-item h3 {
-        font-size: 3rem;
+    @media (max-width: 768px) {
+        .stat-item h3 {
+            font-size: 3rem;
+            min-width: 100px; /* 移动端适当减小固定宽度 */
+        }
     }
 
     /* 移动端页脚布局 */
@@ -1931,5 +1955,195 @@ html {
     .btn {
         width: 200px; /* 设置固定宽度，确保按钮宽度一致 */
         max-width: none; /* 取消最大宽度限制 */
+    }
+}
+
+@media (max-width: 480px) {
+    /* 关于我区域进一步优化 */
+    .profile-card {
+        width: 320px; /* 调整为横向宽度 */
+        height: 140px; /* 调整为横向高度 */
+        flex-direction: row; /* 改为横向布局 */
+        padding: 0 1rem; /* 添加内边距 */
+    }
+    
+    .profile-placeholder {
+        width: 100px;
+        height: 100px;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        margin-right: 1rem; /* 添加右侧边距 */
+        margin-left: auto; /* 自动左侧边距 */
+    }
+    
+    .profile-name {
+        font-size: 1.2rem;
+        margin: 0;
+        margin-right: auto; /* 自动右侧边距 */
+        align-self: center; /* 垂直居中 */
+    }
+}
+
+/* ============================================
+   关于我部分样式
+   ============================================= */
+.about {
+    min-height: 100vh; /* 调整为页面高度 */
+    display: flex; /* 使用flex布局 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    background-color: var(--bg-secondary);
+}
+
+.about-content {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%; /* 确保内容占据整个宽度 */
+    max-width: 1200px; /* 限制最大宽度 */
+    margin: 0 auto; /* 居中对齐 */
+    padding: 0 20px; /* 添加内边距 */
+}
+
+.about-text {
+    text-align: center;
+}
+
+/* 标题样式 */
+.about-text h2 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -1px;
+}
+
+/* 描述文字样式 */
+.about-text p {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    line-height: 1.8;
+}
+
+/* 统计数据样式 */
+.about-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 0 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+/* 项目和视频计数器 - 较小宽度 */
+.stat-item:nth-child(1),
+.stat-item:nth-child(2){
+    width: 120px; /* 项目和视频使用较小宽度 */
+    min-width: 120px;
+}
+
+ .stat-item:nth-child(3){
+    width: 200px; /* 项目和视频使用较小宽度 */
+    min-width: 200px;
+}
+/* 项目下载量和视频播放量计数器 - 较大宽度 */
+.stat-item:nth-child(4) {
+    width: 260px; /* 长数字使用260px宽度 */
+    min-width: 260px;
+}
+
+/* 统计数字样式 */
+.stat-item h3 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    text-align: center;
+    display: block;
+    white-space: nowrap;
+    overflow: visible;
+}
+
+/* 统计标签样式 */
+.stat-item p {
+    color: var(--secondary-color);
+    font-size: 1rem;
+    margin: 0;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: visible;
+}
+
+/* 移动端响应式调整 */
+@media (max-width: 1024px) {
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .about-stats {
+        gap: 1rem;
+        justify-content: space-around;
+    }
+    
+    .stat-item:nth-child(3),
+    .stat-item:nth-child(4) {
+        width: 200px;
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .about {
+        min-height: auto; /* 移动端恢复自动高度 */
+        padding: 80px 0; /* 添加适当的内边距 */
+    }
+    
+    .about-stats {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: space-around;
+    }
+    
+    .stat-item {
+        width: 45%;
+        min-width: auto;
+    }
+    
+    .stat-item h3 {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about {
+        padding: 60px 0;
+    }
+    
+    .about-stats {
+        gap: 0.3rem;
+    }
+    
+    .stat-item {
+        width: 48%;
+    }
+    
+    .stat-item h3 {
+        font-size: 2.5rem;
     }
 }
