@@ -1602,7 +1602,7 @@ height: 24px;
     }
     50% {
         opacity: 0.3;
-    }
+}
 }
 
 /* 磁吸滚动效果 */
@@ -1792,6 +1792,7 @@ opacity: 0;
 
     .skills-grid {
         gap: 1.5rem;
+        grid-template-columns: 1fr;  /* 修改为单列布局 */
     }
 
     .skill-card {
@@ -1898,6 +1899,7 @@ opacity: 0;
 
     .skills-grid {
         gap: 1.2rem;
+        grid-template-columns: 1fr;  /* 确保小屏幕也是单列布局 */
     }
 
     .skill-card {
