@@ -244,7 +244,7 @@ overflow: hidden;
         }
 
         .time-line {
-            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-size: clamp(3.5rem, 12vw, 7rem);
             background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -301,6 +301,64 @@ overflow: hidden;
             color: var(--secondary-color);
             opacity: 0.5;
             margin-top: 0.25rem;
+        }
+
+        /* 星期时间组件样式 */
+        .week-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+            animation: fadeInUp 0.8s ease-out 0.5s both;
+        }
+
+        .week-line {
+            display: flex;
+            align-items: center;
+            gap: 8px; /* 线之间的间距 */
+        }
+
+        .day-segment {
+            width: 30px; /* 每条线的长度 */
+            height: 2px; /* 线的粗细 */
+            border-radius: 1px;
+            background-color: rgba(255, 255, 255, 0.2); /* 未激活的线颜色 */
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .day-segment::before,
+        .day-segment::after {
+            content: '';
+            position: absolute;
+            height: 100%;
+            width: 4px;
+            border-radius: 2px;
+            top: 0;
+        }
+
+        .day-segment::before {
+            left: -2px;
+            background: linear-gradient(transparent, rgba(255, 255, 255, 0.2));
+            filter: blur(3px);
+        }
+
+        .day-segment::after {
+            right: -2px;
+            background: linear-gradient(transparent, rgba(255, 255, 255, 0.2));
+            filter: blur(3px);
+        }
+
+        .day-segment.filled {
+            background-color: var(--accent-color); /* 已激活的线颜色 */
+        }
+
+        .day-segment.filled::before {
+            background: linear-gradient(to right, transparent, var(--accent-color));
+        }
+
+        .day-segment.filled::after {
+            background: linear-gradient(to left, transparent, var(--accent-color));
         }
 
         /* 动画效果 */
@@ -469,7 +527,21 @@ font-size: 3rem;
                         <span class="title-line date-line" id="current-date">加载中...</span>
                         <span class="title-line time-line" id="current-time">00:00:00</span>
                     </h1>
-                    <p class="dashboard-subtitle" id="weather-info">佛山天气 - 25°C 晴朗</p>
+
+                    <!-- 星期时间组件 -->
+<!--                    <div class="week-indicator">-->
+<!--                        <div class="week-line">-->
+<!--                            <div class="day-segment" data-day="1"></div>-->
+<!--                            <div class="day-segment" data-day="2"></div>-->
+<!--                            <div class="day-segment" data-day="3"></div>-->
+<!--                            <div class="day-segment" data-day="4"></div>-->
+<!--                            <div class="day-segment" data-day="5"></div>-->
+<!--                            <div class="day-segment" data-day="6"></div>-->
+<!--                            <div class="day-segment" data-day="7"></div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+                    <p class="dashboard-subtitle" id="weather-info">25°C 晴朗</p>
                 </div>
 
                 <!-- 名言名句区域 -->
@@ -561,21 +633,25 @@ font-size: 3rem;
         // 更新日期时间显示
         function updateDateTime() {
             const now = new Date();
-            
+
             // 格式化日期
             const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
             const dateStr = now.toLocaleDateString('zh-CN', dateOptions);
-            
+
+            // 格式化星期几
+            const weekOptions = { weekday: 'short' };
+            const weekStr = now.toLocaleDateString('zh-CN', weekOptions);
+
             // 格式化时间
-            const timeStr = now.toLocaleTimeString('zh-CN', { 
-                hour: '2-digit', 
-                minute: '2-digit', 
+            const timeStr = now.toLocaleTimeString('zh-CN', {
+                hour: '2-digit',
+                minute: '2-digit',
                 second: '2-digit',
-                hour12: false 
+                hour12: false
             });
-            
+
             // 更新显示
-            document.getElementById('current-date').textContent = dateStr;
+            document.getElementById('current-date').textContent = `${dateStr} ${weekStr}`;
             document.getElementById('current-time').textContent = timeStr;
         }
 
@@ -587,7 +663,7 @@ font-size: 3rem;
             const desc = "晴朗";
             
             // 更新副标题
-            document.getElementById('weather-info').textContent = `佛山天气 - ${temp}°C ${desc}`;
+            document.getElementById('weather-info').textContent = `${temp}°C ${desc}`;
         }
 
         // 获取名言名句
@@ -626,22 +702,41 @@ font-size: 3rem;
             }
         }
 
+        // 初始化星期时间组件
+        function initWeekIndicator() {
+            const now = new Date();
+            const dayOfWeek = now.getDay(); // 0表示星期日，1-6表示星期一到星期六
+
+            // 转换为从1开始的索引（1=星期一，7=星期日）
+            const adjustedDay = dayOfWeek === 0 ? 7 : dayOfWeek;
+
+            // 高亮对应的天数
+            const daySegments = document.querySelectorAll('.day-segment');
+            daySegments.forEach((segment, index) => {
+                const dayNumber = index + 1;
+                if (dayNumber <= adjustedDay) {
+                    segment.classList.add('filled');
+                }
+            });
+        }
+
         // 初始化
         function initDashboard() {
             updateDateTime();
             updateWeather();
             fetchQuote(); // 初始化时获取一次名言
             updateStats(); // 初始化统计数据
-            
+            initWeekIndicator(); // 初始化星期时间组件
+
             // 每秒更新时间
             setInterval(updateDateTime, 1000);
-            
+
             // 每分钟更新天气（实际应用中应该从API获取）
             setInterval(updateWeather, 60000);
-            
+
             // 每5分钟更新名言
             setInterval(fetchQuote, 5 * 60 * 1000);
-            
+
             // 每5分钟更新一次统计数据
             setInterval(updateStats, 5 * 60 * 1000);
         }
