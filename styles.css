@@ -331,6 +331,12 @@ body {
     color: var(--accent-color);
 }
 
+/* 导航按钮容器样式 */
+.nav-buttons {
+    display: flex;
+    gap: 0.5rem; /* 两个按钮之间的间距 */
+}
+
 /* 主题切换按钮样式 */
 .theme-toggle {
     background: transparent;
@@ -667,6 +673,12 @@ body {
 
 .logo:hover {
     color: var(--accent-color);
+}
+
+/* 导航按钮容器样式 */
+.nav-buttons {
+    display: flex;
+    gap: 0.5rem; /* 两个按钮之间的间距 */
 }
 
 /* 主题切换按钮样式 */

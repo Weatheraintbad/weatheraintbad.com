@@ -40,7 +40,7 @@ padding: 120px 0 60px;
             gap: 2rem;
             margin-bottom: 4rem;
             max-width: 1200px;
-            margin: 0 auto 4rem;
+margin: 0 auto 4rem;
         }
 
         /* 独立组件样式 */
@@ -118,7 +118,7 @@ position: absolute;
             width: 60px;
             height: 2px;
             background: var(--accent-color);
-        }
+}
 
         /* 下载统计卡片 */
         .downloads-grid {
@@ -154,8 +154,7 @@ overflow: hidden;
         .download-card:hover::before {
             left: 100%;
         }
-
-        .download-card:hover {
+.download-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
@@ -257,6 +256,49 @@ overflow: hidden;
             animation: fadeInUp 0.8s ease-out 0.4s both;
         }
 
+        /* 名言名句区域样式 */
+        .quote-section {
+            margin: 2rem 0 3rem;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .quote-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem 0;
+            /* 删除圆角矩形背景效果 */
+            border-radius: 0;
+            border: none;
+            backdrop-filter: none;
+            background: none;
+        }
+
+        .quote-text {
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            font-weight: 400;
+            line-height: 1.6;
+            color: var(--primary-color);
+            font-family: 'Noto Serif SC', 'Times New Roman', serif;
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .quote-author {
+            font-size: 1rem;
+            color: var(--secondary-color);
+            opacity: 0.7;
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        .quote-source {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            opacity: 0.5;
+            margin-top: 0.25rem;
+        }
+
         /* 动画效果 */
         @keyframes fadeInUp {
             from {
@@ -281,7 +323,7 @@ overflow: hidden;
 
         .download-card:hover .download-link {
             opacity: 1;
-            transform: translateX(5px);
+transform: translateX(5px);
             color: var(--accent-color);
         }
 
@@ -341,7 +383,7 @@ overflow: hidden;
             }
             
             .date-line {
-                font-size: 3rem;
+font-size: 3rem;
             }
             
             .time-line {
@@ -382,7 +424,14 @@ overflow: hidden;
             <ul class="nav-menu">
                 <li><a href="dashboard.html" style="color: var(--accent-color);">数据看板</a></li>
             </ul>
-            <button id="theme-toggle" class="theme-toggle" aria-label="切换主题">
+            <div class="nav-buttons">
+                <button id="refresh-button" class="theme-toggle" aria-label="刷新数据">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                    </svg>
+                </button>
+                <button id="theme-toggle" class="theme-toggle" aria-label="切换主题">
+
                 <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="5"></circle>
                     <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -398,6 +447,7 @@ overflow: hidden;
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                 </svg>
             </button>
+            </div>
         </div>
     </nav>
 
@@ -412,6 +462,15 @@ overflow: hidden;
                         <span class="title-line time-line" id="current-time">00:00:00</span>
                     </h1>
                     <p class="dashboard-subtitle" id="weather-info">佛山天气 - 25°C 晴朗</p>
+                </div>
+
+                <!-- 名言名句区域 -->
+                <div class="quote-section">
+                    <div class="quote-container">
+                        <div class="quote-text" id="quote-content">获取中...</div>
+                        <div class="quote-author" id="quote-author"></div>
+                        <div class="quote-source" id="quote-source"></div>
+                    </div>
                 </div>
 
                 <!-- 下载统计区域 -->
@@ -523,21 +582,87 @@ overflow: hidden;
             document.getElementById('weather-info').textContent = `佛山天气 - ${temp}°C ${desc}`;
         }
 
+        // 获取名言名句
+        async function fetchQuote() {
+            try {
+                // 随机选择诗词(c=i)或哲学(c=k)类型
+                const types = ['i', 'k'];
+                const randomType = types[Math.floor(Math.random() * types.length)];
+                const apiUrl = `https://v1.hitokoto.cn/?c=${randomType}&encode=json`;
+                
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // 更新名言显示
+                document.getElementById('quote-content').textContent = data.hitokoto;
+                document.getElementById('quote-author').textContent = data.from_who ? `—— ${data.from_who}` : '';
+                document.getElementById('quote-source').textContent = data.from ? `《${data.from}》` : '';
+                
+                if (DEBUG_MODE) {
+                    console.log('名言API响应:', data);
+                }
+                return data;
+            } catch (error) {
+                console.error('获取名言失败:', error);
+                
+                // 失败时显示默认名言
+                document.getElementById('quote-content').textContent = '福生于清俭，德生于卑退。';
+                document.getElementById('quote-author').textContent = '—— 夏侯惇';
+                document.getElementById('quote-source').textContent = '《三国杀》';
+                
+                return null;
+            }
+        }
+
         // 初始化
         function initDashboard() {
             updateDateTime();
             updateWeather();
+            fetchQuote(); // 初始化时获取一次名言
+            updateStats(); // 初始化统计数据
             
             // 每秒更新时间
             setInterval(updateDateTime, 1000);
             
             // 每分钟更新天气（实际应用中应该从API获取）
             setInterval(updateWeather, 60000);
+            
+            // 每5分钟更新名言
+            setInterval(fetchQuote, 5 * 60 * 1000);
+            
+            // 每5分钟更新一次统计数据
+            setInterval(updateStats, 5 * 60 * 1000);
+        }
+
+        // 刷新页面数据函数
+        function refreshData() {
+            const refreshBtn = document.getElementById('refresh-button');
+            // 添加旋转动画效果
+            refreshBtn.style.transform = 'rotate(360deg)';
+            refreshBtn.style.transition = 'transform 0.6s ease';
+
+            // 重新获取所有数据
+            updateWeather();
+            fetchQuote();
+            updateStats();
+
+            // 动画结束后重置
+            setTimeout(() => {
+                refreshBtn.style.transform = 'rotate(0deg)';
+            }, 600);
         }
 
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
             initDashboard();
+
+            // 绑定刷新按钮点击事件
+            const refreshBtn = document.getElementById('refresh-button');
+            refreshBtn.addEventListener('click', refreshData);
         });
 
         // API 函数
@@ -646,11 +771,7 @@ overflow: hidden;
             }
         }
 
-        // 页面加载完成后初始化统计数据
-        document.addEventListener('DOMContentLoaded', function() {
-            updateStats();
-            // 每5分钟更新一次统计数据
-            setInterval(updateStats, 5 * 60 * 1000);
-        });
+        // 删除重复的DOMContentLoaded事件监听器
+        // 页面加载完成后初始化统计数据（已经在initDashboard中调用）
     </script>
 </body>
