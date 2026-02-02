@@ -1052,7 +1052,7 @@
             if (!GIST_ID) {
                 console.warn('未配置 GitHub Gist ID，使用本地存储');
                 localStorage.setItem('weatheraintbad_documents', JSON.stringify(documents));
-                return;
+                return { success: true, message: '文档已保存到本地存储' };
             }
 
             try {
@@ -1077,10 +1077,12 @@
                 }
 
                 console.log('文档已保存到 GitHub Gist');
+                return { success: true, message: '文档已保存到 GitHub Gist' };
             } catch (error) {
                 console.error('保存文档到 GitHub Gist 失败:', error);
                 // 失败时回退到本地存储
                 localStorage.setItem('weatheraintbad_documents', JSON.stringify(documents));
+                return { success: false, message: `GitHub Gist 保存失败，已保存到本地存储 (${error.message})` };
             }
         }
 
@@ -1380,7 +1382,7 @@
         }
 
         // 保存文档
-        function saveDocument() {
+        async function saveDocument() {
             if (!currentDocId) return;
 
             const doc = documents.find(d => d.id === currentDocId);
@@ -1390,8 +1392,8 @@
             doc.content = document.getElementById('editor').value;
             doc.updatedAt = new Date().toISOString();
 
-            saveDocuments();
-            alert('文档保存成功');
+            const result = await saveDocuments();
+            alert(result.message);
         }
 
         // 工具函数
