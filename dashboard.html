@@ -34,7 +34,7 @@ height: 100%;
             position: relative;
             z-index: 1;
             width: 100%;
-            padding: 120px 0 60px;
+            padding: 120px 0 120px; /* 增加底部间距，防止被IP信息遮挡 */
         }
 
         /* 全新组件布局 */
@@ -570,6 +570,11 @@ font-size: 3rem;
                         </div>
                     </div>
                 </div>
+
+                <!-- IP地址查询区域 -->
+                <div class="ip-section" style="position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); text-align: center; z-index: 100;">
+                    <div class="ip-address" id="ip-address" style="font-size: 0.8rem; font-weight: 600; color: var(--secondary-color); opacity: 0.3;">-</div>
+                </div>
             </div>
         </div>
     </section>
@@ -708,12 +713,36 @@ font-size: 3rem;
             });
         }
 
+        // 获取IP地址信息
+        async function fetchIPAddress() {
+            try {
+                const { UapiClient } = await import('https://cdn.jsdelivr.net/npm/uapi-browser-sdk@latest/dist/index.js');
+                const client = new UapiClient('https://uapis.cn');
+                const payload = { source: "commercial" };
+                const data = await client.network.getNetworkMyip(payload);
+
+                if (DEBUG_MODE) {
+                    console.log('IP地址查询结果:', data);
+                }
+
+                // 更新显示
+                document.getElementById('ip-address').textContent = data.ip || '未知';
+
+                return data;
+            } catch (error) {
+                console.error('获取IP地址失败:', error);
+                document.getElementById('ip-address').textContent = '获取失败';
+                return null;
+            }
+        }
+
         // 初始化
         function initDashboard() {
             updateDateTime();
             fetchQuote(); // 初始化时获取一次名言
             updateStats(); // 初始化统计数据
             initWeekIndicator(); // 初始化星期时间组件
+            fetchIPAddress(); // 初始化时获取IP地址
 
             // 每秒更新时间
             setInterval(updateDateTime, 1000);
@@ -735,6 +764,7 @@ font-size: 3rem;
             // 重新获取所有数据
             fetchQuote();
             updateStats();
+            fetchIPAddress();
 
             // 动画结束后重置
             setTimeout(() => {
