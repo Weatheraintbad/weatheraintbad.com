@@ -710,10 +710,10 @@
             });
         }
 
-        // 解析 URL 路由
+        // 解析 URL 路由（支持哈希路由）
         function parseUrl() {
-            const path = window.location.pathname;
-            const docMatch = path.match(/\/doc\/([a-f0-9-]+)$/);
+            const hashPath = window.location.hash.slice(1); // 去除 #
+            const docMatch = hashPath.match(/^\/doc\/([a-f0-9-]+)$/);
 
             if (docMatch) {
                 const slug = docMatch[1];
@@ -723,7 +723,7 @@
             return { type: 'list' };
         }
 
-        // 生成分享链接
+        // 生成分享链接（使用哈希路由）
         function generateShareUrl(docId) {
             const doc = documents.find(d => d.id === docId);
             if (!doc) return null;
@@ -734,8 +734,36 @@
                 saveDocuments();
             }
 
-            return window.location.origin + '/doc/' + doc.slug;
+            return window.location.origin + '/doc.html#/doc/' + doc.slug;
         }
+
+        // 监听 hash 变化
+        window.addEventListener('hashchange', () => {
+            const route = parseUrl();
+            if (route.type === 'doc') {
+                const doc = documents.find(d => d.slug === route.slug);
+                if (doc) {
+                    isShareMode = true;
+                    currentDocId = doc.id;
+                    document.getElementById('editor-title').value = doc.title;
+                    document.getElementById('editor').value = doc.content;
+                    updatePreview();
+
+                    document.getElementById('list-view').style.display = 'none';
+                    document.getElementById('editor-view').style.display = 'block';
+                    document.getElementById('mode-buttons').style.display = 'flex';
+                    switchMode('preview');
+                    hideEditorControls();
+                    hideFooterControls();
+                    hideNavMenu();
+                } else {
+                    alert('文档不存在');
+                }
+            } else {
+                // 显示文档列表
+                goBackToList();
+            }
+        });
 
         // 反调试代码
         (function() {
@@ -1203,9 +1231,6 @@
         }
 
         // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            initPage();
-        });
     </script>
 </body>
 </html>
