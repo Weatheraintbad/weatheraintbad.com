@@ -701,6 +701,42 @@
         let documents = [];
         let currentDocId = null;
 
+        // 生成唯一标识符
+        function generateSlug() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // 解析 URL 路由
+        function parseUrl() {
+            const path = window.location.pathname;
+            const docMatch = path.match(/\/doc\/([a-f0-9-]+)$/);
+
+            if (docMatch) {
+                const slug = docMatch[1];
+                return { type: 'doc', slug };
+            }
+
+            return { type: 'list' };
+        }
+
+        // 生成分享链接
+        function generateShareUrl(docId) {
+            const doc = documents.find(d => d.id === docId);
+            if (!doc) return null;
+
+            // 如果文档没有 slug，生成一个
+            if (!doc.slug) {
+                doc.slug = generateSlug();
+                saveDocuments();
+            }
+
+            return window.location.origin + '/doc/' + doc.slug;
+        }
+
         // 反调试代码
         (function() {
             // 禁止右键菜单
@@ -798,7 +834,43 @@
 
         // 页面加载时显示密码输入框
         document.addEventListener('DOMContentLoaded', function() {
-            showAccessPasswordModal();
+            const route = parseUrl();
+
+            // 如果是文档页面直接显示内容（无需密码）
+            if (route.type === 'doc') {
+                loadDocuments();
+                const doc = documents.find(d => d.slug === route.slug);
+                if (doc) {
+                    // 进入分享模式
+                    isShareMode = true;
+                    currentDocId = doc.id;
+                    document.getElementById('editor-title').value = doc.title;
+                    document.getElementById('editor').value = doc.content;
+                    updatePreview();
+
+                    document.getElementById('list-view').style.display = 'none';
+                    document.getElementById('editor-view').style.display = 'block';
+                    document.getElementById('mode-buttons').style.display = 'flex'; // 显示模式切换按钮
+                    switchMode('preview'); // 切换到预览模式
+                    hideEditorControls(); // 隐藏顶部编辑控件
+                    hideFooterControls(); // 隐藏底部编辑控件
+                    hideNavMenu(); // 隐藏导航菜单
+                } else {
+                    // 文档不存在，显示错误页面
+                    document.body.innerHTML = `
+                        <div class="doc-manager" style="display: flex; align-items: center; justify-content: center;">
+                            <div class="doc-container" style="text-align: center;">
+                                <h1 style="color: var(--primary-color); font-size: 2rem; margin-bottom: 1rem;">文档不存在</h1>
+                                <p style="color: var(--secondary-color); font-size: 1.2rem;">您访问的文档不存在或已被删除</p>
+                                <a href="/doc.html" style="display: inline-block; margin-top: 2rem; padding: 0.75rem 1.5rem; background: var(--accent-color); color: white; text-decoration: none; border-radius: 8px;">返回文档列表</a>
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                // 普通访问，需要密码
+                showAccessPasswordModal();
+            }
         });
 
         // 从 localStorage 加载文档
@@ -859,6 +931,7 @@
                 id: Date.now().toString(),
                 title: title,
                 content: '',
+                slug: generateSlug(), // 添加分享标识符
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
             };
@@ -937,20 +1010,49 @@
 
         // 切换分享模式
         function toggleShareMode() {
-            isShareMode = !isShareMode;
-
-            if (isShareMode) {
+            if (!isShareMode) {
                 // 进入分享模式
-                switchMode('preview'); // 切换到预览模式
-                hideEditorControls(); // 隐藏顶部编辑控件
-                hideFooterControls(); // 隐藏底部编辑控件
-                hideNavMenu(); // 隐藏导航菜单
+                const shareUrl = generateShareUrl(currentDocId);
+                // 显示分享链接
+                const modal = document.createElement('div');
+                modal.className = 'modal active';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-title">分享文档</div>
+                        <p style="color: var(--secondary-color); margin-bottom: 1rem;">复制以下链接分享给他人：</p>
+                        <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                            <input type="text" id="share-url" class="modal-input" value="${shareUrl}" readonly style="flex: 1;">
+                            <button class="btn-confirm" onclick="copyShareUrl()">复制</button>
+                        </div>
+                        <div class="modal-buttons">
+                            <button class="btn-cancel" onclick="hideShareModal()">关闭</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
             } else {
                 // 退出分享模式
                 showEditorControls(); // 显示顶部编辑控件
                 showFooterControls(); // 显示底部编辑控件
                 showNavMenu(); // 显示导航菜单
+                isShareMode = false;
             }
+        }
+
+        // 隐藏分享模态框
+        function hideShareModal() {
+            const modal = document.querySelector('.modal.active');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // 复制分享链接
+        function copyShareUrl() {
+            const shareUrlInput = document.getElementById('share-url');
+            shareUrlInput.select();
+            document.execCommand('copy');
+            alert('分享链接已复制到剪贴板');
         }
 
         // 隐藏底部编辑控件
