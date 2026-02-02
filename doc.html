@@ -701,8 +701,8 @@
         let documents = [];
         let currentDocId = null;
         // GitHub Gist 配置
-        const GIST_ID = 'YOUR_GIST_ID'; // 需要用户设置自己的 Gist ID
-        const GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN'; // 需要用户设置自己的 GitHub Token
+        const GIST_ID = '01b36fdd81eeee41b63fd35187311f35.js';
+        const GITHUB_TOKEN = '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';
 
         // 生成唯一标识符
         function generateSlug() {
@@ -871,13 +871,19 @@
                 e.preventDefault();
             });
 
-            // 禁止选择文本
+            // 禁止选择文本（但允许分享链接输入框选择）
             document.addEventListener('selectstart', function(e) {
+                if (e.target && e.target.id === 'share-url') {
+                    return; // 允许分享链接输入框选择
+                }
                 e.preventDefault();
             });
 
-            // 禁止复制
+            // 禁止复制（但允许分享链接复制）
             document.addEventListener('copy', function(e) {
+                if (e.target && e.target.id === 'share-url') {
+                    return; // 允许分享链接复制
+                }
                 e.preventDefault();
             });
 
@@ -1177,9 +1183,36 @@
         // 复制分享链接
         function copyShareUrl() {
             const shareUrlInput = document.getElementById('share-url');
-            shareUrlInput.select();
-            document.execCommand('copy');
-            alert('分享链接已复制到剪贴板');
+
+            // 使用现代的 Clipboard API
+            if (navigator.clipboard && window.isSecureContext) {
+                // 现代浏览器支持的方式
+                navigator.clipboard.writeText(shareUrlInput.value).then(() => {
+                    alert('分享链接已复制到剪贴板');
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    fallbackCopy(shareUrlInput);
+                });
+            } else {
+                // 旧浏览器的 fallback 方式
+                fallbackCopy(shareUrlInput);
+            }
+        }
+
+        // 旧浏览器的复制方法
+        function fallbackCopy(inputElement) {
+            try {
+                inputElement.select();
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    alert('分享链接已复制到剪贴板');
+                } else {
+                    alert('复制失败，请手动选择并复制链接');
+                }
+            } catch (err) {
+                console.error('复制失败:', err);
+                alert('复制失败，请手动选择并复制链接');
+            }
         }
 
         // 隐藏底部编辑控件
