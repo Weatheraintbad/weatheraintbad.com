@@ -184,7 +184,7 @@
         /* 主内容区域 */
         .yo-container {
             position: relative;
-            z-index: 2;
+            z-index: 10;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -378,6 +378,33 @@
             0%, 100% { opacity: 0.3; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.5); }
         }
+
+        /* 星星动画容器 */
+        .star-animation-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            pointer-events: none;
+            filter: blur(1px);
+        }
+
+        .star-animation {
+            width: 400px;
+            height: 400px;
+            opacity: 0;
+            animation: starFadeIn 0.5s ease-in 0.5s forwards,
+                       starFadeOut 0.5s ease-out 3.5s forwards;
+        }
+
+        @keyframes starFadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes starFadeOut {
+            to { opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -424,6 +451,16 @@
     <div class="star star-2"></div>
     <div class="star star-3"></div>
     <div class="star star-4"></div>
+
+    <!-- 星星动画背景 -->
+    <div class="star-animation-container">
+        <svg class="star-animation" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+            <!-- 星星路径 -->
+            <path id="star-path" d="M200 40 L220 140 L320 140 L240 200 L280 300 L200 240 L120 300 L160 200 L80 140 L180 140 Z"
+                  stroke="rgba(255, 223, 186, 0)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
+                  fill="rgba(255, 223, 186, 0)" />
+        </svg>
+    </div>
 
     <!-- 主内容 -->
     <div class="yo-container">
@@ -511,11 +548,37 @@
             }
         }
 
+        // 星星动画
+        function animateStar() {
+            const starPath = document.getElementById('star-path');
+            if (!starPath) return;
+
+            // 获取路径长度
+            const pathLength = starPath.getTotalLength();
+
+            // 设置初始状态
+            starPath.style.strokeDasharray = pathLength;
+            starPath.style.strokeDashoffset = pathLength;
+            starPath.style.stroke = 'rgba(255, 223, 186, 1)';
+
+            // 绘制动画
+            setTimeout(() => {
+                starPath.style.transition = 'stroke-dashoffset 2s ease-in-out, fill 0.5s ease-in 2s';
+                starPath.style.strokeDashoffset = '0';
+
+                // 填充动画
+                setTimeout(() => {
+                    starPath.style.fill = 'rgba(255, 223, 186, 0.6)';
+                }, 2000);
+            }, 500); // 延迟0.5秒后开始动画
+        }
+
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             initThemeToggle(); // 初始化主题切换
             createHearts();
             createStars();
+            animateStar(); // 初始化星星动画
         });
     </script>
 </body>
