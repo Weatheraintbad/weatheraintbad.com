@@ -792,13 +792,9 @@
             }
         };
 
-        // 生成唯一标识符
+        // 生成唯一标识符（缩短版）
         function generateSlug() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                const r = Math.random() * 16 | 0;
-                const v = c === 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
+            return Math.random().toString(36).substr(2, 10);
         }
 
         // 从 Supabase 加载文档
@@ -875,20 +871,26 @@
             }
         }
 
-        // 解析 URL 路由（支持哈希路由）
+        // 解析 URL 路由（支持简单路径格式）
         function parseUrl() {
-            const hashPath = window.location.hash.slice(1); // 去除 #
-            const docMatch = hashPath.match(/^\/doc\/([a-f0-9-]+)$/);
+            // 首先检查是否有哈希路由（兼容旧格式）
+            const hashPath = window.location.hash.slice(1);
+            const hashMatch = hashPath.match(/^\/doc\/([\w-]+)$/);
+            if (hashMatch) {
+                return { type: 'doc', slug: hashMatch[1] };
+            }
 
-            if (docMatch) {
-                const slug = docMatch[1];
-                return { type: 'doc', slug };
+            // 检查路径路由（新格式）
+            const path = window.location.pathname;
+            const pathMatch = path.match(/\/doc\/([\w-]+)$/);
+            if (pathMatch) {
+                return { type: 'doc', slug: pathMatch[1] };
             }
 
             return { type: 'list' };
         }
 
-        // 生成分享链接（使用哈希路由）
+        // 生成分享链接（使用简单路径格式）
         function generateShareUrl(docId) {
             const doc = documents.find(d => d.id === docId);
             if (!doc) return null;
@@ -899,11 +901,11 @@
                 saveDocuments();
             }
 
-            return window.location.origin + '/doc.html#/doc/' + doc.slug;
+            return window.location.origin + '/doc/' + doc.slug;
         }
 
-        // 监听 hash 变化
-        window.addEventListener('hashchange', () => {
+        // 监听路由变化（支持哈希路由和路径路由）
+        function handleRouteChange() {
             const route = parseUrl();
             if (route.type === 'doc') {
                 const doc = documents.find(d => d.slug === route.slug);
@@ -932,7 +934,13 @@
                 // 显示文档列表
                 goBackToList();
             }
-        });
+        }
+
+        // 监听 hash 变化（兼容旧格式）
+        window.addEventListener('hashchange', handleRouteChange);
+
+        // 监听 popstate 事件（处理浏览器前进/后退按钮）
+        window.addEventListener('popstate', handleRouteChange);
 
         // 反调试代码
         (function() {
