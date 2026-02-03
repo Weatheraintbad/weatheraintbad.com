@@ -550,6 +550,67 @@
             background: #f0f0f0 !important; /* 确保模态框内容背景明显 */
         }
 
+        /* 浅色模式下的代码块和文字高亮样式 */
+        @media (prefers-color-scheme: light) {
+            .preview code {
+                background: #ffffff; /* 代码块背景 */
+                border: 1px solid #ffffff; /* 白色边框 */
+                color: #000000;
+            }
+
+            .preview pre {
+                background: #ffffff; /* 代码块背景 */
+                border: 1px solid #ffffff; /* 白色边框 */
+                color: #000000;
+            }
+
+            .preview pre code {
+                background: transparent;
+                border: none;
+            }
+
+            .preview blockquote {
+                border-left: 3px solid #ffffff; /* 白色引用边框 */
+            }
+
+            .preview th, .preview td {
+                border: 1px solid #ffffff; /* 白色表格边框 */
+            }
+
+            .preview h1 {
+                border-bottom: 1px solid #ffffff; /* 白色标题边框 */
+            }
+        }
+
+        .light-theme .preview code {
+            background: #ffffff !important; /* 代码块背景 */
+            border: 1px solid #ffffff !important; /* 白色边框 */
+            color: #000000 !important;
+        }
+
+        .light-theme .preview pre {
+            background: #ffffff !important; /* 代码块背景 */
+            border: 1px solid #ffffff !important; /* 白色边框 */
+            color: #000000 !important;
+        }
+
+        .light-theme .preview pre code {
+            background: transparent !important;
+            border: none !important;
+        }
+
+        .light-theme .preview blockquote {
+            border-left: 3px solid #ffffff !important; /* 白色引用边框 */
+        }
+
+        .light-theme .preview th, .light-theme .preview td {
+            border: 1px solid #ffffff !important; /* 白色表格边框 */
+        }
+
+        .light-theme .preview h1 {
+            border-bottom: 1px solid #ffffff !important; /* 白色标题边框 */
+        }
+
         .modal-input::placeholder {
             color: var(--secondary-color);
             opacity: 0.5;
