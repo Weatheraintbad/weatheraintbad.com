@@ -905,6 +905,10 @@
                         return { data: await response.json(), error: null };
                     },
                     update: async function(data, id) {
+                        console.log('Update request:', {
+                            url: `${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`,
+                            data: data
+                        });
                         const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
                             method: 'PATCH',
                             headers: {
@@ -916,8 +920,14 @@
                             },
                             body: JSON.stringify(data)
                         });
-                        if (!response.ok) throw new Error(`Update failed: ${response.status}`);
-                        return { data: await response.json(), error: null };
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error('Update failed response:', response.status, errorText);
+                            throw new Error(`Update failed: ${response.status} - ${errorText}`);
+                        }
+                        const result = await response.json();
+                        console.log('Update success:', result);
+                        return { data: result, error: null };
                     },
                     delete: async function(id = null) {
                         let url;
@@ -1367,6 +1377,8 @@
 
             // 切换发布状态
             doc.published = !doc.published;
+            // 更新更新时间
+            doc.updated_at = new Date().toISOString();
 
             // 更新按钮显示
             updatePublishButton();
@@ -1582,14 +1594,14 @@
 
         // 隐藏编辑控件
         function hideEditorControls() {
-            document.querySelectorAll('.btn-back, .btn-delete, .btn-save').forEach(btn => {
+            document.querySelectorAll('.btn-back, .btn-delete, .btn-save, .btn-publish').forEach(btn => {
                 btn.style.display = 'none';
             });
         }
 
         // 显示编辑控件
         function showEditorControls() {
-            document.querySelectorAll('.btn-back, .btn-delete, .btn-save').forEach(btn => {
+            document.querySelectorAll('.btn-back, .btn-delete, .btn-save, .btn-publish').forEach(btn => {
                 btn.style.display = 'block';
             });
         }
