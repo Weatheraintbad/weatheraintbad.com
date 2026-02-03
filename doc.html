@@ -694,6 +694,15 @@
         </div>
     </div>
 
+    <!-- 加载动画 -->
+    <div class="loader-overlay" id="loader">
+        <div class="loader-decoration">
+            <div class="floating-element el-1"></div>
+            <div class="floating-element el-2"></div>
+            <div class="floating-element el-3"></div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
@@ -1013,6 +1022,13 @@
         async function initPage() {
             await loadDocuments(); // 使用异步加载
             renderDocList();
+            // 数据加载完成后隐藏加载动画
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                if (loader) {
+                    loader.classList.add('hidden');
+                }
+            }, 500);
         }
 
         // 页面加载时显示密码输入框
@@ -1050,9 +1066,23 @@
                         </div>
                     `;
                 }
+                // 数据加载完成后隐藏加载动画
+                setTimeout(() => {
+                    const loader = document.getElementById('loader');
+                    if (loader) {
+                        loader.classList.add('hidden');
+                    }
+                }, 500);
             } else {
                 // 普通访问，需要密码
                 showAccessPasswordModal();
+                // 数据加载完成后隐藏加载动画
+                setTimeout(() => {
+                    const loader = document.getElementById('loader');
+                    if (loader) {
+                        loader.classList.add('hidden');
+                    }
+                }, 500);
             }
         });
 
