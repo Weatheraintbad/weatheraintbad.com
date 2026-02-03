@@ -1354,14 +1354,27 @@
             if (!doc) return;
 
             currentDocId = docId;
-            document.getElementById('editor-title').value = doc.title;
-            document.getElementById('editor').value = doc.content;
+            const titleInput = document.getElementById('editor-title');
+            const editor = document.getElementById('editor');
+
+            titleInput.value = doc.title;
+            titleInput.readOnly = false; // 确保标题可编辑
+            editor.value = doc.content;
+            editor.readOnly = false; // 确保内容可编辑
             updatePreview();
 
             document.getElementById('list-view').style.display = 'none';
             document.getElementById('editor-view').style.display = 'block';
             // 显示导航栏中的模式切换按钮
             document.getElementById('mode-buttons').style.display = 'flex';
+            switchMode('edit'); // 确保进入编辑模式
+
+            // 显示所有编辑控件
+            showEditorControls();
+            showFooterControls();
+            showNavMenu();
+
+            isShareMode = false; // 确保不是分享模式
 
             // 更新发布按钮状态
             updatePublishButton();
@@ -1412,6 +1425,13 @@
             renderDocList();
             // 隐藏导航栏中的模式切换按钮
             document.getElementById('mode-buttons').style.display = 'none';
+            // 重置分享模式状态
+            isShareMode = false;
+            // 确保编辑器和标题输入框都是可编辑状态（以便下次打开文档时正常）
+            const titleInput = document.getElementById('editor-title');
+            const editor = document.getElementById('editor');
+            if (titleInput) titleInput.readOnly = false;
+            if (editor) editor.readOnly = false;
         }
 
         // 切换编辑/预览模式
@@ -1531,6 +1551,15 @@
                 showFooterControls(); // 显示底部编辑控件
                 showNavMenu(); // 显示导航菜单
                 isShareMode = false;
+
+                // 确保标题和内容可编辑
+                const titleInput = document.getElementById('editor-title');
+                const editor = document.getElementById('editor');
+                titleInput.readOnly = false;
+                editor.readOnly = false;
+
+                // 切换到编辑模式
+                switchMode('edit');
             }
         }
 
