@@ -164,6 +164,19 @@
             opacity: 0.5;
         }
 
+        /* 浅色模式下的博客文章卡片样式 */
+        @media (prefers-color-scheme: light) {
+            .blog-post {
+                background: #F2F2F2; /* 淡灰色背景 */
+                border: 1px solid #d0d0d0;
+            }
+        }
+
+        .light-theme .blog-post {
+            background: #F2F2F2 !important; /* 淡灰色背景 */
+            border: 1px solid #d0d0d0 !important;
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .blog-title {
