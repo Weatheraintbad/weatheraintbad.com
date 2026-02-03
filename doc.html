@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文档管理 - Weatheraintbad</title>
+    <title>文档 - Weatheraintbad</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto Serif SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -565,10 +565,17 @@
                 gap: 1rem;
             }
 
+            /* 缩小页面容器左右边距 */
+            .doc-container {
+                padding: 0 1rem;
+            }
+
+            /* 缩小编辑器标题底部边距 */
             .editor-header {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1rem;
+                margin-bottom: 1.5rem; /* 调整为与标题和导航栏之间间隔相等的值 */
             }
 
             .editor-title-input {

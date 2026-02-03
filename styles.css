@@ -1749,6 +1749,11 @@ opacity: 0;
         gap: 1rem;
     }
 
+    /* 移动端导航栏logo字体大小调整 */
+    .logo {
+        font-size: 1.2rem;
+    }
+
     /* 移动端英雄区标题 - 调大字体大小，保持与网页端一致的缩放逻辑 */
     .hero-title {
         font-size: clamp(2.8rem, 10vw, 5rem);
@@ -1868,6 +1873,11 @@ opacity: 0;
     /* 小屏幕导航菜单隐藏 */
     .nav-menu {
         display: none;
+    }
+
+    /* 小屏幕导航栏logo字体大小调整 */
+    .logo {
+        font-size: 1.2rem;
     }
 
     /* 小屏幕英雄区标题 - 调大字体大小，保持与网页端一致的缩放逻辑 */
