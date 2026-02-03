@@ -507,6 +507,49 @@
             box-sizing: border-box;
         }
 
+        /* 浅色模式下的各种圆角矩形框样式 */
+        @media (prefers-color-scheme: light) {
+            .modal-input {
+                background: #e0e0e0; /* 淡灰色背景 */
+                border: 1px solid #d0d0d0;
+                color: #000000;
+            }
+
+            .doc-item {
+                background: #F2F2F2; /* 淡灰色背景 */
+                border: 1px solid #d0d0d0;
+            }
+
+            .editor-area {
+                background: #F2F2F2; /* 淡灰色背景 */
+                border: 1px solid #d0d0d0;
+            }
+
+            .modal-content {
+                background: #f0f0f0 !important; /* 确保模态框内容背景明显 */
+            }
+        }
+
+        .light-theme .modal-input {
+            background: #F2F2F2 !important; /* 淡灰色背景 */
+            border: 1px solid #d0d0d0 !important;
+            color: #000000 !important;
+        }
+
+        .light-theme .doc-item {
+            background: #F2F2F2 !important; /* 淡灰色背景 */
+            border: 1px solid #d0d0d0 !important;
+        }
+
+        .light-theme .editor-area {
+            background: #F2F2F2 !important; /* 淡灰色背景 */
+            border: 1px solid #d0d0d0 !important;
+        }
+
+        .light-theme .modal-content {
+            background: #f0f0f0 !important; /* 确保模态框内容背景明显 */
+        }
+
         .modal-input::placeholder {
             color: var(--secondary-color);
             opacity: 0.5;
