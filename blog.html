@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客 - Weatheraintbad</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 博客页面特定样式 */
+        .blog {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blog::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(250, 167, 85, 0.05) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .blog-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 120px 0 60px;
+        }
+
+        /* 页面布局容器 */
+        .blog-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* 页面标题 */
+        .blog-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .blog-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-family: 'Noto Serif SC', 'Times New Roman', serif;
+            margin-bottom: 1rem;
+        }
+
+        .blog-subtitle {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            opacity: 0.8;
+        }
+
+        /* 博客文章列表 */
+        .blog-list {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .blog-post {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blog-post::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .blog-post:hover::before {
+            left: 100%;
+        }
+
+        .blog-post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border-color: rgba(250, 167, 85, 0.3);
+        }
+
+        .blog-post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .blog-post-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .blog-post-meta {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            opacity: 0.7;
+            margin-bottom: 1rem;
+        }
+
+        .blog-post-excerpt {
+            color: var(--secondary-color);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .blog-post-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .blog-post-link:hover {
+            gap: 0.75rem;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--secondary-color);
+            opacity: 0.7;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .blog-title {
+                font-size: 2rem;
+            }
+
+            .blog-subtitle {
+                font-size: 1rem;
+            }
+
+            .blog-container {
+                padding: 0 1rem;
+            }
+
+            .blog-post {
+                padding: 1.5rem;
+            }
+
+            .blog-post-title {
+                font-size: 1.2rem;
+            }
+
+            .blog-post-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html" style="text-decoration: none; color: inherit;">Weatheraintbad.com</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html#home">首页</a></li>
+                <li><a href="index.html#about">关于</a></li>
+                <li><a href="index.html#skills">能力</a></li>
+                <li><a href="index.html#work">项目</a></li>
+                <li><a href="index.html#contact">联系</a></li>
+                <li><a href="blog.html" style="color: var(--accent-color);">博客</a></li>
+            </ul>
+            <button id="theme-toggle" class="theme-toggle" aria-label="切换主题">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <section class="blog">
+        <div class="blog-content">
+            <div class="blog-container">
+                <div class="blog-header">
+                    <h1 class="blog-title">博客</h1>
+                    <p class="blog-subtitle">分享我的思考、项目经验和学习笔记</p>
+                </div>
+
+                <div id="blog-list" class="blog-list">
+                    <!-- 博客文章列表将通过 JavaScript 动态生成 -->
+                </div>
+
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    <div class="empty-state-icon">📝</div>
+                    <div>暂无文章，敬请期待</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">Weatheraintbad</div>
+                <div class="footer-copyright">
+                    <p>&copy; 2026 Jason Loong. All rights reserved.</p>
+                </div>
+                <div class="footer-social">
+                    <a href="https://github.com/weatheraintbad" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <a href="https://modrinth.com/user/weatheraintbad" target="_blank" rel="noopener noreferrer" aria-label="Modrinth">
+                        <svg viewBox="0 0 600 590" width="24" height="24" fill="currentColor">
+                            <g fill="currentColor">
+                                <path d="m29 424.4 188.2-112.95-17.15-45.48 53.75-55.21 67.93-14.64 19.67 24.21-31.32 31.72-27.3 8.6-19.52 20.05 9.56 26.6 19.4 20.6 27.36-7.28 19.47-21.38 42.51-13.47 12.67 28.5-43.87 53.78-73.5 23.27-32.97-36.7L55.06 467.94C46.1 456.41 35.67 440.08 29 424.4Zm543.03-230.25-149.5 40.32c8.24 21.92 10.95 34.8 13.23 49l149.23-40.26c-2.38-15.94-6.65-32.17-12.96-49.06Z"></path>
+                                <path d="M51.28 316.13c10.59 125 115.54 223.3 243.27 223.3 96.51 0 180.02-56.12 219.63-137.46l48.61 16.83c-46.78 101.34-149.35 171.75-268.24 171.75C138.6 590.55 10.71 469.38 0 316.13h51.28ZM.78 265.24C15.86 116.36 141.73 0 294.56 0c162.97 0 295.28 132.31 295.28 295.28 0 26.14-3.4 51.49-9.8 75.63l-48.48-16.78a244.28 244.28 0 0 0 7.15-58.85c0-134.75-109.4-244.15-244.15-244.15-124.58 0-227.49 93.5-242.32 214.11H.8Z"></path>
+                                <path d="M293.77 153.17c-78.49.07-142.2 63.83-142.2 142.34 0 78.56 63.79 142.34 142.35 142.34 3.98 0 7.93-.16 11.83-.49l14.22 49.76a194.65 194.65 0 0 1-26.05 1.74c-106.72 0-193.36-86.64-193.36-193.35 0-106.72 86.64-193.35 193.36-193.35 2.64 0 5.28.05 7.9.16l-8.05 50.85Zm58.2-42.13c78.39 24.67 135.3 97.98 135.3 184.47 0 80.07-48.77 148.83-118.2 178.18l-14.17-49.55c48.08-22.85 81.36-71.89 81.36-128.63 0-60.99-38.44-113.07-92.39-133.32l8.1-51.15Z"></path>
+                            </g>
+                        </svg>
+                    </a>
+                    <a href="https://space.bilibili.com/185401036" target="_blank" rel="noopener noreferrer" aria-label="Bilibili">
+                        <svg viewBox="220 200 650 650" width="24" height="24" fill="currentColor">
+                            <path d="M450.803484 456.506027l-120.670435 23.103715 10.333298 45.288107 119.454151-23.102578-9.117014-45.289244z m65.04448 120.060586c-29.483236 63.220622-55.926329 15.502222-55.926328 15.502223l-19.754098 12.768142s38.90176 53.192249 75.986489 12.764729c43.770311 40.42752 77.203911-13.068516 77.203911-13.068516l-17.934791-11.55072c0.001138-0.304924-31.305956 44.983182-59.575183-16.415858z m59.57632-74.773617L695.182222 524.895573l10.029511-45.288106-120.364373-23.103716-9.423076 45.289245z m237.784178-88.926436c-1.905778-84.362809-75.487004-100.540871-75.487004-100.540871s-57.408853-0.316302-131.944676-0.95232l54.237867-52.332089s8.562916-10.784996-6.026809-22.834062c-14.592-12.051342-15.543182-6.660551-20.615396-3.487289-4.441884 3.169849-69.462471 66.920676-80.878933 78.340551-29.494613 0-60.2624-0.319716-90.075591-0.319716h10.466418s-77.705671-76.754489-82.781298-80.241777c-5.075627-3.488427-5.709369-8.56064-20.616533 3.487289-14.589724 12.05248-6.026809 22.8352-6.026809 22.8352l55.504213 53.919288c-60.261262 0-112.280462 0.319716-136.383147 1.268623-78.025387 22.521173-71.99744 100.859449-71.99744 100.859449s0.950044 168.100978 0 253.103217c8.562916 85.00224 73.899804 98.636231 73.899805 98.636231s26.007324 0.63488 45.357511 0.63488c1.900089 5.391929 3.486151 32.034133 33.302756 32.034134 29.495751 0 33.30048-32.034133 33.30048-32.034134s217.263218-0.950044 235.340231-0.950044c0.953458 9.196658 5.394204 33.619058 35.207395 33.303893 29.494613-0.636018 31.714418-35.20512 31.714418-35.20512s10.151253-0.95232 40.280747 0c70.413653-13.005938 74.534684-95.468658 74.534684-95.468657s-1.265209-169.689316-0.312889-254.056676zM752.628622 681.8304c0 13.319964-10.467556 24.102684-23.471218 24.102684H300.980907c-13.003662 0-23.47008-10.78272-23.47008-24.102684V397.961671c0-13.32224 10.467556-24.106098 23.47008-24.106098h428.176497c13.003662 0 23.471218 10.783858 23.471218 24.106098v283.868729z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 加载动画 -->
+    <div class="loader-overlay" id="loader">
+        <div class="loader-decoration">
+            <div class="floating-element el-1"></div>
+            <div class="floating-element el-2"></div>
+            <div class="floating-element el-3"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // Supabase 配置
+        const SUPABASE_URL = 'https://wyoofofxviolwdebkpkt.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_TOTiug5k7UCGYLeLib0cUw_Vqm06ZyC';
+
+        // 初始化 Supabase 客户端
+        const supabase = {
+            url: SUPABASE_URL,
+            anonKey: SUPABASE_ANON_KEY,
+            from: function(table) {
+                return {
+                    select: async function(query = '*') {
+                        const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${new URLSearchParams({ select: query })}`, {
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        if (!response.ok) throw new Error(`Select failed: ${response.status}`);
+                        return { data: await response.json(), error: null };
+                    },
+                    insert: async function(data) {
+                        const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+                            method: 'POST',
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'Prefer': 'return=representation'
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        if (!response.ok) throw new Error(`Insert failed: ${response.status}`);
+                        return { data: await response.json(), error: null };
+                    },
+                    update: async function(data, id) {
+                        const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+                            method: 'PATCH',
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'Prefer': 'return=representation'
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        if (!response.ok) throw new Error(`Update failed: ${response.status}`);
+                        return { data: await response.json(), error: null };
+                    },
+                    delete: async function(id = null) {
+                        let url;
+                        if (id) {
+                            url = `${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`;
+                        } else {
+                            url = `${SUPABASE_URL}/rest/v1/${table}?id=neq.0`;
+                        }
+                        const response = await fetch(url, {
+                            method: 'DELETE',
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        if (!response.ok) throw new Error(`Delete failed: ${response.status}`);
+                        return { data: null, error: null };
+                    }
+                };
+            }
+        };
+
+        // 文档数据存储
+        let documents = [];
+
+        // 加载博客文章
+        async function loadBlogPosts() {
+            try {
+                const { data, error } = await supabase.from('documents').select('*');
+
+                if (error) {
+                    throw new Error(`Failed to load documents: ${error.message}`);
+                }
+
+                if (data && data.length > 0) {
+                    documents = data.filter(doc => doc.published);
+                } else {
+                    documents = [];
+                }
+            } catch (error) {
+                console.error('加载博客文章失败:', error);
+                documents = [];
+            }
+        }
+
+        // 渲染博客列表
+        function renderBlogList() {
+            const listContainer = document.getElementById('blog-list');
+            const emptyState = document.getElementById('empty-state');
+
+            if (documents.length === 0) {
+                listContainer.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            listContainer.innerHTML = documents.map(doc => {
+                // 生成文章摘要
+                const excerpt = getExcerpt(doc.content);
+                // 格式化发布日期
+                const formattedDate = formatDate(doc.updated_at);
+                // 计算阅读时间
+                const readTime = calculateReadTime(doc.content);
+
+                return `
+                    <div class="blog-post" onclick="openBlogPost('${doc.slug}')">
+                        <div class="blog-post-header">
+                            <div class="blog-post-title">${escapeHtml(doc.title)}</div>
+                        </div>
+                        <div class="blog-post-meta">
+                            <span>📅 ${formattedDate}</span>
+                            <span>⏱ ${readTime}分钟阅读</span>
+                            <span>📝 ${formatWordCount(doc.content)}</span>
+                        </div>
+                        <div class="blog-post-excerpt">${excerpt}</div>
+                        <a href="doc.html#${doc.slug}" class="blog-post-link">
+                            阅读更多
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 打开博客文章（跳转到分享模式页面）
+        function openBlogPost(slug) {
+            window.location.href = `doc.html#${slug}`;
+        }
+
+        // 获取文章摘要
+        function getExcerpt(content) {
+            // 移除 Markdown 标记
+            let plainText = content
+                .replace(/\[.*?\]\(.*?\)/g, '') // 移除链接
+                .replace(/!\[.*?\]\(.*?\)/g, '') // 移除图片
+                .replace(/###?#?/g, '') // 移除标题标记
+                .replace(/[*_~`]/g, '') // 移除强调标记
+                .trim();
+
+            // 截取前200个字作为摘要
+            if (plainText.length > 200) {
+                return plainText.substring(0, 200) + '...';
+            }
+            return plainText || '暂无内容';
+        }
+
+        // 计算阅读时间
+        function calculateReadTime(content) {
+            const words = content.trim().split(/\s+/).filter(word => word.length > 0).length;
+            return Math.ceil(words / 300); // 假设每分钟阅读300字
+        }
+
+        // 工具函数
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+
+            return text.replace(/[&<>"]/g, function(m) { return map[m]; });
+        }
+
+        function formatDate(isoString) {
+            const date = new Date(isoString);
+            const now = new Date();
+            const diff = now - date;
+
+            if (diff < 60000) { // 小于1分钟
+                return '刚刚';
+            } else if (diff < 3600000) { // 小于1小时
+                return Math.floor(diff / 60000) + '分钟前';
+            } else if (diff < 86400000) { // 小于1天
+                return Math.floor(diff / 3600000) + '小时前';
+            } else {
+                return date.toLocaleDateString('zh-CN');
+            }
+        }
+
+        function formatWordCount(content) {
+            if (!content) return '0';
+            const count = content.trim().split(/\s+/).filter(word => word.length > 0).length;
+            return count + (count === 1 ? '字' : '字');
+        }
+
+        // 初始化页面
+        async function initPage() {
+            await loadBlogPosts();
+            renderBlogList();
+
+            // 数据加载完成后隐藏加载动画
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                if (loader) {
+                    loader.classList.add('hidden');
+                }
+            }, 500);
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initPage();
+        });
+    </script>
+</body>
+</html>

@@ -239,6 +239,36 @@
             border-color: rgba(76, 175, 80, 0.5);
         }
 
+        /* 发布按钮 */
+        .btn-publish {
+            background: rgba(250, 167, 85, 0.1);
+            color: var(--accent-color);
+            border: 1px solid rgba(250, 167, 85, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-publish:hover {
+            background: rgba(250, 167, 85, 0.2);
+            border-color: rgba(250, 167, 85, 0.5);
+        }
+
+        /* 已发布状态的按钮 */
+        .btn-publish.published {
+            background: rgba(255, 82, 82, 0.1);
+            color: #ff5252;
+            border: 1px solid rgba(255, 82, 82, 0.3);
+        }
+
+        .btn-publish.published:hover {
+            background: rgba(255, 82, 82, 0.2);
+            border-color: rgba(255, 82, 82, 0.5);
+        }
+
         /* 保存按钮 */
         .btn-save {
             background: linear-gradient(135deg, var(--accent-color), #ff9a3c);
@@ -801,6 +831,7 @@
                         <div class="editor-footer">
                             <button class="btn-delete" onclick="deleteDocument()">删除</button>
                             <button class="btn-share" onclick="toggleShareMode()">分享</button>
+                            <button class="btn-publish" id="publish-btn" onclick="togglePublish()">发布于博客</button>
                             <button class="btn-save" onclick="saveDocument()">保存文档</button>
                         </div>
                     </div>
@@ -981,7 +1012,8 @@
                             title: doc.title,
                             content: doc.content,
                             slug: doc.slug,
-                            updated_at: doc.updated_at
+                            updated_at: doc.updated_at,
+                            published: doc.published || false
                         }, doc.id);
                     } else {
                         // 插入新文档
@@ -1297,7 +1329,8 @@
                 content: '',
                 slug: generateSlug(), // 添加分享标识符
                 created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString()
+                updated_at: new Date().toISOString(),
+                published: false // 添加发布状态字段
             };
 
             documents.unshift(newDoc);
@@ -1320,6 +1353,44 @@
             document.getElementById('editor-view').style.display = 'block';
             // 显示导航栏中的模式切换按钮
             document.getElementById('mode-buttons').style.display = 'flex';
+
+            // 更新发布按钮状态
+            updatePublishButton();
+        }
+
+        // 切换发布状态
+        function togglePublish() {
+            if (!currentDocId) return;
+
+            const doc = documents.find(d => d.id === currentDocId);
+            if (!doc) return;
+
+            // 切换发布状态
+            doc.published = !doc.published;
+
+            // 更新按钮显示
+            updatePublishButton();
+
+            // 保存到 Supabase
+            saveDocuments();
+
+            // 显示提示信息
+            alert(doc.published ? '文档已发布到博客' : '文档已从博客撤下');
+        }
+
+        // 更新发布按钮状态
+        function updatePublishButton() {
+            const publishBtn = document.getElementById('publish-btn');
+            if (!publishBtn) return;
+
+            const doc = documents.find(d => d.id === currentDocId);
+            if (doc && doc.published) {
+                publishBtn.textContent = '从博客撤下';
+                publishBtn.classList.add('published');
+            } else {
+                publishBtn.textContent = '发布于博客';
+                publishBtn.classList.remove('published');
+            }
         }
 
         // 返回文档列表
