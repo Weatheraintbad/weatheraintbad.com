@@ -325,6 +325,22 @@
             outline: none;
         }
 
+        /* 预览区域图片样式 */
+        .preview img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1rem 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 拖拽区域样式 */
+        .editor.dragover {
+            background: rgba(250, 167, 85, 0.1);
+            border-color: var(--accent-color);
+            transition: all 0.3s ease;
+        }
+
         /* 预览区域 */
         .preview {
             color: var(--primary-color);
@@ -674,7 +690,7 @@
                         </div>
 
                         <div class="editor-area">
-                            <textarea id="editor" class="editor" placeholder="请输入 Markdown 内容..."></textarea>
+                            <textarea id="editor" class="editor" placeholder="请输入 Markdown 内容... 可以直接拖入图片"></textarea>
                             <div id="preview" class="preview" style="display: none;"></div>
                         </div>
 
@@ -1228,6 +1244,55 @@
                 document.getElementById('preview').style.display = 'block';
             }
         }
+
+        // 配置 marked 库，允许解析 HTML 和添加图片样式
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            sanitize: false,  // 允许 HTML 标签
+            mangle: false
+        });
+
+        // 拖拽事件处理
+        const editor = document.getElementById('editor');
+
+        // 防止浏览器默认拖拽行为
+        editor.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+
+        editor.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+
+        editor.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+                const file = files[0];
+                const fileName = file.name;
+                const imageUrl = URL.createObjectURL(file);
+
+                const cursorPos = editor.selectionStart;
+                const textBefore = editor.value.substring(0, cursorPos);
+                const textAfter = editor.value.substring(cursorPos);
+
+                // 插入 HTML img 标签
+                const imgTag = `<img alt="${fileName}" src="${imageUrl}" />\n\n`;
+                editor.value = textBefore + imgTag + textAfter;
+
+                // 移动光标到图片插入后的位置
+                editor.selectionStart = editor.selectionEnd = cursorPos + imgTag.length;
+                editor.focus();
+
+                // 更新预览
+                updatePreview();
+            }
+        });
 
         // 更新预览
         function updatePreview() {
