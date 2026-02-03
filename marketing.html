@@ -25,10 +25,18 @@
             font-size: clamp(2.5rem, 8vw, 4rem);
             font-weight: 700;
             margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--primary-color);
+        }
+
+        /* 浅色模式下标题直接使用强调色 */
+        @media (prefers-color-scheme: light) {
+            .marketing-header h1 {
+                color: var(--accent-color) !important;
+            }
+        }
+
+        .light-theme .marketing-header h1 {
+            color: var(--accent-color) !important;
         }
 
         .marketing-header p {
@@ -41,9 +49,8 @@
         /* 内容区域 */
         .marketing-content {
             max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-            padding: 4rem 2rem;
+            margin: 0 auto 3rem;
+            padding: 2rem;
             background-color: var(--bg-card);
             border-radius: 15px;
             border: 1px solid var(--border-color);
@@ -51,10 +58,148 @@
             animation: fadeInUp 1s ease-out 0.3s both;
         }
 
+        .marketing-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
         .marketing-content p {
-            font-size: 1.2rem;
+            font-size: 1rem;
+            color: var(--secondary-color);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 项目表格 */
+        .project-table-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .project-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-primary);
+        }
+
+        .project-table th {
+            background-color: var(--bg-secondary);
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .project-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
             color: var(--secondary-color);
             line-height: 1.6;
+        }
+
+        .project-table tr:hover {
+            background-color: var(--bg-card);
+        }
+
+        .project-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 能力卡片 */
+        .abilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+
+        .ability-card {
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+        }
+
+        .ability-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 140, 0, 0.1);
+        }
+
+        .ability-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+
+        .ability-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .ability-card p {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* 语言与认证 */
+        .certifications {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+
+        .cert-item {
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+            min-width: 200px;
+        }
+
+        .cert-item:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 140, 0, 0.1);
+        }
+
+        .cert-item h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .cert-item p {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0;
         }
 
         /* 返回按钮 */
@@ -103,7 +248,27 @@
             }
 
             .marketing-content {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .abilities-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .certifications {
+                gap: 1.2rem;
+            }
+
+            .cert-item {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .project-table th,
+            .project-table td {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -114,11 +279,11 @@
         <div class="nav-container">
             <div class="logo">Weatheraintbad.com</div>
             <ul class="nav-menu">
-                <li><a href="#home">首页</a></li>
-                <li><a href="#about">关于</a></li>
-                <li><a href="#skills">能力</a></li>
-                <li><a href="#work">项目</a></li>
-                <li><a href="#contact">联系</a></li>
+                <li><a href="index.html#home">首页</a></li>
+                <li><a href="index.html#about">关于</a></li>
+                <li><a href="index.html#skills">能力</a></li>
+                <li><a href="index.html#work">项目</a></li>
+                <li><a href="index.html#contact">联系</a></li>
                 <li><a href="blog.html">博客</a></li>
             </ul>
             <!-- 主题切换按钮 -->
@@ -149,8 +314,111 @@
                 <p>市场分析 | 品牌洞察 | 活动策划</p>
             </div>
 
+            <!-- 专业概述 -->
             <div class="marketing-content">
-                <p>暂无内容</p>
+                <h2>专业概述</h2>
+                <p>拥有丰富的品牌整合营销与海外推广实战经验。擅长从0到1搭建品牌出海体系，包括选品策略、本土化包装、社媒矩阵运营等。在国家级电商赛事中担任团队负责人，带领品牌开展东南亚市场拓展，实现品牌曝光破万。同时具备跨文化沟通能力，获得全国跨文化能力大赛一等奖。</p>
+            </div>
+
+            <!-- 关键项目 -->
+            <div class="marketing-content">
+                <h2>关键项目</h2>
+                <div class="project-table-container">
+                    <table class="project-table">
+                        <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>角色</th>
+                                <th>核心策略</th>
+                                <th>量化成果</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>第十五届全国大学生电子商务三创赛</td>
+                                <td>团队负责人</td>
+                                <td>搭建跨职能团队，与优质品牌方达成独家合作，负责Lazada店铺运营+东南亚社媒推广</td>
+                                <td>品牌累计曝光量10000+</td>
+                            </tr>
+                            <tr>
+                                <td>第六届"外教社杯"跨文化能力大赛</td>
+                                <td>核心成员</td>
+                                <td>开发跨文化案例，预测决赛题目策略，主导知识问答环节</td>
+                                <td>全国一等奖，知识问答环节获全场最高分</td>
+                            </tr>
+                            <tr>
+                                <td>佛山传媒集团产品运营</td>
+                                <td>产品运营实习生</td>
+                                <td>设计用户增长功能，优化互动数据，推动媒体排名提升</td>
+                                <td>被评为优秀实习生</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 核心能力 -->
+            <div class="abilities-grid">
+                <div class="ability-card">
+                    <div class="ability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    </div>
+                    <h3>品牌出海</h3>
+                    <p>熟悉Lazada等跨境电商平台运营，掌握东南亚市场本土化策略</p>
+                </div>
+                <div class="ability-card">
+                    <div class="ability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+                        </svg>
+                    </div>
+                    <h3>社媒营销</h3>
+                    <p>擅长TikTok、Instagram等海外社媒内容策划与投放</p>
+                </div>
+                <div class="ability-card">
+                    <div class="ability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3>跨文化沟通</h3>
+                    <p>英语CET-6（526分），跨文化能力中级认证，适应国际化工作环境</p>
+                </div>
+                <div class="ability-card">
+                    <div class="ability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <h3>商务谈判</h3>
+                    <p>成功与多家企业洽谈并达成品牌合作，具备资源整合能力</p>
+                </div>
+            </div>
+
+            <!-- 语言与认证 -->
+            <div class="marketing-content">
+                <h2>语言与认证</h2>
+                <div class="certifications">
+                    <div class="cert-item">
+                        <h3>英语CET-6</h3>
+                        <p>526分</p>
+                    </div>
+                    <div class="cert-item">
+                        <h3>跨文化能力中级</h3>
+                        <p>ICT Intermediate 191分</p>
+                    </div>
+                    <div class="cert-item">
+                        <h3>英语听说</h3>
+                        <p>流利</p>
+                    </div>
+                </div>
             </div>
 
             <!-- 返回按钮 -->

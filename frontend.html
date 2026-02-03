@@ -25,10 +25,18 @@
             font-size: clamp(2.5rem, 8vw, 4rem);
             font-weight: 700;
             margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--primary-color);
+        }
+
+        /* 浅色模式下标题直接使用强调色 */
+        @media (prefers-color-scheme: light) {
+            .frontend-header h1 {
+                color: var(--accent-color) !important;
+            }
+        }
+
+        .light-theme .frontend-header h1 {
+            color: var(--accent-color) !important;
         }
 
         .frontend-header p {
@@ -41,9 +49,8 @@
         /* 内容区域 */
         .frontend-content {
             max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-            padding: 4rem 2rem;
+            margin: 0 auto 3rem;
+            padding: 2rem;
             background-color: var(--bg-card);
             border-radius: 15px;
             border: 1px solid var(--border-color);
@@ -51,10 +58,132 @@
             animation: fadeInUp 1s ease-out 0.3s both;
         }
 
+        .frontend-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
         .frontend-content p {
-            font-size: 1.2rem;
+            font-size: 1rem;
+            color: var(--secondary-color);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 技术栈表格 */
+        .tech-table-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .tech-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-primary);
+        }
+
+        .tech-table th {
+            background-color: var(--bg-secondary);
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .tech-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
             color: var(--secondary-color);
             line-height: 1.6;
+        }
+
+        .tech-table tr:hover {
+            background-color: var(--bg-card);
+        }
+
+        .tech-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 项目卡片 */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+
+        .project-card {
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+        }
+
+        .project-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 140, 0, 0.1);
+        }
+
+        .project-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+
+        .project-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .project-card p {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* GitHub链接 */
+        .github-link {
+            display: inline-block;
+            margin: 1rem 0;
+            padding: 10px 20px;
+            background-color: var(--bg-card);
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 400;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .github-link:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-primary);
+            border-color: var(--accent-color);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.2);
         }
 
         /* 返回按钮 */
@@ -103,7 +232,18 @@
             }
 
             .frontend-content {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .tech-table th,
+            .tech-table td {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -114,11 +254,11 @@
         <div class="nav-container">
             <div class="logo">Weatheraintbad.com</div>
             <ul class="nav-menu">
-                <li><a href="#home">首页</a></li>
-                <li><a href="#about">关于</a></li>
-                <li><a href="#skills">能力</a></li>
-                <li><a href="#work">项目</a></li>
-                <li><a href="#contact">联系</a></li>
+                <li><a href="index.html#home">首页</a></li>
+                <li><a href="index.html#about">关于</a></li>
+                <li><a href="index.html#skills">能力</a></li>
+                <li><a href="index.html#work">项目</a></li>
+                <li><a href="index.html#contact">联系</a></li>
                 <li><a href="blog.html">博客</a></li>
             </ul>
             <!-- 主题切换按钮 -->
@@ -149,8 +289,108 @@
                 <p>HTML | CSS | JavaScript | Vue | 响应式设计</p>
             </div>
 
+            <!-- 专业概述 -->
             <div class="frontend-content">
-                <p>暂无内容</p>
+                <h2>专业概述</h2>
+                <p>具备极快的技术学习能力，曾在2天内从零基础完成Java项目全流程开发。熟悉前端基础技术栈，能将设计稿精准还原为可交互的网页。拥有GitHub开源项目维护经验，注重代码规范与工程化实践。目前正在向全栈方向发展，具备产品设计思维与开发实现的双重能力。</p>
+            </div>
+
+            <!-- 技术栈 -->
+            <div class="frontend-content">
+                <h2>技术栈</h2>
+                <div class="tech-table-container">
+                    <table class="tech-table">
+                        <thead>
+                            <tr>
+                                <th>类别</th>
+                                <th>技术/工具</th>
+                                <th>熟练程度</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>前端基础</td>
+                                <td>HTML5, CSS3</td>
+                                <td>★★★★☆</td>
+                            </tr>
+                            <tr>
+                                <td>开发工具</td>
+                                <td>VS Code, IntelliJ IDEA</td>
+                                <td>★★★★☆</td>
+                            </tr>
+                            <tr>
+                                <td>数据库</td>
+                                <td>MySQL, DbGate</td>
+                                <td>★★★☆☆</td>
+                            </tr>
+                            <tr>
+                                <td>版本控制</td>
+                                <td>Git, GitHub</td>
+                                <td>★★★☆☆</td>
+                            </tr>
+                            <tr>
+                                <td>3D/创意</td>
+                                <td>Blender, Stable Diffusion</td>
+                                <td>★★★☆☆</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 项目实践 -->
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="9" y1="9" x2="15" y2="9"></line>
+                            <line x1="9" y1="15" x2="15" y2="15"></line>
+                            <line x1="15" y1="9" x2="15" y2="15"></line>
+                            <line x1="9" y1="15" x2="9" y2="9"></line>
+                        </svg>
+                    </div>
+                    <h3>微信小程序平台</h3>
+                    <p>负责前端UX框架设计，与后端开发人员对接API接口，完成产品从设计到落地的闭环</p>
+                </div>
+                <div class="project-card">
+                    <div class="project-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                        </svg>
+                    </div>
+                    <h3>Java快速开发项目</h3>
+                    <p>2天内从零基础学习Java语法到完成项目开发，展现极强学习能力</p>
+                </div>
+                <div class="project-card">
+                    <div class="project-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                    </div>
+                    <h3>个人网站搭建</h3>
+                    <p>独立使用HTML/CSS构建个人作品集网站，优化响应式布局与交互体验</p>
+                </div>
+            </div>
+
+            <!-- GitHub主页 -->
+            <div class="frontend-content">
+                <h2>相关链接</h2>
+                <div style="text-align: center;">
+                    <a href="https://github.com/Weatheraintbad" class="github-link" target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="margin-right: 6px; vertical-align: middle;">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        GitHub主页
+                    </a>
+                </div>
+            </div>
+
+            <!-- 学习能力亮点 -->
+            <div class="frontend-content">
+                <h2>学习能力亮点</h2>
+                <p>具有极强的项目学习能力，可在极短时间内熟悉并上手新技术栈。擅长将产品设计思维融入前端开发，确保代码实现与设计方案高度一致。</p>
             </div>
 
             <!-- 返回按钮 -->

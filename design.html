@@ -25,10 +25,18 @@
             font-size: clamp(2.5rem, 8vw, 4rem);
             font-weight: 700;
             margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--primary-color);
+        }
+
+        /* 浅色模式下标题直接使用强调色 */
+        @media (prefers-color-scheme: light) {
+            .design-header h1 {
+                color: var(--accent-color) !important;
+            }
+        }
+
+        .light-theme .design-header h1 {
+            color: var(--accent-color) !important;
         }
 
         .design-header p {
@@ -38,13 +46,176 @@
             margin: 0 auto;
         }
 
+        /* 内容区域 */
+        .design-content {
+            max-width: 1200px;
+            margin: 0 auto 3rem;
+            padding: 2rem;
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .design-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .design-content p {
+            font-size: 1rem;
+            color: var(--secondary-color);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 设计领域表格 */
+        .design-table-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .design-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-primary);
+        }
+
+        .design-table th {
+            background-color: var(--bg-secondary);
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .design-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--secondary-color);
+            line-height: 1.6;
+        }
+
+        .design-table tr:hover {
+            background-color: var(--bg-card);
+        }
+
+        .design-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 核心能力卡片 */
+        .abilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+
+        .ability-card {
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+        }
+
+        .ability-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 140, 0, 0.1);
+        }
+
+        .ability-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+
+        .ability-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .ability-card p {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* 工具栈 */
+        .tool-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 1.5rem auto;
+        }
+
+        .tool-item {
+            padding: 0.6rem 1.2rem;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--secondary-color);
+            font-weight: 400;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+        }
+
+        /* 作品集链接 */
+        .portfolio-link {
+            display: inline-block;
+            margin: 1rem 0;
+            padding: 10px 20px;
+            background-color: var(--bg-card);
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 400;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .portfolio-link:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-primary);
+            border-color: var(--accent-color);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.2);
+        }
+
         /* 作品网格布局 */
         .design-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 3rem auto;
         }
 
         /* 作品卡片 */
@@ -67,7 +238,7 @@
         /* 图片容器 */
         .design-image-container {
             width: 100%;
-            height: 300px;
+            aspect-ratio: 2 / 3;
             background: linear-gradient(135deg, var(--bg-primary), var(--bg-card));
             display: flex;
             align-items: center;
@@ -149,6 +320,15 @@
                 margin-bottom: 3rem;
             }
 
+            .design-content {
+                padding: 1.5rem;
+            }
+
+            .abilities-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
             .design-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
@@ -156,6 +336,21 @@
 
             .design-image-container {
                 height: 250px;
+            }
+
+            .tool-stack {
+                gap: 0.8rem;
+            }
+
+            .tool-item {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .design-table th,
+            .design-table td {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -166,11 +361,11 @@
         <div class="nav-container">
             <div class="logo">Weatheraintbad.com</div>
             <ul class="nav-menu">
-                <li><a href="#home">首页</a></li>
-                <li><a href="#about">关于</a></li>
-                <li><a href="#skills">能力</a></li>
-                <li><a href="#work">项目</a></li>
-                <li><a href="#contact">联系</a></li>
+                <li><a href="index.html#home">首页</a></li>
+                <li><a href="index.html#about">关于</a></li>
+                <li><a href="index.html#skills">能力</a></li>
+                <li><a href="index.html#work">项目</a></li>
+                <li><a href="index.html#contact">联系</a></li>
                 <li><a href="blog.html">博客</a></li>
             </ul>
             <!-- 主题切换按钮 -->
@@ -201,71 +396,171 @@
                 <p>海报设计 | 品牌视觉 | 排版设计</p>
             </div>
 
-            <div class="design-grid">
-                <!-- 作品 1 -->
-                <div class="design-card">
-                    <div class="design-image-container">
-                        <img src="images/design-poster1.png" alt="海报设计 1" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+            <!-- 专业概述 -->
+            <div class="design-content">
+                <h2>专业概述</h2>
+                <p>具备系统的视觉设计能力，擅长将抽象需求转化为具象视觉方案。拥有丰富的UI界面设计、品牌视觉识别、海报设计及三维场景建模经验。熟练运用Adobe全家桶及Blender等工具，能在二维与三维空间自由切换，为产品提供完整的视觉解决方案。</p>
+            </div>
+
+            <!-- 设计领域 -->
+            <div class="design-content">
+                <h2>设计领域</h2>
+                <div class="design-table-container">
+                    <table class="design-table">
+                        <thead>
+                            <tr>
+                                <th>领域</th>
+                                <th>项目经验</th>
+                                <th>代表技能</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>UI/UX设计</td>
+                                <td>佛山+移动端135+页面原型、微信小程序UI设计</td>
+                                <td>Figma组件库搭建、设计系统规范、交互流程设计</td>
+                            </tr>
+                            <tr>
+                                <td>品牌设计</td>
+                                <td>电商赛事品牌视觉包装、校园活动主视觉</td>
+                                <td>Logo设计、VI系统、品牌本土化视觉改造</td>
+                            </tr>
+                            <tr>
+                                <td>海报与物料</td>
+                                <td>校青协活动海报28张、招生宣传物料</td>
+                                <td>PS视觉合成、AI矢量插画、印刷规范</td>
+                            </tr>
+                            <tr>
+                                <td>三维视觉</td>
+                                <td>产品场景渲染、动画制作</td>
+                                <td>Blender建模、材质渲染、简单动画</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 核心能力详解 -->
+            <div class="abilities-grid">
+                <div class="ability-card">
+                    <div class="ability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
                     </div>
-                    <div class="design-info">
-                        <h3>创意海报设计</h3>
-                        <p>现代风格的创意海报，采用渐变色彩和几何图形设计</p>
+                    <h3>UI/界面设计</h3>
+                    <p>熟悉移动端与Web端设计规范，能建立统一的设计系统；擅长信息架构梳理，优化用户操作路径；注重设计与开发的衔接，输出标注清晰的交付物</p>
+                </div>
+                <div class="ability-card">
+                    <div class="ability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
+                            <circle cx="12" cy="11" r="3"></circle>
+                        </svg>
+                    </div>
+                    <h3>品牌与视觉识别</h3>
+                    <p>具备品牌本土化改造经验（东南亚市场）；能从品牌战略高度规划视觉传达体系；熟悉不同媒介的视觉适配（线上/线下/印刷）</p>
+                </div>
+                <div class="ability-card">
+                    <div class="ability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
+                    <h3>三维与动态视觉</h3>
+                    <p>使用Blender进行产品场景建模与环境渲染；结合Stable Diffusion进行AI辅助视觉创作；AE动态图形设计，增强视觉表现力</p>
+                </div>
+            </div>
+
+            <!-- 设计工具栈 -->
+            <div class="design-content">
+                <h2>设计工具栈</h2>
+                    <p>Adobe Photoshop、Adobe Illustrator、Figma、Blender、Stable Diffusion(WebUI)、秀米编辑器、可画</p>
+            </div>
+
+            <!-- 作品展示 -->
+            <div class="design-content">
+                <h2>作品展示</h2>
+                <div class="design-grid">
+                    <!-- 作品 1 -->
+                    <div class="design-card">
+                        <div class="design-image-container">
+                            <img src="images/poster-teacher.png" alt="海报设计 2" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+                        </div>
+                        <div class="design-info">
+                            <h3>廉洁主题系列海报（其一）</h3>
+                            <p>童年的理想和现实的碰撞，体现教师群体的职业操守与高尚品德</p>
+                        </div>
+                    </div>
+
+                    <!-- 作品 2 -->
+                    <div class="design-card">
+                        <div class="design-image-container">
+                            <img src="images/poster-IDD.png" alt="海报设计 1" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+                        </div>
+                        <div class="design-info">
+                            <h3>12.3国际残疾人日海报</h3>
+                            <p>采用阳光和剪影体现残疾人群体自强不息的精神，强调人人享有尊严和正义</p>
+                        </div>
+                    </div>
+
+                    <!-- 作品 3 -->
+                    <div class="design-card">
+                        <div class="design-image-container">
+                            <img src="images/poster-IOD.png" alt="海报设计 3" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+                        </div>
+                        <div class="design-info">
+                            <h3>10.1国际老年人日海报</h3>
+                            <p>插画风格营造温馨氛围，人物对视体现关怀，强调对老年人的承诺</p>
+                        </div>
+                    </div>
+
+                    <!-- 作品 4 -->
+                    <div class="design-card">
+                        <div class="design-image-container">
+                            <img src="images/poster-ielts.png" alt="海报设计 4" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+                        </div>
+                        <div class="design-info">
+                            <h3>Road to IELTS 课程海报</h3>
+                            <p>汕头大学语言中心特色课程宣传海报</p>
+                        </div>
+                    </div>
+
+                    <!-- 作品 5 -->
+                    <div class="design-card">
+                        <div class="design-image-container">
+                            <img src="images/poster-EGAP.png" alt="海报设计 5" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+                        </div>
+                        <div class="design-info">
+                            <h3>EGAP 课程海报</h3>
+                            <p>汕头大学语言中心《通用学术英语》课程宣传海报</p>
+                        </div>
+                    </div>
+
+                    <!-- 作品 6 -->
+                    <div class="design-card">
+                        <div class="design-image-container">
+                            <img src="images/poster-canva.png" alt="海报设计 6" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
+                        </div>
+                        <div class="design-info">
+                            <h3>可画系列广告海报（其一）</h3>
+                            <p>以可画操作界面与远处背景的对比强调产品快速出图的功能</p>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- 作品 2 -->
-                <div class="design-card">
-                    <div class="design-image-container">
-                        <img src="images/design-poster2.png" alt="海报设计 2" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
-                    </div>
-                    <div class="design-info">
-                        <h3>活动宣传海报</h3>
-                        <p>色彩鲜艳的活动宣传海报，突出主题和关键信息</p>
-                    </div>
-                </div>
-
-                <!-- 作品 3 -->
-                <div class="design-card">
-                    <div class="design-image-container">
-                        <img src="images/design-poster3.png" alt="海报设计 3" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
-                    </div>
-                    <div class="design-info">
-                        <h3>品牌形象海报</h3>
-                        <p>简洁大气的品牌形象海报，传达专业与信赖感</p>
-                    </div>
-                </div>
-
-                <!-- 作品 4 -->
-                <div class="design-card">
-                    <div class="design-image-container">
-                        <img src="images/design-poster4.png" alt="海报设计 4" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
-                    </div>
-                    <div class="design-info">
-                        <h3>产品推广海报</h3>
-                        <p>突出产品特点的推广海报，吸引目标受众关注</p>
-                    </div>
-                </div>
-
-                <!-- 作品 5 -->
-                <div class="design-card">
-                    <div class="design-image-container">
-                        <img src="images/design-poster5.png" alt="海报设计 5" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
-                    </div>
-                    <div class="design-info">
-                        <h3>音乐节海报</h3>
-                        <p>充满活力的音乐节海报，体现音乐与青春的氛围</p>
-                    </div>
-                </div>
-
-                <!-- 作品 6 -->
-                <div class="design-card">
-                    <div class="design-image-container">
-                        <img src="images/design-poster6.png" alt="海报设计 6" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAyNCIgaGVpZ2h0PSI2NTgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDI0IiBoZWlnaHQ9IjY1OCIgZmlsbD0iIzAwMDAwMCIvPgo8cGF0aCBkPSJNNTExLjUgMzI5TDEwMjQgNTcxVjE4Nkw1MTEuNSAzMjlaIiBmaWxsPSIjMzMzMzMzIiBvcGFjaXR5PSIwLjUiLz4KPHN2ZyB4PSIyNjIiIHk9IjE5MCIgd2lkdGg9IjUwMCIgaGVpZ2h0PSIyODAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CjxyZWN0IHdpZHRoPSI1MDAiIGhlaWdodD0iMjgwIiBmaWxsPSIjMzMzMzMzIi8+Cjx0ZXh0IHg9IjI1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjRkZGIj7lm5TliqDlronnq6M8L3RleHQ+Cjwvc3ZnPgo8L3N2Zz4=';" />
-                    </div>
-                    <div class="design-info">
-                        <h3>艺术展览海报</h3>
-                        <p>简约而富有艺术感的展览海报，展现作品的内涵</p>
-                    </div>
+            <!-- 作品集链接 -->
+            <div class="design-content">
+                <h2>作品集链接</h2>
+                <div style="text-align: center;">
+                    <a href="https://ycnukn285vi3.feishu.cn/drive/folder/JXjUfGBE2lmaZUdLadzcDICRnIb" class="portfolio-link" target="_blank" rel="noopener noreferrer">
+                        查看完整作品集
+                    </a>
                 </div>
             </div>
 

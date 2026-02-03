@@ -25,10 +25,18 @@
             font-size: clamp(2.5rem, 8vw, 4rem);
             font-weight: 700;
             margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--primary-color);
+        }
+
+        /* 浅色模式下标题直接使用强调色 */
+        @media (prefers-color-scheme: light) {
+            .video-header h1 {
+                color: var(--accent-color) !important;
+            }
+        }
+
+        .light-theme .video-header h1 {
+            color: var(--accent-color) !important;
         }
 
         .video-header p {
@@ -41,9 +49,8 @@
         /* 内容区域 */
         .video-content {
             max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-            padding: 4rem 2rem;
+            margin: 0 auto 3rem;
+            padding: 2rem;
             background-color: var(--bg-card);
             border-radius: 15px;
             border: 1px solid var(--border-color);
@@ -51,10 +58,176 @@
             animation: fadeInUp 1s ease-out 0.3s both;
         }
 
+        .video-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
         .video-content p {
-            font-size: 1.2rem;
+            font-size: 1rem;
+            color: var(--secondary-color);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 项目表格 */
+        .project-table-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .project-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-primary);
+        }
+
+        .project-table th {
+            background-color: var(--bg-secondary);
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .project-table td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
             color: var(--secondary-color);
             line-height: 1.6;
+        }
+
+        .project-table tr:hover {
+            background-color: var(--bg-card);
+        }
+
+        .project-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 能力卡片 */
+        .abilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+
+        .ability-card {
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+        }
+
+        .ability-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 140, 0, 0.1);
+        }
+
+        .ability-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+
+        .ability-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .ability-card p {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* 工具栈 */
+        .tool-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 1.5rem auto;
+        }
+
+        .tool-item {
+            padding: 0.6rem 1.2rem;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--secondary-color);
+            font-weight: 400;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+        }
+
+        /* 个人账号数据 */
+        .account-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+
+        .stat-item {
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+            min-width: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-item:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 140, 0, 0.1);
+        }
+
+        .stat-item h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .stat-item p {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0;
         }
 
         /* 返回按钮 */
@@ -103,7 +276,36 @@
             }
 
             .video-content {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .abilities-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .tool-stack {
+                gap: 0.8rem;
+            }
+
+            .tool-item {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
+            .account-stats {
+                gap: 1.2rem;
+            }
+
+            .stat-item {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .project-table th,
+            .project-table td {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -114,11 +316,11 @@
         <div class="nav-container">
             <div class="logo">Weatheraintbad.com</div>
             <ul class="nav-menu">
-                <li><a href="#home">首页</a></li>
-                <li><a href="#about">关于</a></li>
-                <li><a href="#skills">能力</a></li>
-                <li><a href="#work">项目</a></li>
-                <li><a href="#contact">联系</a></li>
+                <li><a href="index.html#home">首页</a></li>
+                <li><a href="index.html#about">关于</a></li>
+                <li><a href="index.html#skills">能力</a></li>
+                <li><a href="index.html#work">项目</a></li>
+                <li><a href="index.html#contact">联系</a></li>
                 <li><a href="blog.html">博客</a></li>
             </ul>
             <!-- 主题切换按钮 -->
@@ -149,8 +351,118 @@
                 <p>内容策划 | 视频拍摄/剪辑</p>
             </div>
 
+            <!-- 专业概述 -->
             <div class="video-content">
-                <p>暂无内容</p>
+                <h2>专业概述</h2>
+                <p>拥有完整的视频制作全链路能力，擅长短视频策划、多机位拍摄与后期包装。累计制作视频50+条，全网播放量超40万。在汕头融媒集团实习期间，策划的"乡村百千万工程"系列视频多次被官方置顶。熟练运用Adobe Premiere Pro、After Effects等专业软件，具备构建标准化视觉体系的能力。</p>
+            </div>
+
+            <!-- 项目履历 -->
+            <div class="video-content">
+                <h2>项目履历</h2>
+                <div class="project-table-container">
+                    <table class="project-table">
+                        <thead>
+                            <tr>
+                                <th>项目</th>
+                                <th>职责</th>
+                                <th>内容亮点</th>
+                                <th>数据表现</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>汕头融媒集团政企部</td>
+                                <td>视频策划与制作</td>
+                                <td>调研乡镇特产卖点，策划"乡村百千万工程"系列视频</td>
+                                <td>多个视频被汕头橄榄台置顶，累计播放量80000+</td>
+                            </tr>
+                            <tr>
+                                <td>招生办媒体中心</td>
+                                <td>视频部编辑</td>
+                                <td>独立负责招生宣传视频策划、拍摄、后期</td>
+                                <td>累计播放量300000+（截至2025.5）</td>
+                            </tr>
+                            <tr>
+                                <td>"青菜帮帮"网媒工作室</td>
+                                <td>拍摄制作岗</td>
+                                <td>标准化视觉体系搭建，多场景拍摄解决方案设计</td>
+                                <td>团队产出选题60+，构建可复用场景配置方案</td>
+                            </tr>
+                            <tr>
+                                <td>校青协"萤火虫"大队</td>
+                                <td>宣传部副部长</td>
+                                <td>摄影与PR剪辑培训5场，统筹部门视觉内容</td>
+                                <td>审核照片600+张、海报28张、推文19篇</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 技术能力 -->
+            <div class="abilities-grid">
+                <div class="ability-card">
+                    <div class="ability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3>前期策划</h3>
+                    <p>选题挖掘、脚本撰写、分镜设计、拍摄方案制定</p>
+                </div>
+                <div class="ability-card">
+                    <div class="ability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                            <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                    </div>
+                    <h3>现场执行</h3>
+                    <p>相机稳定器、三脚架操作，多场景布光，人员调度</p>
+                </div>
+                <div class="ability-card">
+                    <div class="ability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 7 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 7 23 7 23 13"></polyline>
+                        </svg>
+                    </div>
+                    <h3>后期制作</h3>
+                    <p>PR剪辑节奏设计、AE动态包装、调色与视觉统一性管理</p>
+                </div>
+                <div class="ability-card">
+                    <div class="ability-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="14" rx="2"></rect>
+                            <path d="M16 3h-6a2 2 0 0 0-2 2v4"></path>
+                            <line x1="2" y1="7" x2="22" y2="7"></line>
+                        </svg>
+                    </div>
+                    <h3>平台运营</h3>
+                    <p>熟悉B站、抖音、视频号等平台算法与内容调性</p>
+                </div>
+            </div>
+
+            <!-- 软件工具 -->
+            <div class="video-content">
+                <h2>软件/设备</h2>
+                    <p>Adobe Premiere Pro、Adobe After Effects、Adobe Photoshop、剪映、相机、稳定器、脚架</p>
+            </div>
+
+            <!-- 个人账号数据 -->
+            <div class="video-content">
+                <h2>个人账号数据</h2>
+                <div class="account-stats">
+                    <div class="stat-item">
+                        <h3>50+</h3>
+                        <p>视频数量</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>42万+</h3>
+                        <p>累计播放量</p>
+                    </div>
+                </div>
             </div>
 
             <!-- 返回按钮 -->

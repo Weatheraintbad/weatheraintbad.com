@@ -25,10 +25,18 @@
             font-size: clamp(2.5rem, 8vw, 4rem);
             font-weight: 700;
             margin-bottom: 1rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--primary-color);
+        }
+
+        /* 浅色模式下标题直接使用强调色 */
+        @media (prefers-color-scheme: light) {
+            .mod-header h1 {
+                color: var(--accent-color) !important;
+            }
+        }
+
+        .light-theme .mod-header h1 {
+            color: var(--accent-color) !important;
         }
 
         .mod-header p {
@@ -41,9 +49,8 @@
         /* 内容区域 */
         .mod-content {
             max-width: 1200px;
-            margin: 0 auto;
-            text-align: center;
-            padding: 4rem 2rem;
+            margin: 0 auto 3rem;
+            padding: 2rem;
             background-color: var(--bg-card);
             border-radius: 15px;
             border: 1px solid var(--border-color);
@@ -51,10 +58,246 @@
             animation: fadeInUp 1s ease-out 0.3s both;
         }
 
+        .mod-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
         .mod-content p {
-            font-size: 1.2rem;
+            font-size: 1rem;
+            color: var(--secondary-color);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 技能迁移表格 */
+        .skills-migration-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .skills-migration {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-primary);
+        }
+
+        .skills-migration th {
+            background-color: var(--bg-secondary);
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .skills-migration td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
             color: var(--secondary-color);
             line-height: 1.6;
+        }
+
+        .skills-migration tr:hover {
+            background-color: var(--bg-card);
+        }
+
+        .skills-migration tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 开发方向卡片 */
+        .development-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+
+        .development-card {
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+        }
+
+        .development-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 140, 0, 0.1);
+        }
+
+        .development-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+
+        .development-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .development-card p {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* 技术栈表格 */
+        .tech-stack-container {
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .tech-stack {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-primary);
+        }
+
+        .tech-stack th {
+            background-color: var(--bg-secondary);
+            color: var(--primary-color);
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .tech-stack td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--secondary-color);
+            line-height: 1.6;
+        }
+
+        .tech-stack tr:hover {
+            background-color: var(--bg-card);
+        }
+
+        .tech-stack tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 社区运营卡片 */
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+
+        .community-card {
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+        }
+
+        .community-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 140, 0, 0.1);
+        }
+
+        .community-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+
+        .community-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .community-card p {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        /* 个人优势 */
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+
+        .advantage-card {
+            background-color: var(--bg-card);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+            opacity: 0;
+            animation: fadeInUp 1s ease-out both;
+        }
+
+        .advantage-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 140, 0, 0.1);
+        }
+
+        .advantage-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+
+        .advantage-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .advantage-card p {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0;
         }
 
         /* 返回按钮 */
@@ -103,7 +346,22 @@
             }
 
             .mod-content {
-                padding: 2rem 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .development-grid,
+            .community-grid,
+            .advantages-grid {
+                grid-template-columns: 1fr;
+                gap: 1.2rem;
+            }
+
+            .skills-migration th,
+            .skills-migration td,
+            .tech-stack th,
+            .tech-stack td {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -114,11 +372,11 @@
         <div class="nav-container">
             <div class="logo">Weatheraintbad.com</div>
             <ul class="nav-menu">
-                <li><a href="#home">首页</a></li>
-                <li><a href="#about">关于</a></li>
-                <li><a href="#skills">能力</a></li>
-                <li><a href="#work">项目</a></li>
-                <li><a href="#contact">联系</a></li>
+                <li><a href="index.html#home">首页</a></li>
+                <li><a href="index.html#about">关于</a></li>
+                <li><a href="index.html#skills">能力</a></li>
+                <li><a href="index.html#work">项目</a></li>
+                <li><a href="index.html#contact">联系</a></li>
                 <li><a href="blog.html">博客</a></li>
             </ul>
             <!-- 主题切换按钮 -->
@@ -146,11 +404,127 @@
         <div class="container">
             <div class="mod-header">
                 <h1>游戏模组开发</h1>
-                <p>《我的世界》模组 | 游戏逻辑设计</p>
+                <p>《我的世界》模组开发 | 游戏逻辑设计</p>
             </div>
 
+            <!-- 专业概述 -->
             <div class="mod-content">
-                <p>暂无内容</p>
+                <h2>专业概述</h2>
+                <p>具备极快的技术学习能力（2天掌握Java项目开发），熟悉游戏底层逻辑架构与玩家社区运营，致力于创作提升游戏体验的实用型模组与独立游戏原型。目前已有6款模组于国内外多平台上线，饱受玩家好评。</p>
+            </div>
+
+            <!-- 能力优势 -->
+            <div class="mod-content">
+                <h2>能力优势</h2>
+                <div class="skills-migration-container">
+                    <table class="skills-migration">
+                        <thead>
+                            <tr>
+                                <th>现有能力</th>
+                                <th>模组开发应用</th>
+                                <th>具体体现</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Java快速开发</td>
+                                <td>Minecraft模组/插件开发</td>
+                                <td>2天速成Java经验可直接上手Forge/Fabric API</td>
+                            </tr>
+                            <tr>
+                                <td>前端交互设计</td>
+                                <td>游戏UI/UX模组设计</td>
+                                <td>将网页交互思维转化为游戏界面优化</td>
+                            </tr>
+                            <tr>
+                                <td>3D建模渲染</td>
+                                <td>自定义模型、材质包制作</td>
+                                <td>Blender技能用于创建游戏内资产</td>
+                            </tr>
+                            <tr>
+                                <td>数据库管理</td>
+                                <td>服务器数据架构、玩家系统</td>
+                                <td>MySQL设计玩家经济、成就系统</td>
+                            </tr>
+                            <tr>
+                                <td>社区运营</td>
+                                <td>模组发布、玩家反馈迭代</td>
+                                <td>视频制作能力用于模组宣发与教程</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 技术栈与学习路径 -->
+            <div class="mod-content">
+                <h2>相关技术栈</h2>
+                <h3>已具备基础</h3>
+                <div style="margin-top: 1rem;">
+                    <p>编程基础：Java、HTML/CSS</p>
+                    <p>工具链：VS Code、IntelliJ IDEA、Git版本控制</p>
+                    <p>视觉资产：Blender建模、PS/AI贴图绘制、Stable Diffusion概念设计</p>
+                    <p>数据处理：MySQL数据库设计</p>
+                </div>
+            </div>
+
+            <!-- 社区与作品运营 -->
+            <div class="mod-content">
+                <h2>社区与作品运营</h2>
+                <h3>内容策略</h3>
+                <div style="margin-top: 1rem;">
+                    <p>开发日志：记录模组开发流程（选题→设计→编程→测试→发布）</p>
+                    <p>社区互动：在GitHub开源模组代码，建立个人品牌</p>
+                </div>
+                <h3>平台规划</h3>
+                <div style="margin-top: 2rem;">
+                    <p>国内：MC百科（作品发布）、GitHub（代码开源）</p>
+                    <p>海外：CurseForge/Modrinth（作品分发）</p>
+                </div>
+            </div>
+
+            <!-- 个人优势总结 -->
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="1 4 1 10 7 10"></polyline>
+                            <polyline points="23 20 23 14 17 14"></polyline>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                        </svg>
+                    </div>
+                    <h3>极致学习速度</h3>
+                    <p>已验证2天掌握Java项目，模组开发技术门槛可快速突破</p>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    </div>
+                    <h3>全链路思维</h3>
+                    <p>不仅能写代码，更能从产品设计角度思考玩家需求</p>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3>视觉资产自制</h3>
+                    <p>Blender+PS+AI能力，无需依赖外部美术资源</p>
+                </div>
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                    </div>
+                    <h3>内容运营闭环</h3>
+                    <p>视频制作+社媒运营能力，解决"做出来没人知道"的痛点</p>
+                </div>
             </div>
 
             <!-- 返回按钮 -->
