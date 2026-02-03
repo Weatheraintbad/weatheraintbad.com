@@ -861,10 +861,10 @@
                 }
 
                 console.log('文档已保存到 Supabase');
-                return { success: true, message: '文档已保存到 Supabase' };
+                return { success: true, message: '文档已保存至服务器' };
             } catch (error) {
                 console.error('保存文档到 Supabase 失败:', error);
-                return { success: false, message: `Supabase 保存失败: ${error.message}` };
+                return { success: false, message: `文档保存失败: ${error.message}` };
             }
         }
 
@@ -903,8 +903,12 @@
                 if (doc) {
                     isShareMode = true;
                     currentDocId = doc.id;
-                    document.getElementById('editor-title').value = doc.title;
-                    document.getElementById('editor').value = doc.content;
+                    const titleInput = document.getElementById('editor-title');
+                    titleInput.value = doc.title;
+                    titleInput.readOnly = true; // 分享模式下标题不可修改
+                    const editor = document.getElementById('editor');
+                    editor.value = doc.content;
+                    editor.readOnly = true; // 分享模式下内容不可修改
                     updatePreview();
 
                     document.getElementById('list-view').style.display = 'none';
@@ -930,29 +934,35 @@
                 e.preventDefault();
             });
 
-            // 禁止选择文本（但允许分享链接输入框选择）
+            // 禁止选择文本（但允许分享链接输入框和编辑器选择）
             document.addEventListener('selectstart', function(e) {
-                if (e.target && e.target.id === 'share-url') {
-                    return; // 允许分享链接输入框选择
+                if (e.target && (e.target.id === 'share-url' || e.target.id === 'editor' || e.target.id === 'editor-title')) {
+                    return; // 允许分享链接输入框、编辑器和标题输入框选择
                 }
                 e.preventDefault();
             });
 
-            // 禁止复制（但允许分享链接复制）
+            // 禁止复制（但允许分享链接、编辑器和标题输入框复制）
             document.addEventListener('copy', function(e) {
-                if (e.target && e.target.id === 'share-url') {
-                    return; // 允许分享链接复制
+                if (e.target && (e.target.id === 'share-url' || e.target.id === 'editor' || e.target.id === 'editor-title')) {
+                    return; // 允许分享链接、编辑器和标题输入框复制
                 }
                 e.preventDefault();
             });
 
-            // 禁止剪切
+            // 禁止剪切（但允许编辑器和标题输入框剪切）
             document.addEventListener('cut', function(e) {
+                if (e.target && (e.target.id === 'editor' || e.target.id === 'editor-title')) {
+                    return; // 允许编辑器和标题输入框剪切
+                }
                 e.preventDefault();
             });
 
-            // 禁止粘贴
+            // 禁止粘贴（但允许编辑器和标题输入框粘贴）
             document.addEventListener('paste', function(e) {
+                if (e.target && (e.target.id === 'editor' || e.target.id === 'editor-title')) {
+                    return; // 允许编辑器和标题输入框粘贴
+                }
                 e.preventDefault();
             });
 
@@ -1043,8 +1053,12 @@
                     // 进入分享模式
                     isShareMode = true;
                     currentDocId = doc.id;
-                    document.getElementById('editor-title').value = doc.title;
-                    document.getElementById('editor').value = doc.content;
+                    const titleInput = document.getElementById('editor-title');
+                    titleInput.value = doc.title;
+                    titleInput.readOnly = true; // 分享模式下标题不可修改
+                    const editor = document.getElementById('editor');
+                    editor.value = doc.content;
+                    editor.readOnly = true; // 分享模式下内容不可修改
                     updatePreview();
 
                     document.getElementById('list-view').style.display = 'none';
