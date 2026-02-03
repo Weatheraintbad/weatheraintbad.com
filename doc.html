@@ -701,17 +701,16 @@
         let documents = [];
         let currentDocId = null;
         // Supabase 配置
-        // 请在 https://supabase.com/ 创建项目并获取以下信息
         const SUPABASE_URL = 'https://wyoofofxviolwdebkpkt.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_TOTiug5k7UCGYLeLib0cUw_Vqm06ZyC';
 
         // 初始化 Supabase 客户端
-        const supabase = SUPABASE_URL && SUPABASE_ANON_KEY ? supabase = {
+        const supabase = {
             url: SUPABASE_URL,
             anonKey: SUPABASE_ANON_KEY,
-            async from(table) {
+            from: function(table) {
                 return {
-                    async select(query = '*') {
+                    select: async function(query = '*') {
                         const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${new URLSearchParams({ select: query })}`, {
                             headers: {
                                 'apikey': SUPABASE_ANON_KEY,
@@ -723,7 +722,7 @@
                         if (!response.ok) throw new Error(`Select failed: ${response.status}`);
                         return { data: await response.json(), error: null };
                     },
-                    async insert(data) {
+                    insert: async function(data) {
                         const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
                             method: 'POST',
                             headers: {
@@ -738,8 +737,8 @@
                         if (!response.ok) throw new Error(`Insert failed: ${response.status}`);
                         return { data: await response.json(), error: null };
                     },
-                    async update(data) {
-                        const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+                    update: async function(data, id) {
+                        const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
                             method: 'PATCH',
                             headers: {
                                 'apikey': SUPABASE_ANON_KEY,
@@ -753,8 +752,15 @@
                         if (!response.ok) throw new Error(`Update failed: ${response.status}`);
                         return { data: await response.json(), error: null };
                     },
-                    async delete() {
-                        const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+                    delete: async function(id = null) {
+                        let url;
+                        if (id) {
+                            url = `${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`;
+                        } else {
+                            // 删除所有文档需要使用特殊的查询参数
+                            url = `${SUPABASE_URL}/rest/v1/${table}?id=neq.0`;
+                        }
+                        const response = await fetch(url, {
                             method: 'DELETE',
                             headers: {
                                 'apikey': SUPABASE_ANON_KEY,
@@ -768,7 +774,7 @@
                     }
                 };
             }
-        } : null;
+        };
 
         // 生成唯一标识符
         function generateSlug() {
@@ -779,100 +785,78 @@
             });
         }
 
-        // 从 GitHub Gist 加载文档
-        async function loadDocumentsFromGist() {
-            if (!GIST_ID) {
-                console.warn('未配置 GitHub Gist ID，使用本地存储');
-                loadDocumentsFromLocalStorage();
+        // 从 Supabase 加载文档
+        async function loadDocuments() {
+            if (!supabase) {
+                console.warn('未配置 Supabase');
+                documents = [];
                 return;
             }
 
             try {
-                const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-                    headers: GITHUB_TOKEN ? {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    } : {}
-                });
+                const { data, error } = await supabase.from('documents').select('*');
 
-                if (!response.ok) {
-                    throw new Error(`Failed to load gist: ${response.status}`);
+                if (error) {
+                    throw new Error(`Failed to load documents: ${error.message}`);
                 }
 
-                const data = await response.json();
-                const file = Object.values(data.files)[0];
-
-                if (file && file.content) {
-                    documents = JSON.parse(file.content);
-                    console.log('从 GitHub Gist 加载了', documents.length, '个文档');
+                if (data && data.length > 0) {
+                    documents = data;
+                    console.log('从 Supabase 加载了', documents.length, '个文档');
                 } else {
-                    console.warn('Gist 中没有文档，初始化空数组');
+                    console.warn('Supabase 中没有文档，初始化空数组');
                     documents = [];
                 }
             } catch (error) {
-                console.error('从 GitHub Gist 加载文档失败:', error);
-                // 失败时回退到本地存储
-                loadDocumentsFromLocalStorage();
+                console.error('从 Supabase 加载文档失败:', error);
+                documents = [];
             }
         }
-
-        // 保存文档到 GitHub Gist
-        async function saveDocumentsToGist() {
-            if (!GIST_ID) {
-                console.warn('未配置 GitHub Gist ID，使用本地存储');
-                saveDocumentsToLocalStorage();
-                return;
+1
+        // 保存文档到 Supabase
+        async function saveDocuments() {
+            if (!supabase) {
+                console.warn('未配置 Supabase');
+                return { success: false, message: '未配置 Supabase' };
             }
 
             try {
-                const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        files: {
-                            'documents.json': {
-                                content: JSON.stringify(documents, null, 2)
-                            }
-                        }
-                    })
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to save gist: ${response.status}`);
+                // 获取当前 Supabase 中的所有文档
+                const { data: existingDocs, error: fetchError } = await supabase.from('documents').select('id');
+                if (fetchError) {
+                    throw new Error(`Failed to fetch existing documents: ${fetchError.message}`);
                 }
 
-                console.log('文档已保存到 GitHub Gist');
+                // 删除不再存在的文档
+                const existingIds = existingDocs.map(doc => doc.id);
+                const currentIds = documents.map(doc => doc.id);
+                const idsToDelete = existingIds.filter(id => !currentIds.includes(id));
+                for (const id of idsToDelete) {
+                    await supabase.from('documents').delete(id);
+                }
+
+                // 插入或更新文档
+                for (const doc of documents) {
+                    const existingDoc = existingDocs.find(d => d.id === doc.id);
+                    if (existingDoc) {
+                        // 更新现有文档
+                        await supabase.from('documents').update({
+                            title: doc.title,
+                            content: doc.content,
+                            updated_at: doc.updated_at
+                        }, doc.id);
+                    } else {
+                        // 插入新文档
+                        await supabase.from('documents').insert(doc);
+                    }
+                }
+
+                console.log('文档已保存到 Supabase');
+                return { success: true, message: '文档已保存到 Supabase' };
             } catch (error) {
-                console.error('保存文档到 GitHub Gist 失败:', error);
-                // 失败时回退到本地存储
-                saveDocumentsToLocalStorage();
+                console.error('保存文档到 Supabase 失败:', error);
+                return { success: false, message: `Supabase 保存失败: ${error.message}` };
             }
-        }
-
-        // 从本地存储加载文档（备用方案）
-        function loadDocumentsFromLocalStorage() {
-            const stored = localStorage.getItem('weatheraintbad_documents');
-            documents = stored ? JSON.parse(stored) : [];
-            console.log('从本地存储加载了', documents.length, '个文档');
-        }
-
-        // 保存文档到本地存储（备用方案）
-        function saveDocumentsToLocalStorage() {
-            localStorage.setItem('weatheraintbad_documents', JSON.stringify(documents));
-        }
-
-        // 统一的加载文档函数
-        function loadDocuments() {
-            loadDocumentsFromGist();
-        }
-
-        // 统一的保存文档函数
-        function saveDocuments() {
-            saveDocumentsToGist();
         }
 
         // 解析 URL 路由（支持哈希路由）
@@ -1072,71 +1056,6 @@
             }
         });
 
-        // 从 Supabase 加载文档（统一接口）
-        async function loadDocuments() {
-            if (!supabase) {
-                console.warn('未配置 Supabase，使用本地存储');
-                const stored = localStorage.getItem('weatheraintbad_documents');
-                documents = stored ? JSON.parse(stored) : [];
-                console.log('从本地存储加载了', documents.length, '个文档');
-                return;
-            }
-
-            try {
-                const { data, error } = await supabase.from('documents').select('*');
-
-                if (error) {
-                    throw new Error(`Failed to load documents: ${error.message}`);
-                }
-
-                if (data && data.length > 0) {
-                    documents = data;
-                    console.log('从 Supabase 加载了', documents.length, '个文档');
-                } else {
-                    console.warn('Supabase 中没有文档，初始化空数组');
-                    documents = [];
-                }
-            } catch (error) {
-                console.error('从 Supabase 加载文档失败:', error);
-                // 失败时回退到本地存储
-                const stored = localStorage.getItem('weatheraintbad_documents');
-                documents = stored ? JSON.parse(stored) : [];
-                console.log('从本地存储加载了', documents.length, '个文档');
-            }
-        }
-
-        // 保存文档到 Supabase（统一接口）
-        async function saveDocuments() {
-            if (!supabase) {
-                console.warn('未配置 Supabase，使用本地存储');
-                localStorage.setItem('weatheraintbad_documents', JSON.stringify(documents));
-                return { success: true, message: '文档已保存到本地存储' };
-            }
-
-            try {
-                // 先删除所有现有文档
-                await supabase.from('documents').delete();
-
-                // 再插入所有文档
-                if (documents.length > 0) {
-                    const { data, error } = await supabase.from('documents').insert(documents);
-
-                    if (error) {
-                        throw new Error(`Failed to save documents: ${error.message}`);
-                    }
-                }
-
-                console.log('文档已保存到 Supabase');
-                // 同时保存到本地存储作为备份
-                localStorage.setItem('weatheraintbad_documents', JSON.stringify(documents));
-                return { success: true, message: '文档已保存到 Supabase' };
-            } catch (error) {
-                console.error('保存文档到 Supabase 失败:', error);
-                // 失败时回退到本地存储
-                localStorage.setItem('weatheraintbad_documents', JSON.stringify(documents));
-                return { success: false, message: `Supabase 保存失败，已保存到本地存储 (${error.message})` };
-            }
-        }
 
         // 渲染文档列表
         function renderDocList() {
@@ -1155,7 +1074,7 @@
                 <div class="doc-item" onclick="openDocument('${doc.id}')">
                     <div class="doc-item-title">${escapeHtml(doc.title)}</div>
                     <div class="doc-item-meta">
-                        <span>${formatDate(doc.updatedAt)}</span>
+                        <span>${formatDate(doc.updated_at)}</span>
                         <span>⏱ ${formatWordCount(doc.content)}</span>
                     </div>
                 </div>
@@ -1186,8 +1105,8 @@
                 title: title,
                 content: '',
                 slug: generateSlug(), // 添加分享标识符
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString()
             };
 
             documents.unshift(newDoc);
@@ -1442,7 +1361,7 @@
 
             doc.title = document.getElementById('editor-title').value.trim() || '未命名文档';
             doc.content = document.getElementById('editor').value;
-            doc.updatedAt = new Date().toISOString();
+            doc.updated_at = new Date().toISOString();
 
             const result = await saveDocuments();
             alert(result.message);
