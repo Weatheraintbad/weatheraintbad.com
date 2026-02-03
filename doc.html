@@ -792,9 +792,14 @@
             }
         };
 
-        // 生成唯一标识符（缩短版）
+        // 生成唯一标识符（8位随机数字和字母组合）
         function generateSlug() {
-            return Math.random().toString(36).substr(2, 10);
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let slug = '';
+            for (let i = 0; i < 8; i++) {
+                slug += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return slug;
         }
 
         // 从 Supabase 加载文档
@@ -855,6 +860,7 @@
                         await supabase.from('documents').update({
                             title: doc.title,
                             content: doc.content,
+                            slug: doc.slug,
                             updated_at: doc.updated_at
                         }, doc.id);
                     } else {
@@ -871,16 +877,22 @@
             }
         }
 
-        // 解析 URL 路由（支持简单路径格式）
+        // 解析 URL 路由（支持简洁的哈希路由格式）
         function parseUrl() {
-            // 首先检查是否有哈希路由（兼容旧格式）
+            // 首先检查简洁格式的哈希路由（新格式）
             const hashPath = window.location.hash.slice(1);
-            const hashMatch = hashPath.match(/^\/doc\/([\w-]+)$/);
-            if (hashMatch) {
-                return { type: 'doc', slug: hashMatch[1] };
+            const simpleHashMatch = hashPath.match(/^([\w-]+)$/);
+            if (simpleHashMatch) {
+                return { type: 'doc', slug: simpleHashMatch[1] };
             }
 
-            // 检查路径路由（新格式）
+            // 兼容旧格式的哈希路由（/doc/abc123）
+            const oldHashMatch = hashPath.match(/^\/doc\/([\w-]+)$/);
+            if (oldHashMatch) {
+                return { type: 'doc', slug: oldHashMatch[1] };
+            }
+
+            // 检查路径路由（/doc/abc123）
             const path = window.location.pathname;
             const pathMatch = path.match(/\/doc\/([\w-]+)$/);
             if (pathMatch) {
@@ -890,7 +902,7 @@
             return { type: 'list' };
         }
 
-        // 生成分享链接（使用简单路径格式）
+        // 生成分享链接（使用简洁的哈希路由格式）
         function generateShareUrl(docId) {
             const doc = documents.find(d => d.id === docId);
             if (!doc) return null;
@@ -901,7 +913,7 @@
                 saveDocuments();
             }
 
-            return window.location.origin + '/doc/' + doc.slug;
+            return window.location.origin + '/doc.html#' + doc.slug;
         }
 
         // 监听路由变化（支持哈希路由和路径路由）
