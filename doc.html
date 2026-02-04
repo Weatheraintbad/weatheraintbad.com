@@ -8,10 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto Serif SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        /* ==================== 全局样式 ==================== */
+
         /* 文档管理页面特定样式 */
         .doc-manager {
             min-height: 100vh;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); /* 页面背景渐变颜色 */
             position: relative;
             overflow: hidden;
         }
@@ -23,7 +25,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(250, 167, 85, 0.05) 0%, transparent 70%);
+            background: radial-gradient(circle at 50% 50%, rgba(250, 167, 85, 0.05) 0%, transparent 70%); /* 背景光晕效果颜色 */
             z-index: 0;
         }
 
@@ -41,7 +43,7 @@
             padding: 0 2rem;
         }
 
-        /* 页面标题 */
+        /* ==================== 页面标题 ==================== */
         .doc-header {
             display: flex;
             justify-content: space-between;
@@ -52,14 +54,16 @@
         .doc-title {
             font-size: 2.5rem;
             font-weight: 700;
-            color: var(--primary-color);
+            color: var(--primary-color); /* 页面标题颜色 */
             font-family: 'Noto Serif SC', 'Times New Roman', serif;
         }
 
+        /* ==================== 按钮样式 ==================== */
+
         /* 新建按钮 */
         .btn-new {
-            background: linear-gradient(135deg, var(--accent-color), #ff9a3c);
-            color: white;
+            background: linear-gradient(135deg, var(--accent-color), #ff9a3c); /* 按钮渐变背景颜色 */
+            color: white; /* 按钮文字颜色 */
             border: none;
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
@@ -67,19 +71,19 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(250, 167, 85, 0.3);
+            box-shadow: 0 4px 15px rgba(250, 167, 85, 0.3); /* 按钮阴影颜色 */
         }
 
         .btn-new:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(250, 167, 85, 0.4);
+            box-shadow: 0 6px 20px rgba(250, 167, 85, 0.4); /* 按钮悬停时阴影颜色 */
         }
 
         .btn-new:active {
             transform: translateY(0);
         }
 
-        /* 文档列表 */
+        /* ==================== 文档列表 ==================== */
         .doc-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -88,10 +92,10 @@
         }
 
         .doc-item {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)); /* 文档卡片背景颜色 */
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1); /* 文档卡片边框颜色 */
             border-radius: 16px;
             padding: 1.5rem;
             transition: all 0.3s ease;
@@ -107,7 +111,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); /* 卡片hover时的光效颜色 */
             transition: left 0.6s;
         }
 
@@ -117,14 +121,14 @@
 
         .doc-item:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            border-color: rgba(250, 167, 85, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); /* 卡片hover时的阴影颜色 */
+            border-color: rgba(250, 167, 85, 0.3); /* 卡片hover时的边框颜色 */
         }
 
         .doc-item-title {
             font-size: 1.2rem;
             font-weight: 600;
-            color: var(--primary-color);
+            color: var(--primary-color); /* 文档标题颜色 */
             margin-bottom: 0.5rem;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -136,11 +140,11 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.8rem;
-            color: var(--secondary-color);
+            color: var(--secondary-color); /* 文档元信息颜色 */
             opacity: 0.7;
         }
 
-        /* 编辑器页面 */
+        /* ==================== 编辑器页面 ==================== */
         .editor-container {
             max-width: 900px;
             margin: 0 auto;
@@ -162,7 +166,7 @@
             width: 100%;
             background: transparent;
             border: none;
-            color: var(--primary-color);
+            color: var(--primary-color); /* 编辑器标题颜色 */
             font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 700;
             font-family: 'Times New Roman', 'Noto Serif SC', Times, serif;
@@ -173,7 +177,7 @@
         }
 
         .editor-title-input::placeholder {
-            color: var(--secondary-color);
+            color: var(--secondary-color); /* 编辑器标题占位符颜色 */
             opacity: 0.5;
         }
 
@@ -188,9 +192,9 @@
         }
 
         .btn-back {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--primary-color);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1); /* 返回按钮背景颜色 */
+            color: var(--primary-color); /* 返回按钮文字颜色 */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* 返回按钮边框颜色 */
             padding: 0.5rem 1rem;
             border-radius: 8px;
             font-size: 0.9rem;
@@ -200,14 +204,14 @@
         }
 
         .btn-back:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.2); /* 返回按钮hover背景颜色 */
         }
 
         /* 删除按钮 */
         .btn-delete {
-            background: rgba(255, 82, 82, 0.1);
-            color: #ff5252;
-            border: 1px solid rgba(255, 82, 82, 0.3);
+            background: rgba(255, 82, 82, 0.1); /* 删除按钮背景颜色 */
+            color: #ff5252; /* 删除按钮文字颜色 */
+            border: 1px solid rgba(255, 82, 82, 0.3); /* 删除按钮边框颜色 */
             padding: 0.5rem 1rem;
             border-radius: 8px;
             font-size: 0.9rem;
@@ -217,15 +221,15 @@
         }
 
         .btn-delete:hover {
-            background: rgba(255, 82, 82, 0.2);
-            border-color: rgba(255, 82, 82, 0.5);
+            background: rgba(255, 82, 82, 0.2); /* 删除按钮hover背景颜色 */
+            border-color: rgba(255, 82, 82, 0.5); /* 删除按钮hover边框颜色 */
         }
 
         /* 分享按钮 */
         .btn-share {
-            background: rgba(76, 175, 80, 0.1);
-            color: #4caf50;
-            border: 1px solid rgba(76, 175, 80, 0.3);
+            background: rgba(76, 175, 80, 0.1); /* 分享按钮背景颜色 */
+            color: #4caf50; /* 分享按钮文字颜色 */
+            border: 1px solid rgba(76, 175, 80, 0.3); /* 分享按钮边框颜色 */
             padding: 0.5rem 1rem;
             border-radius: 8px;
             font-size: 0.9rem;
@@ -235,15 +239,15 @@
         }
 
         .btn-share:hover {
-            background: rgba(76, 175, 80, 0.2);
-            border-color: rgba(76, 175, 80, 0.5);
+            background: rgba(76, 175, 80, 0.2); /* 分享按钮hover背景颜色 */
+            border-color: rgba(76, 175, 80, 0.5); /* 分享按钮hover边框颜色 */
         }
 
         /* 发布按钮 */
         .btn-publish {
-            background: rgba(250, 167, 85, 0.1);
-            color: var(--accent-color);
-            border: 1px solid rgba(250, 167, 85, 0.3);
+            background: rgba(250, 167, 85, 0.1); /* 发布按钮背景颜色 */
+            color: var(--accent-color); /* 发布按钮文字颜色 */
+            border: 1px solid rgba(250, 167, 85, 0.3); /* 发布按钮边框颜色 */
             padding: 0.5rem 1rem;
             border-radius: 8px;
             font-size: 0.9rem;
@@ -253,26 +257,26 @@
         }
 
         .btn-publish:hover {
-            background: rgba(250, 167, 85, 0.2);
-            border-color: rgba(250, 167, 85, 0.5);
+            background: rgba(250, 167, 85, 0.2); /* 发布按钮hover背景颜色 */
+            border-color: rgba(250, 167, 85, 0.5); /* 发布按钮hover边框颜色 */
         }
 
         /* 已发布状态的按钮 */
         .btn-publish.published {
-            background: rgba(255, 82, 82, 0.1);
-            color: #ff5252;
-            border: 1px solid rgba(255, 82, 82, 0.3);
+            background: rgba(255, 82, 82, 0.1); /* 已发布状态按钮背景颜色 */
+            color: #ff5252; /* 已发布状态按钮文字颜色 */
+            border: 1px solid rgba(255, 82, 82, 0.3); /* 已发布状态按钮边框颜色 */
         }
 
         .btn-publish.published:hover {
-            background: rgba(255, 82, 82, 0.2);
-            border-color: rgba(255, 82, 82, 0.5);
+            background: rgba(255, 82, 82, 0.2); /* 已发布状态按钮hover背景颜色 */
+            border-color: rgba(255, 82, 82, 0.5); /* 已发布状态按钮hover边框颜色 */
         }
 
         /* 保存按钮 */
         .btn-save {
-            background: linear-gradient(135deg, var(--accent-color), #ff9a3c);
-            color: white;
+            background: linear-gradient(135deg, var(--accent-color), #ff9a3c); /* 保存按钮渐变背景颜色 */
+            color: white; /* 保存按钮文字颜色 */
             border: none;
             padding: 0.5rem 1rem;
             border-radius: 8px;
@@ -280,12 +284,12 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(250, 167, 85, 0.3);
+            box-shadow: 0 4px 15px rgba(250, 167, 85, 0.3); /* 保存按钮阴影颜色 */
         }
 
         .btn-save:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(250, 167, 85, 0.4);
+            box-shadow: 0 6px 20px rgba(250, 167, 85, 0.4); /* 保存按钮hover阴影颜色 */
         }
 
         /* 模式切换按钮容器 */
@@ -298,7 +302,7 @@
         /* 模式切换按钮 */
         .mode-btn {
             background: transparent;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-color); /* 模式按钮边框颜色 */
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -307,18 +311,18 @@
             justify-content: center;
             cursor: pointer;
             transition: var(--transition);
-            color: var(--secondary-color);
+            color: var(--secondary-color); /* 模式按钮默认颜色 */
             padding: 0;
         }
 
         .mode-btn:hover {
-            color: var(--accent-color);
-            border-color: var(--accent-color);
+            color: var(--accent-color); /* 模式按钮hover颜色 */
+            border-color: var(--accent-color); /* 模式按钮hover边框颜色 */
         }
 
         .mode-btn.active {
-            color: var(--accent-color);
-            border-color: var(--accent-color);
+            color: var(--accent-color); /* 模式按钮激活状态颜色 */
+            border-color: var(--accent-color); /* 模式按钮激活状态边框颜色 */
         }
 
         .mode-btn svg {
@@ -329,10 +333,10 @@
             transform: scale(1.1);
         }
 
-        /* 编辑器区域 */
+        /* ==================== 编辑器区域 ==================== */
         .editor-area {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1); /* 编辑器背景颜色 */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* 编辑器边框颜色 */
             border-radius: 12px;
             padding: 1.5rem;
             min-height: 500px;
@@ -344,7 +348,7 @@
             min-height: 500px;
             background: transparent;
             border: none;
-            color: var(--primary-color);
+            color: var(--primary-color); /* 编辑器文字颜色 */
             font-size: 1rem;
             line-height: 1.6;
             font-family: 'Inter', sans-serif;
@@ -361,31 +365,32 @@
             height: auto;
             border-radius: 8px;
             margin: 1rem 0;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* 图片阴影颜色 */
         }
 
         /* 拖拽区域样式 */
         .editor.dragover {
-            background: rgba(250, 167, 85, 0.1);
-            border-color: var(--accent-color);
+            background: rgba(250, 167, 85, 0.1); /* 拖拽时背景颜色 */
+            border-color: var(--accent-color); /* 拖拽时边框颜色 */
             transition: all 0.3s ease;
         }
 
-        /* 预览区域 */
+        /* ==================== 预览区域 ==================== */
         .preview {
-            color: var(--primary-color);
+            color: var(--primary-color); /* 预览区域文字颜色 */
             line-height: 1.6;
         }
 
+        /* 标题样式 */
         .preview h1, .preview h2, .preview h3 {
-            color: var(--accent-color);
+            color: var(--primary-color); /* 标题颜色 */
             margin-top: 1.5rem;
             margin-bottom: 1rem;
         }
 
         .preview h1 {
             font-size: 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* H1下划线颜色 */
             padding-bottom: 0.5rem;
         }
 
@@ -406,8 +411,9 @@
             padding-left: 2rem;
         }
 
+        /* 代码块样式 */
         .preview code {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.3); /* 内联代码背景颜色 */
             padding: 0.2rem 0.4rem;
             border-radius: 4px;
             font-family: monospace;
@@ -415,7 +421,7 @@
         }
 
         .preview pre {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.3); /* 代码块背景颜色 */
             padding: 1rem;
             border-radius: 8px;
             overflow-x: auto;
@@ -427,14 +433,16 @@
             padding: 0;
         }
 
+        /* 引用样式 */
         .preview blockquote {
-            border-left: 3px solid var(--accent-color);
+            border-left: 3px solid var(--accent-color); /* 引用边框颜色 */
             padding-left: 1rem;
             margin-left: 0;
             margin-bottom: 1rem;
             opacity: 0.8;
         }
 
+        /* 表格样式 */
         .preview table {
             width: 100%;
             border-collapse: collapse;
@@ -442,13 +450,26 @@
         }
 
         .preview th, .preview td {
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1); /* 表格边框颜色 */
             padding: 0.5rem;
             text-align: left;
         }
 
         .preview th {
-            background: rgba(250, 167, 85, 0.1);
+            background: rgba(250, 167, 85, 0.1); /* 表格表头背景颜色 */
+        }
+
+        /* 链接样式 */
+        .preview a {
+            color: #6495ed; /* 淡蓝色链接颜色 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .preview a:hover {
+            color: #4169e1; /* 链接hover时颜色加深 */
+            border-bottom-color: #6495ed; /* 链接hover时显示下划线 */
         }
 
         /* 底部按钮区域 */
@@ -537,82 +558,88 @@
             box-sizing: border-box;
         }
 
+        /* ==================== 浅色模式样式 ==================== */
+
         /* 浅色模式下的各种圆角矩形框样式 */
         @media (prefers-color-scheme: light) {
             .modal-input {
-                background: #e0e0e0; /* 淡灰色背景 */
-                border: 1px solid #d0d0d0;
-                color: #000000;
+                background: #e0e0e0; /* 模态框输入框背景颜色 */
+                border: 1px solid #d0d0d0; /* 模态框输入框边框颜色 */
+                color: #000000; /* 模态框输入框文字颜色 */
             }
 
             .doc-item {
-                background: #F2F2F2; /* 淡灰色背景 */
-                border: 1px solid #d0d0d0;
+                background: #F2F2F2; /* 文档卡片背景颜色 */
+                border: 1px solid #d0d0d0; /* 文档卡片边框颜色 */
             }
 
             .editor-area {
-                background: #F2F2F2; /* 淡灰色背景 */
-                border: 1px solid #d0d0d0;
+                background: #F2F2F2; /* 编辑器背景颜色 */
+                border: 1px solid #d0d0d0; /* 编辑器边框颜色 */
             }
 
             .modal-content {
-                background: #f0f0f0 !important; /* 确保模态框内容背景明显 */
+                background: #f0f0f0 !important; /* 模态框内容背景颜色 */
             }
         }
 
         .light-theme .modal-input {
-            background: #F2F2F2 !important; /* 淡灰色背景 */
-            border: 1px solid #d0d0d0 !important;
-            color: #000000 !important;
+            background: #F2F2F2 !important; /* 模态框输入框背景颜色 */
+            border: 1px solid #d0d0d0 !important; /* 模态框输入框边框颜色 */
+            color: #000000 !important; /* 模态框输入框文字颜色 */
         }
 
         .light-theme .doc-item {
-            background: #F2F2F2 !important; /* 淡灰色背景 */
-            border: 1px solid #d0d0d0 !important;
+            background: #F2F2F2 !important; /* 文档卡片背景颜色 */
+            border: 1px solid #d0d0d0 !important; /* 文档卡片边框颜色 */
         }
 
         .light-theme .editor-area {
-            background: #F2F2F2 !important; /* 淡灰色背景 */
-            border: 1px solid #d0d0d0 !important;
+            background: #F2F2F2 !important; /* 编辑器背景颜色 */
+            border: 1px solid #d0d0d0 !important; /* 编辑器边框颜色 */
         }
 
         .light-theme .modal-content {
-            background: #f0f0f0 !important; /* 确保模态框内容背景明显 */
+            background: #f0f0f0 !important; /* 模态框内容背景颜色 */
         }
+
+        /* ==================== 深色模式样式 ==================== */
 
         /* 深色模式下的各种圆角矩形框样式 */
         .dark-theme .modal-input {
-            background: rgba(255, 255, 255, 0.1) !important; /* 深色背景 */
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            color: var(--primary-color) !important;
+            background: rgba(255, 255, 255, 0.1) !important; /* 模态框输入框背景颜色 */
+            border: 1px solid rgba(255, 255, 255, 0.2) !important; /* 模态框输入框边框颜色 */
+            color: var(--primary-color) !important; /* 模态框输入框文字颜色 */
         }
 
         .dark-theme .doc-item {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)) !important; /* 深色背景 */
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)) !important; /* 文档卡片背景颜色 */
+            border: 1px solid rgba(255, 255, 255, 0.1) !important; /* 文档卡片边框颜色 */
         }
 
         .dark-theme .editor-area {
-            background: rgba(255, 255, 255, 0.1) !important; /* 深色背景 */
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            background: rgba(255, 255, 255, 0.1) !important; /* 编辑器背景颜色 */
+            border: 1px solid rgba(255, 255, 255, 0.2) !important; /* 编辑器边框颜色 */
         }
 
         .dark-theme .modal-content {
-            background: var(--bg-card) !important; /* 深色背景 */
+            background: var(--bg-card) !important; /* 模态框内容背景颜色 */
         }
+
+        /* ==================== 浅色模式下的预览区域样式 ==================== */
 
         /* 浅色模式下的代码块和文字高亮样式 */
         @media (prefers-color-scheme: light) {
             .preview code {
-                background: #ffffff; /* 代码块背景 */
-                border: 1px solid #ffffff; /* 白色边框 */
-                color: #000000;
+                background: #e8e8e8; /* 内联代码背景颜色 - 稍深的浅灰色 */
+                border: 1px solid #d0d0d0; /* 内联代码边框颜色 - 浅灰色 */
+                color: #000000; /* 内联代码文字颜色 */
             }
 
             .preview pre {
-                background: #ffffff; /* 代码块背景 */
-                border: 1px solid #ffffff; /* 白色边框 */
-                color: #000000;
+                background: #e8e8e8; /* 代码块背景颜色 - 稍深的浅灰色 */
+                border: 1px solid #d0d0d0; /* 代码块边框颜色 - 浅灰色 */
+                color: #000000; /* 代码块文字颜色 */
             }
 
             .preview pre code {
@@ -621,28 +648,28 @@
             }
 
             .preview blockquote {
-                border-left: 3px solid #ffffff; /* 白色引用边框 */
+                border-left: 3px solid var(--accent-color); /* 引用边框颜色 - 强调色（橙色） */
             }
 
             .preview th, .preview td {
-                border: 1px solid #ffffff; /* 白色表格边框 */
+                border: 1px solid #d0d0d0; /* 表格边框颜色 - 浅灰色 */
             }
 
             .preview h1 {
-                border-bottom: 1px solid #ffffff; /* 白色标题边框 */
+                border-bottom: 1px solid #d0d0d0; /* H1下划线颜色 - 浅灰色 */
             }
         }
 
         .light-theme .preview code {
-            background: #ffffff !important; /* 代码块背景 */
-            border: 1px solid #ffffff !important; /* 白色边框 */
-            color: #000000 !important;
+            background: #e8e8e8 !important; /* 内联代码背景颜色 - 稍深的浅灰色 */
+            border: 1px solid #d0d0d0 !important; /* 内联代码边框颜色 - 浅灰色 */
+            color: #000000 !important; /* 内联代码文字颜色 */
         }
 
         .light-theme .preview pre {
-            background: #ffffff !important; /* 代码块背景 */
-            border: 1px solid #ffffff !important; /* 白色边框 */
-            color: #000000 !important;
+            background: #e8e8e8 !important; /* 代码块背景颜色 - 稍深的浅灰色 */
+            border: 1px solid #d0d0d0 !important; /* 代码块边框颜色 - 浅灰色 */
+            color: #000000 !important; /* 代码块文字颜色 */
         }
 
         .light-theme .preview pre code {
@@ -651,15 +678,55 @@
         }
 
         .light-theme .preview blockquote {
-            border-left: 3px solid #ffffff !important; /* 白色引用边框 */
+            border-left: 3px solid var(--accent-color) !important; /* 引用边框颜色 - 强调色（橙色） */
         }
 
         .light-theme .preview th, .light-theme .preview td {
-            border: 1px solid #ffffff !important; /* 白色表格边框 */
+            border: 1px solid #d0d0d0 !important; /* 表格边框颜色 - 浅灰色 */
         }
 
         .light-theme .preview h1 {
-            border-bottom: 1px solid #ffffff !important; /* 白色标题边框 */
+            border-bottom: 1px solid #d0d0d0 !important; /* H1下划线颜色 - 浅灰色 */
+        }
+
+        /* 浅色模式下的链接样式 */
+        @media (prefers-color-scheme: light) {
+            .preview a {
+                color: #6495ed !important; /* 淡蓝色链接颜色 */
+                text-decoration: none;
+                border-bottom: 1px solid transparent;
+                transition: all 0.3s ease;
+            }
+
+            .preview a:hover {
+                color: #4169e1 !important; /* 链接hover时颜色加深 */
+                border-bottom-color: #6495ed !important; /* 链接hover时显示下划线 */
+            }
+        }
+
+        .light-theme .preview a {
+            color: #6495ed !important; /* 淡蓝色链接颜色 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .light-theme .preview a:hover {
+            color: #4169e1 !important; /* 链接hover时颜色加深 */
+            border-bottom-color: #6495ed !important; /* 链接hover时显示下划线 */
+        }
+
+        /* 深色模式下的链接样式 */
+        .dark-theme .preview a {
+            color: #6495ed !important; /* 淡蓝色链接颜色 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .dark-theme .preview a:hover {
+            color: #4169e1 !important; /* 链接hover时颜色加深 */
+            border-bottom-color: #6495ed !important; /* 链接hover时显示下划线 */
         }
 
         .modal-input::placeholder {
