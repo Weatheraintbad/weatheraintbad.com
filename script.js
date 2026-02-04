@@ -1,7 +1,7 @@
 // 导航栏滚动效果 - 支持深色/浅色主题
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
-    const isLightTheme = window.matchMedia('(prefers-color-scheme: light)').matches;
+    const isLightTheme = document.documentElement.classList.contains('light-theme');
 
     if (window.scrollY > 100) {
         navbar.style.backgroundColor = isLightTheme ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.95)';
