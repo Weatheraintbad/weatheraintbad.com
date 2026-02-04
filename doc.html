@@ -580,6 +580,27 @@
             background: #f0f0f0 !important; /* 确保模态框内容背景明显 */
         }
 
+        /* 深色模式下的各种圆角矩形框样式 */
+        .dark-theme .modal-input {
+            background: rgba(255, 255, 255, 0.1) !important; /* 深色背景 */
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: var(--primary-color) !important;
+        }
+
+        .dark-theme .doc-item {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)) !important; /* 深色背景 */
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .dark-theme .editor-area {
+            background: rgba(255, 255, 255, 0.1) !important; /* 深色背景 */
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .dark-theme .modal-content {
+            background: var(--bg-card) !important; /* 深色背景 */
+        }
+
         /* 浅色模式下的代码块和文字高亮样式 */
         @media (prefers-color-scheme: light) {
             .preview code {

@@ -1,16 +1,44 @@
 // 导航栏滚动效果 - 支持深色/浅色主题
-window.addEventListener('scroll', () => {
+function updateNavbarStyle() {
     const navbar = document.querySelector('.navbar');
     const isLightTheme = document.documentElement.classList.contains('light-theme');
+    const isDarkTheme = document.documentElement.classList.contains('dark-theme');
 
     if (window.scrollY > 100) {
-        navbar.style.backgroundColor = isLightTheme ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.95)';
-        navbar.style.boxShadow = isLightTheme ? '0 5px 30px rgba(0, 0, 0, 0.1)' : '0 5px 30px rgba(0, 0, 0, 0.5)';
+        if (isLightTheme) {
+            navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+            navbar.style.boxShadow = '0 5px 30px rgba(0, 0, 0, 0.1)';
+        } else if (isDarkTheme) {
+            navbar.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+            navbar.style.boxShadow = '0 5px 30px rgba(0, 0, 0, 0.5)';
+        } else {
+            // 跟随系统设置
+            const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+            navbar.style.backgroundColor = prefersLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.95)';
+            navbar.style.boxShadow = prefersLight ? '0 5px 30px rgba(0, 0, 0, 0.1)' : '0 5px 30px rgba(0, 0, 0, 0.5)';
+        }
     } else {
-        navbar.style.backgroundColor = isLightTheme ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)';
-        navbar.style.boxShadow = 'none';
+        if (isLightTheme) {
+            navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+            navbar.style.boxShadow = 'none';
+        } else if (isDarkTheme) {
+            navbar.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            navbar.style.boxShadow = 'none';
+        } else {
+            // 跟随系统设置
+            const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+            navbar.style.backgroundColor = prefersLight ? 'rgba(255, 255, 255, 0.9)' : 'rgba(0, 0, 0, 0.8)';
+            navbar.style.boxShadow = 'none';
+        }
     }
-});
+}
+
+window.addEventListener('scroll', updateNavbarStyle);
+
+// 主题切换时同步更新导航栏样式
+function syncNavbarWithTheme() {
+    updateNavbarStyle();
+}
 
 // 滚动时的动画 - 双向响应
 const fadeInOnScroll = () => {
@@ -137,14 +165,18 @@ function initThemeToggle() {
     // 初始化主题
     if (savedTheme === 'light') {
         document.documentElement.classList.add('light-theme');
+        document.documentElement.classList.remove('dark-theme');
     } else if (savedTheme === 'dark') {
         document.documentElement.classList.remove('light-theme');
+        document.documentElement.classList.add('dark-theme');
     } else {
         // 跟随系统设置
         if (prefersLight) {
             document.documentElement.classList.add('light-theme');
+            document.documentElement.classList.remove('dark-theme');
         } else {
             document.documentElement.classList.remove('light-theme');
+            document.documentElement.classList.remove('dark-theme');
         }
     }
 
@@ -153,11 +185,15 @@ function initThemeToggle() {
         const isLight = document.documentElement.classList.contains('light-theme');
         if (isLight) {
             document.documentElement.classList.remove('light-theme');
+            document.documentElement.classList.add('dark-theme');
             localStorage.setItem('theme', 'dark');
         } else {
             document.documentElement.classList.add('light-theme');
+            document.documentElement.classList.remove('dark-theme');
             localStorage.setItem('theme', 'light');
         }
+        // 同步更新导航栏样式
+        syncNavbarWithTheme();
     });
 
     // 监听系统颜色方案变化
@@ -166,8 +202,10 @@ function initThemeToggle() {
         if (!localStorage.getItem('theme')) {
             if (e.matches) {
                 document.documentElement.classList.add('light-theme');
+                document.documentElement.classList.remove('dark-theme');
             } else {
                 document.documentElement.classList.remove('light-theme');
+                document.documentElement.classList.remove('dark-theme');
             }
         }
     });
@@ -179,6 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fadeInOnScroll();
     addImageErrorHandlers();
     initThemeToggle(); // 初始化主题切换
+    updateNavbarStyle(); // 初始化导航栏样式
 });
 
 // 滚动时触发动画

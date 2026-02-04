@@ -198,6 +198,85 @@
     --border-color: #e0e0e0 !important;          /* 边框颜色 - 浅灰色 */
 }
 
+/* 强制深色主题（设备浅色模式下点击按钮切换到此） */
+.dark-theme {
+    --primary-color: #ffffff !important;
+    --secondary-color: #888888 !important;
+    --accent-color: #faa755 !important;
+    --bg-primary: #000000 !important;
+    --bg-secondary: #0a0a0a !important;
+    --bg-card: #1a1a1a !important;
+    --border-color: #2a2a2a !important;
+}
+
+/* 深色主题导航栏调整 */
+.dark-theme .navbar {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.dark-theme .navbar.scrolled {
+    background-color: rgba(0, 0, 0, 0.95) !important;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark-theme .nav-menu a {
+    color: var(--secondary-color) !important;
+}
+
+.dark-theme .nav-menu a:hover {
+    color: var(--accent-color) !important;
+}
+
+/* 深色模式文字渐变 */
+.dark-theme .hero-title .title-line:nth-child(2) {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+.dark-theme .stat-item h3 {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* 深色模式二维码图片切换 */
+.dark-theme .qr-placeholder img[src*="qrcode-WeChat-black.png"] {
+    content: url('images/qrcode-WeChat-clean.png');
+}
+
+.dark-theme .floating-element {
+    background: radial-gradient(circle, rgba(255, 140, 0, 0.1) 0%, transparent 70%) !important;
+}
+
+.dark-theme .hero-decoration div {
+    background-color: rgba(255, 140, 0, 0.1) !important;
+}
+
+.dark-theme .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(250, 167, 85, 0.03) 0%, transparent 70%) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    z-index: 0 !important;
+}
+
+.dark-theme .loader-overlay {
+    background: rgba(0, 0, 0, 0.9) !important;
+}
+
+.dark-theme .loader-decoration .floating-element {
+    background: radial-gradient(circle, rgba(255, 140, 0, 0.2) 0%, transparent 70%) !important;
+}
+
 /* 浅色模式导航栏调整 */
 .light-theme .navbar {
     background-color: #ffffff !important; /* 纯白色背景 */
@@ -539,6 +618,85 @@ body {
     --bg-secondary: #f8f8f8 !important;          /* 次要背景色 - 浅灰色 */
     --bg-card: #f0f0f0 !important;               /* 卡片背景色 - 稍深的浅灰色 */
     --border-color: #e0e0e0 !important;          /* 边框颜色 - 浅灰色 */
+}
+
+/* 强制深色主题（设备浅色模式下点击按钮切换到此） */
+.dark-theme {
+    --primary-color: #ffffff !important;
+    --secondary-color: #888888 !important;
+    --accent-color: #faa755 !important;
+    --bg-primary: #000000 !important;
+    --bg-secondary: #0a0a0a !important;
+    --bg-card: #1a1a1a !important;
+    --border-color: #2a2a2a !important;
+}
+
+/* 深色主题导航栏调整 */
+.dark-theme .navbar {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.dark-theme .navbar.scrolled {
+    background-color: rgba(0, 0, 0, 0.95) !important;
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark-theme .nav-menu a {
+    color: var(--secondary-color) !important;
+}
+
+.dark-theme .nav-menu a:hover {
+    color: var(--accent-color) !important;
+}
+
+/* 深色模式文字渐变 */
+.dark-theme .hero-title .title-line:nth-child(2) {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+.dark-theme .stat-item h3 {
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* 深色模式二维码图片切换 */
+.dark-theme .qr-placeholder img[src*="qrcode-WeChat-black.png"] {
+    content: url('images/qrcode-WeChat-clean.png');
+}
+
+.dark-theme .floating-element {
+    background: radial-gradient(circle, rgba(255, 140, 0, 0.1) 0%, transparent 70%) !important;
+}
+
+.dark-theme .hero-decoration div {
+    background-color: rgba(255, 140, 0, 0.1) !important;
+}
+
+.dark-theme .hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 50%, rgba(250, 167, 85, 0.03) 0%, transparent 70%) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    z-index: 0 !important;
+}
+
+.dark-theme .loader-overlay {
+    background: rgba(0, 0, 0, 0.9) !important;
+}
+
+.dark-theme .loader-decoration .floating-element {
+    background: radial-gradient(circle, rgba(255, 140, 0, 0.2) 0%, transparent 70%) !important;
 }
 
 /* 浅色模式导航栏调整 */
