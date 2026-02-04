@@ -417,11 +417,16 @@
 
             emptyState.style.display = 'none';
 
-            listContainer.innerHTML = documents.map(doc => {
+            // 按照创建时间由新到旧排序
+            const sortedDocuments = [...documents].sort((a, b) =>
+                new Date(b.created_at) - new Date(a.created_at)
+            );
+
+            listContainer.innerHTML = sortedDocuments.map(doc => {
                 // 生成文章摘要
                 const excerpt = getExcerpt(doc.content);
-                // 格式化发布日期
-                const formattedDate = formatDate(doc.updated_at);
+                // 格式化发布日期（使用创建时间）
+                const formattedDate = formatDate(doc.created_at);
                 // 计算阅读时间
                 const readTime = calculateReadTime(doc.content);
 
@@ -431,8 +436,8 @@
                             <div class="blog-post-title">${escapeHtml(doc.title)}</div>
                         </div>
                         <div class="blog-post-meta">
-                            <span>📅 ${formattedDate}</span>
-                            <span>⏱ ${readTime}分钟阅读</span>
+                            <span>发布于: ${formattedDate}</span>
+                            <span>阅读耗时: ${readTime}分钟</span>
                         </div>
                         <div class="blog-post-excerpt">${excerpt}</div>
                         <a href="doc.html#${doc.slug}" class="blog-post-link">
@@ -472,7 +477,7 @@
         // 计算阅读时间
         function calculateReadTime(content) {
             const words = content.trim().split(/\s+/).filter(word => word.length > 0).length;
-            return Math.ceil(words / 300); // 假设每分钟阅读300字
+            return Math.ceil(words / 80);
         }
 
         // 工具函数
