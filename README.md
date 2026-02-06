@@ -1,228 +1,211 @@
-## 项目概述
+> Weatheraintbad.com 是一个集个人作品集展示、文档管理与分享系统和数据可视化于一体的综合性个人网站。采用现代化设计理念，提供响应式布局、主题切换和丰富的动画效果。
 
-Weatheraintbad.com采用现代化的设计风格，支持深色/浅色主题切换，响应式布局适配各种设备。并于文档管理系统集成了现代数据库技术，实现了完整的内容管理功能。
+# 一、产品概览
 
-## 技术架构
+- **产品定位**：个人作品集+数据可视化平台+文档管理/分享系统
+- **解决问题**：提供一个统一的平台展示个人作品、可视化数据、管理和分享文档
 
-### 前后端技术栈
+# 二、核心功能
 
-- **HTML5**: 语义化页面结构
-- **CSS3**: 现代样式和动画效果
-- **JavaScript ES6+**: 交互逻辑和数据处理
-- **Google Fonts**: 字体资源（Inter、Noto Serif SC）
-- **SVG**: 矢量图标和装饰元素
-- **Supabase**: 后端数据库和认证服务
-- **Node.js**: 后端服务器环境
-- **Express**: 后端路由和中间件
-- **PostgreSQL**: 数据库管理系统
-- **JWT**: 基于 JSON Web Token 的用户认证
-- **CORS**: 跨域资源共享配置
+### 2.1 用户角色
 
-### 核心特性
+| 角色 | 登录方式 | 核心权限 |
+|------|----------|----------|
+| 访客 | 无需登录 | 浏览所有公开内容、查看作品、阅读文档 |
+| 管理员 | 密码验证 | 编辑文档、管理内容、配置系统 |
 
-#### 1. 响应式设计
+### 2.2 功能模块
 
-网站采用响应式布局，使用 CSS Grid 和 Flexbox 实现：
+Weatheraintbad.com 包含以下主要功能模块：
 
-```css
-/* 技能网格布局 */
-.skills-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
-}
+#### 2.2.1 首页 - 个人作品集展示
 
-/* 作品网格布局 */
-.work-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
+<img width="2198" height="1436" alt="07761d5e-cbb1-47c0-ac67-0392f8adac4c" src="https://github.com/user-attachments/assets/adc966a4-ee7a-4269-8531-00b3cf1cc0f1" />
+
+**功能描述**：展示个人信息、技能、作品和联系信息的首页。
+
+**详细功能**：
+- 个人介绍：昵称、头像等描述
+- 能力展示：技能分类和标签
+- 项目展示：网格布局展示各类作品
+- 联系信息：社交平台链接、邮箱、微信二维码
+- 响应式设计：适配不同屏幕尺寸
+- 主题切换：支持深色/浅色主题
+- 滚动动画：滚动触发的淡入和缩放效果
+- 导航栏：固定导航栏，滚动时样式变化
+
+#### 2.2.2 文档管理系统
+
+<img width="1131" height="739" alt="image" src="https://github.com/user-attachments/assets/8cf79dd0-a64b-49fc-834f-939a08840edb" />
+
+<img width="2251" height="1469" alt="498e9c8e2ad26f52a34cc75d52e56ce5" src="https://github.com/user-attachments/assets/8e8da138-229c-4ea4-bdb9-890ad3e483af" />
+
+<img width="966" height="729" alt="image" src="https://github.com/user-attachments/assets/5e9663a0-2c86-42e9-af84-3bd1984792eb" />
+
+**功能描述**：完整的文档管理和编辑系统，支持Markdown格式和Supabase存储。
+
+**详细功能**：
+- 文档列表：分页展示所有文档
+- 文档编辑：Markdown编辑器，支持实时预览
+- 文档预览：点击右上角按钮切换渲染Markdown内容
+- 文档分享：生成分享链接，采用随机8位唯一标识符
+- 密码保护：修改内容需密码验证
+- 离线存储：本地存储文档副本
+- 数据库操作：Supabase后端存储和管理
+
+#### 2.2.3 项目展示页面
+
+<img width="1117" height="741" alt="image" src="https://github.com/user-attachments/assets/1ed35db1-78c3-4904-b2f7-1c8f9022b33c" />
+
+**功能描述**：展示各类项目的页面，点击后可跳转详情页。
+
+#### 2.2.4 数据看板
+
+<img width="1940" height="1282" alt="f447c1662e1fe89b12c9ab596545dfa6" src="https://github.com/user-attachments/assets/b626688b-4705-4fff-ad80-d2dbb2ac80e6" />
+
+**功能描述**：数据可视化和分析页面。
+
+**详细功能**：
+- 时间信息：日期、时间显示
+- IP信息：实时获取IP地址
+- 数据统计：模组下载量统计
+- 实时更新：数据实时刷新
+- 响应式图表：适配不同屏幕尺寸
+
+#### 2.2.5 系统功能
+
+**功能描述**：系统级功能和安全机制。
+
+**详细功能**：
+- 主题系统：深色/浅色/跟随系统主题
+- 响应式布局：适配移动端、平板、桌面端
+- 动画效果：页面加载、滚动、交互动画
+- 安全机制：页面访问密码、文档编辑密码加密储存
+- 反调试：防止代码调试和篡改
+
+# 三、用户界面设计
+
+### 3.1 设计风格
+
+- **主色调**：橙色 (#faa755)
+- **辅助色**：黑色、白色、灰色系
+- **设计语言**：现代化、简约、渐变效果
+- **动画风格**：流畅的过渡和悬停效果
+- **字体**：Inter（英文）、Noto Serif SC（中文）
+
+### 3.2 响应式设计
+
+| 设备类型 | 屏幕尺寸 | 布局特点 |
+|----------|----------|----------|
+| 移动端 | ≤768px | 单列布局，优化触摸交互 |
+| 平板 | 768px-1024px | 双列布局，平衡内容密度 |
+| 桌面端 | ≥1024px | 多列布局，最大化内容展示 |
+
+### 3.3 主要页面设计
+
+#### 3.3.1 首页设计
+
+- **顶部导航**：固定导航栏，包含logo和菜单
+- **Hero区域**：大标题、副标题、CTA按钮
+- **技能展示**：技能标签和分类
+- **作品展示**：网格布局的作品卡片
+- **联系区域**：社交链接和联系信息
+
+#### 3.3.2 文档管理系统设计
+
+- **主内容区**：文档列表和搜索
+- **编辑器**：Markdown编辑器和预览
+- **工具栏**：保存、分享、导出等功能
+
+# 四、技术架构
+
+### 4.1 前端技术栈
+
+- **HTML5**：语义化页面结构
+- **CSS3**：现代样式和动画
+- **JavaScript ES6+**：交互逻辑
+- **Google Fonts**：字体资源
+- **CSS Grid & Flexbox**：响应式布局
+- **CSS Variables**：主题系统
+
+### 4.2 后端技术栈
+
+- **Supabase**：数据库和认证服务
+- **PostgreSQL**：关系型数据库
+- **JWT**：用户认证
+- **CORS**：跨域资源共享
+
+### 4.3 存储方案
+
+- **图片存储**：GitHub仓库和CDN
+- **文档存储**：Supabase数据库
+- **配置存储**：本地存储和环境变量
+
+# 五、数据结构
+
+### 5.1 文档数据结构
+
+```json
+{
+  "id": "uuid",
+  "title": "文档标题",
+  "content": "Markdown内容",
+  "created_at": "创建时间",
+  "updated_at": "更新时间",
+  "published": "是否公开",
 }
 ```
 
-#### 2. 主题系统
+### 5.2 作品数据结构
 
-支持自动系统主题检测和手动主题切换：
-
-```css
-/* 深色主题配色 */
-:root {
-    --primary-color: #ffffff;
-    --secondary-color: #888888;
-    --accent-color: #faa755;
-    --bg-primary: #000000;
-    --bg-secondary: #0a0a0a;
-    --bg-card: #1a1a1a;
-    --border-color: #2a2a2a;
-}
-
-/* 浅色主题配色 */
-.light-theme {
-    --primary-color: #000000 !important;
-    --secondary-color: #333333 !important;
-    --accent-color: #faa755 !important;
-    --bg-primary: #ffffff !important;
-    --bg-secondary: #f8f8f8 !important;
-    --bg-card: #f0f0f0 !important;
-    --border-color: #e0e0e0 !important;
+```json
+{
+  "id": "uuid",
+  "title": "作品标题",
+  "description": "作品描述",
+  "category": "分类",
+  "image": "封面图片",
+  "link": "作品链接",
+  "tags": ["标签1", "标签2"]
 }
 ```
 
-#### 3. 动画效果
+# 六、安全需求
 
-- 页面加载动画
-- 滚动触发动画
-- 卡片悬停效果
-- 平滑滚动
-- 导航栏滚动变化
-
-```javascript
-// 滚动动画实现
-function handleScrollAnimations() {
-    const sections = document.querySelectorAll('.fade-in-section');
-    sections.forEach(section => {
-        const sectionTop = section.getBoundingClientRect().top;
-        const windowHeight = window.innerHeight;
-        if (sectionTop < windowHeight * 0.85) {
-            section.classList.add('is-visible');
-        }
-    });
-}
-```
-
-#### 4. 文档管理系统
-
-内置完整的文档管理功能：
-
-- 文档列表展示
-- 文档编辑器（Markdown 支持）
-- 文档预览功能
-- 文档分享系统
-- 访问密码保护
-
-```javascript
-// 文档加载和保存
-async function loadDocuments() {
-    if (!supabase) {
-        console.warn('未配置 Supabase');
-        documents = [];
-        return;
-    }
-
-    try {
-        const { data, error } = await supabase.from('documents').select('*');
-        if (error) {
-            throw new Error(`Failed to load documents: ${error.message}`);
-        }
-        documents = data || [];
-    } catch (error) {
-        console.error('从 Supabase 加载文档失败:', error);
-        documents = [];
-    }
-}
-```
-
-#### 5. 安全性措施
+### 6.1 访问控制
 
 - 页面访问密码保护
 - 文档编辑密码验证
-- 反调试保护
-- 右键菜单和文本选择限制
+- 敏感操作权限控制
 
-## 项目特色
+### 6.2 数据安全
 
-### 1. 现代化设计
+- 文档内容加密存储
+- 用户输入验证
+- SQL注入防护
 
-- 渐变背景和玻璃态效果
-- 流畅的动画过渡
-- 精心挑选的配色方案
-- 响应式布局适配
+### 6.3 反调试
 
-### 2. 交互体验优化
+- 防止代码调试
+- 右键菜单限制
+- 文本选择限制
 
-- 平滑滚动导航
-- 智能动画触发
-- 主题切换动画
-- 移动端优化
+# 七、性能优化
 
-### 3. 功能完整性
-
-- 完整的文档管理系统
-- 内容管理功能
-- 社交链接集成
-- 访问控制机制
-
-### 4. 性能优化
+### 7.1 加载优化
 
 - 图片懒加载
-- 代码压缩和优化
+- 资源压缩和优化
 - 响应式图片加载
+
+### 7.2 渲染优化
+
 - 动画性能优化
+- DOM操作优化
+- 代码分割
 
-## 开发说明
+### 7.3 缓存策略
 
-### 项目结构
-
-```
-weatheraintbad.com/
-├── index.html          # 首页
-├── doc.html            # 文档管理页面
-├── design.html         # 设计作品集页面
-├── styles.css          # 全局样式
-├── script.js           # 核心 JavaScript
-├── dashboard.html      # 数据看板页面
-├── images/             # 图片资源
-└── SUPABASE_CONFIG.md  # Supabase 配置
-```
-
-### 主要文件说明
-
-- `styles.css`: 包含所有样式定义，支持主题切换
-- `script.js`: 实现页面交互和文档管理功能
-- `doc.html`: 文档管理系统的实现
-- `design.html`: 设计作品集页面
-
-## 未来规划
-
-- 添加博客功能
-- 增加多语言支持
-- 提升性能和安全性
-- 集成更多社交平台
-
-## 技术亮点
-
-### 1. 主题系统架构
-
-实现了完整的 CSS 变量主题系统，支持：
-
-- 自动系统主题检测
-- 手动主题切换
-- 动画过渡效果
-- 主题状态保持
-
-### 2. 响应式布局实现
-
-使用现代 CSS Grid 和 Flexbox 技术，实现：
-
-- 移动端单列布局
-- 平板端双列布局
-- 桌面端三列布局
-- 自适应内容宽度
-
-### 3. 动画系统设计
-
-设计了完整的动画系统，包括：
-
-- 加载动画
-- 滚动动画
-- 交互反馈动画
-- 页面过渡动画
-
-### 4. 文档管理实现
-
-集成了 Supabase 数据库，实现：
-
-- 文档的增删改查
-- 实时预览和编辑
-- 分享和访问控制
-- 数据持久化
+- 浏览器缓存
+- CDN缓存
+- 本地存储
