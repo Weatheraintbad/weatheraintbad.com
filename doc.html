@@ -445,8 +445,11 @@
         /* 表格样式 */
         .preview table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             margin-bottom: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .preview th, .preview td {
@@ -457,6 +460,23 @@
 
         .preview th {
             background: rgba(0, 0, 0, 0.3); /* 表格表头背景颜色 */
+        }
+
+        /* 表格圆角优化 */
+        .preview th:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        .preview th:last-child {
+            border-top-right-radius: 8px;
+        }
+
+        .preview tr:last-child td:first-child {
+            border-bottom-left-radius: 8px;
+        }
+
+        .preview tr:last-child td:last-child {
+            border-bottom-right-radius: 8px;
         }
 
         /* 链接样式 */
@@ -655,8 +675,32 @@
                 border-left: 3px solid var(--accent-color); /* 引用边框颜色 - 强调色（橙色） */
             }
 
+            .preview table {
+                border-collapse: separate;
+                border-spacing: 0;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
             .preview th, .preview td {
                 border: 1px solid #d0d0d0; /* 表格边框颜色 - 浅灰色 */
+            }
+
+            /* 表格圆角优化 */
+            .preview th:first-child {
+                border-top-left-radius: 8px;
+            }
+
+            .preview th:last-child {
+                border-top-right-radius: 8px;
+            }
+
+            .preview tr:last-child td:first-child {
+                border-bottom-left-radius: 8px;
+            }
+
+            .preview tr:last-child td:last-child {
+                border-bottom-right-radius: 8px;
             }
 
             .preview h1 {
@@ -685,8 +729,32 @@
             border-left: 3px solid var(--accent-color) !important; /* 引用边框颜色 - 强调色（橙色） */
         }
 
+        .light-theme .preview table {
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+        }
+
         .light-theme .preview th, .light-theme .preview td {
             border: 1px solid #d0d0d0 !important; /* 表格边框颜色 - 浅灰色 */
+        }
+
+        /* 表格圆角优化 */
+        .light-theme .preview th:first-child {
+            border-top-left-radius: 8px !important;
+        }
+
+        .light-theme .preview th:last-child {
+            border-top-right-radius: 8px !important;
+        }
+
+        .light-theme .preview tr:last-child td:first-child {
+            border-bottom-left-radius: 8px !important;
+        }
+
+        .light-theme .preview tr:last-child td:last-child {
+            border-bottom-right-radius: 8px !important;
         }
 
         .light-theme .preview h1 {
