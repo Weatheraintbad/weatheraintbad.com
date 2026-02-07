@@ -1332,20 +1332,20 @@
             const hashPath = window.location.hash.slice(1);
             const simpleHashMatch = hashPath.match(/^([\w-]+)$/);
             if (simpleHashMatch) {
-                return { type: 'wiki', slug: simpleHashMatch[1] };
+                return { type: 'doc', slug: simpleHashMatch[1] };
             }
 
-            // 兼容旧格式的哈希路由（/wiki/abc123）
+            // 兼容旧格式的哈希路由（/doc/abc123）
             const oldHashMatch = hashPath.match(/^\/doc\/([\w-]+)$/);
             if (oldHashMatch) {
-                return { type: 'wiki', slug: oldHashMatch[1] };
+                return { type: 'doc', slug: oldHashMatch[1] };
             }
 
-            // 检查路径路由（/wiki/abc123）
+            // 检查路径路由（/doc/abc123）
             const path = window.location.pathname;
             const pathMatch = path.match(/\/doc\/([\w-]+)$/);
             if (pathMatch) {
-                return { type: 'wiki', slug: pathMatch[1] };
+                return { type: 'doc', slug: pathMatch[1] };
             }
 
             return { type: 'list' };
