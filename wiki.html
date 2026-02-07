@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>文档 - Weatheraintbad</title>
+    <title>Wiki - Weatheraintbad</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto Serif SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         /* ==================== 全局样式 ==================== */
 
-        /* 文档管理页面特定样式 */
+        /* Wiki页面特定样式 */
         .doc-manager {
             min-height: 100vh;
             background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); /* 页面背景渐变颜色 */
@@ -144,10 +144,76 @@
             opacity: 0.7;
         }
 
+        /* ==================== 侧边导航栏 ==================== */
+        .toc-container {
+            position: fixed;
+            top: 100px; /* 与导航栏高度一致 */
+            left: 2rem; /* 与页面布局容器的左边距对齐 */
+            width: 250px;
+            height: calc(95vh - 100px); /* 页面高度 - 导航栏高度 */
+            overflow-y: auto; /* 添加垂直滚动 */
+            overflow-x: hidden; /* 隐藏水平滚动 */
+            background: rgba(255, 255, 255, 0.1); /* 与编辑框背景相同 */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* 与编辑框边框相同 */
+            border-radius: 12px; /* 与编辑框边框半径相同 */
+            padding: 1.5rem; /* 与编辑框内边距相同 */
+            box-shadow: var(--shadow-md);
+            z-index: 100;
+            display: none; /* 默认隐藏 */
+            border-top: none; /* 去掉顶部边框，与导航栏相连 */
+        }
+
+        .toc-container.show {
+            display: block;
+        }
+
+        .toc-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .toc-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .toc-item {
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .toc-item:hover {
+            color: var(--accent-color);
+        }
+
+        .toc-item h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .toc-item h2 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            padding-left: 1rem;
+        }
+
+        .toc-item h3 {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--secondary-color);
+            padding-left: 2rem;
+        }
+
         /* ==================== 编辑器页面 ==================== */
         .editor-container {
             max-width: 900px;
             margin: 0 auto;
+            margin-left: 280px; /* 减小侧边导航栏与编辑框之间的距离 */
         }
 
         .editor-header {
@@ -598,6 +664,11 @@
                 border: 1px solid #d0d0d0; /* 编辑器边框颜色 */
             }
 
+            .toc-container {
+                background: #F2F2F2 !important; /* 与编辑框背景相同 */
+                border: 1px solid #d0d0d0 !important; /* 与编辑框边框相同 */
+            }
+
             .modal-content {
                 background: #f0f0f0 !important; /* 模态框内容背景颜色 */
             }
@@ -617,6 +688,11 @@
         .light-theme .editor-area {
             background: #F2F2F2 !important; /* 编辑器背景颜色 */
             border: 1px solid #d0d0d0 !important; /* 编辑器边框颜色 */
+        }
+
+        .light-theme .toc-container {
+            background: #F2F2F2 !important; /* 与编辑框背景相同 */
+            border: 1px solid #d0d0d0 !important; /* 与编辑框边框相同 */
         }
 
         .light-theme .modal-content {
@@ -644,6 +720,11 @@
         .dark-theme .editor-area {
             background: rgba(255, 255, 255, 0.1) !important; /* 编辑器背景颜色 */
             border: 1px solid rgba(255, 255, 255, 0.2) !important; /* 编辑器边框颜色 */
+        }
+
+        .dark-theme .toc-container {
+            background: rgba(255, 255, 255, 0.1) !important; /* 与编辑框背景相同 */
+            border: 1px solid rgba(255, 255, 255, 0.2) !important; /* 与编辑框边框相同 */
         }
 
         .dark-theme .modal-content {
@@ -952,6 +1033,14 @@
         </div>
     </nav>
 
+    <!-- 侧边导航栏 -->
+    <div class="toc-container" id="toc-container">
+        <div class="toc-title">目录</div>
+        <ul class="toc-list" id="toc-list">
+            <!-- 目录将通过 JavaScript 动态生成 -->
+        </ul>
+    </div>
+
     <!-- 主内容区域 -->
     <section class="doc-manager">
         <div class="doc-content">
@@ -959,8 +1048,8 @@
                 <!-- 文档列表页面 -->
                 <div id="list-view">
                     <div class="doc-header">
-                        <h1 class="doc-title">文档管理</h1>
-                        <button class="btn-new" onclick="showCreateModal()">新建文档</button>
+                        <h1 class="doc-title">Wiki管理</h1>
+                        <button class="btn-new" onclick="showCreateModal()">新建Wiki</button>
                     </div>
                     <div id="doc-list" class="doc-list">
                         <!-- 文档列表将通过 JavaScript 动态生成 -->
@@ -1136,7 +1225,7 @@
                 // 直接构造查询 URL，尝试按类型筛选加载文档
                 const url = `${SUPABASE_URL}/rest/v1/documents?${new URLSearchParams({
                     select: '*',
-                    'type=eq': 'doc'
+                    'type=eq': 'wiki'
                 })}`;
 
                 const response = await fetch(url, {
@@ -1170,7 +1259,7 @@
                     // 为没有类型字段的文档设置默认类型
                     documents = allData.map(doc => ({
                         ...doc,
-                        type: doc.type || 'doc'
+                        type: doc.type || 'wiki'
                     }));
                     console.log('从 Supabase 加载了所有', documents.length, '个文档');
                 } else {
@@ -1201,7 +1290,7 @@
 
                 // 插入或更新文档
                 for (const doc of documents) {
-                    const existingDoc = allExistingDocs.find(d => d.id === doc.id && d.type === 'doc');
+                    const existingDoc = allExistingDocs.find(d => d.id === doc.id && d.type === 'wiki');
                     if (existingDoc) {
                         // 更新现有文档
                         await supabase.from('documents').update({
@@ -1210,9 +1299,20 @@
                             slug: doc.slug,
                             updated_at: doc.updated_at,
                             published: doc.published || false,
-                            type: doc.type || 'doc'
+                            type: doc.type || 'wiki'
                         }, doc.id);
                     } else {
+                        // 检查 id 是否已经存在于其他类型的文档中
+                        const idExists = allExistingDocs.find(d => d.id === doc.id);
+                        if (idExists) {
+                            // 如果 id 已经存在，生成一个新的 id
+                            const generateUniqueId = () => {
+                                const timestamp = Date.now().toString(36);
+                                const randomStr = Math.random().toString(36).substring(2, 10);
+                                return timestamp + randomStr;
+                            };
+                            doc.id = generateUniqueId();
+                        }
                         // 插入新文档
                         await supabase.from('documents').insert(doc);
                     }
@@ -1232,20 +1332,20 @@
             const hashPath = window.location.hash.slice(1);
             const simpleHashMatch = hashPath.match(/^([\w-]+)$/);
             if (simpleHashMatch) {
-                return { type: 'doc', slug: simpleHashMatch[1] };
+                return { type: 'wiki', slug: simpleHashMatch[1] };
             }
 
-            // 兼容旧格式的哈希路由（/doc/abc123）
+            // 兼容旧格式的哈希路由（/wiki/abc123）
             const oldHashMatch = hashPath.match(/^\/doc\/([\w-]+)$/);
             if (oldHashMatch) {
-                return { type: 'doc', slug: oldHashMatch[1] };
+                return { type: 'wiki', slug: oldHashMatch[1] };
             }
 
-            // 检查路径路由（/doc/abc123）
+            // 检查路径路由（/wiki/abc123）
             const path = window.location.pathname;
             const pathMatch = path.match(/\/doc\/([\w-]+)$/);
             if (pathMatch) {
-                return { type: 'doc', slug: pathMatch[1] };
+                return { type: 'wiki', slug: pathMatch[1] };
             }
 
             return { type: 'list' };
@@ -1262,7 +1362,7 @@
                 saveDocuments();
             }
 
-            return window.location.origin + '/doc.html#' + doc.slug;
+            return window.location.origin + '/wiki.html#' + doc.slug;
         }
 
         // 监听路由变化（支持哈希路由和路径路由）
@@ -1415,6 +1515,22 @@
                     loader.classList.add('hidden');
                 }
             }, 500);
+
+            // 动态调整侧边导航栏的左边距，使其位于导航栏logo的下方
+            adjustTocPosition();
+            // 监听窗口大小变化，重新调整侧边导航栏位置
+            window.addEventListener('resize', adjustTocPosition);
+        }
+
+        // 调整侧边导航栏位置
+        function adjustTocPosition() {
+            const logo = document.querySelector('.logo');
+            const tocContainer = document.getElementById('toc-container');
+            if (logo && tocContainer) {
+                const logoRect = logo.getBoundingClientRect();
+                // 侧边导航栏的左边距设置为logo的左边距
+                tocContainer.style.left = logoRect.left + 'px';
+            }
         }
 
         // 页面加载时显示密码输入框
@@ -1451,7 +1567,7 @@
                             <div class="doc-container" style="text-align: center;">
                                 <h1 style="color: var(--primary-color); font-size: 2rem; margin-bottom: 1rem;">文档不存在</h1>
                                 <p style="color: var(--secondary-color); font-size: 1.2rem;">您访问的文档不存在或已被删除</p>
-                                <a href="/doc.html" style="display: inline-block; margin-top: 2rem; padding: 0.75rem 1.5rem; background: var(--accent-color); color: white; text-decoration: none; border-radius: 8px;">返回文档列表</a>
+                                <a href="/wiki.html" style="display: inline-block; margin-top: 2rem; padding: 0.75rem 1.5rem; background: var(--accent-color); color: white; text-decoration: none; border-radius: 8px;">返回文档列表</a>
                             </div>
                         </div>
                     `;
@@ -1483,7 +1599,7 @@
             const emptyState = document.getElementById('empty-state');
 
             // 筛选出当前页面类型的文档
-            const filteredDocs = documents.filter(doc => doc.type === 'doc');
+            const filteredDocs = documents.filter(doc => doc.type === 'wiki');
 
             if (filteredDocs.length === 0) {
                 listContainer.innerHTML = '';
@@ -1522,15 +1638,22 @@
                 return;
             }
 
+            // 生成更可靠的唯一标识符
+            const generateUniqueId = () => {
+                const timestamp = Date.now().toString(36);
+                const randomStr = Math.random().toString(36).substring(2, 10);
+                return timestamp + randomStr;
+            };
+
             const newDoc = {
-                id: Date.now().toString(),
+                id: generateUniqueId(),
                 title: title,
                 content: '',
                 slug: generateSlug(), // 添加分享标识符
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
                 published: false, // 添加发布状态字段
-                type: 'doc' // 文档类型为 doc
+                type: 'wiki' // 文档类型为 wiki
             };
 
             documents.unshift(newDoc);
@@ -1569,6 +1692,10 @@
 
             // 更新发布按钮状态
             updatePublishButton();
+
+            // 显示侧边导航栏
+            const tocContainer = document.getElementById('toc-container');
+            tocContainer.classList.add('show');
         }
 
         // 切换发布状态
@@ -1623,6 +1750,10 @@
             const editor = document.getElementById('editor');
             if (titleInput) titleInput.readOnly = false;
             if (editor) editor.readOnly = false;
+
+            // 隐藏侧边导航栏
+            const tocContainer = document.getElementById('toc-container');
+            tocContainer.classList.remove('show');
         }
 
         // 切换编辑/预览模式
@@ -1691,11 +1822,166 @@
             }
         });
 
+        // 生成目录
+        function generateTableOfContents() {
+            const preview = document.getElementById('preview');
+            const tocList = document.getElementById('toc-list');
+            const tocContainer = document.getElementById('toc-container');
+
+            // 清空现有目录
+            tocList.innerHTML = '';
+
+            // 查找所有标题
+            const headings = preview.querySelectorAll('h1, h2, h3');
+
+            if (headings.length === 0) {
+                // 没有标题时隐藏目录
+                tocContainer.classList.remove('show');
+                return;
+            }
+
+            // 生成目录项
+            headings.forEach((heading, index) => {
+                // 为标题添加唯一的 id
+                const headingId = `heading-${index}`;
+                heading.id = headingId;
+
+                // 创建目录项
+                const li = document.createElement('li');
+                li.className = 'toc-item';
+
+                // 根据标题级别设置样式
+                const level = parseInt(heading.tagName.charAt(1));
+
+                // 设置不同级别的缩进
+                if (level === 1) {
+                    li.style.paddingLeft = '0';
+                } else if (level === 2) {
+                    li.style.paddingLeft = '1rem';
+                } else if (level === 3) {
+                    li.style.paddingLeft = '2rem';
+                }
+
+                // 检查当前标题是否有子标题
+                const hasSubheadings = checkForSubheadings(headings, index, level);
+
+                // 只有h1和h2标题需要显示小三角
+                if (level < 3 && hasSubheadings) {
+                    // 创建三角图标
+                    const triangle = document.createElement('span');
+                    triangle.className = 'toc-triangle';
+                    triangle.innerHTML = '▼'; // 有子标题默认展开
+                    triangle.style.marginRight = '0.5rem';
+                    triangle.style.fontSize = '0.8rem';
+                    triangle.style.color = 'var(--secondary-color)';
+                    triangle.style.cursor = 'pointer';
+
+                    // 添加三角点击事件
+                    triangle.addEventListener('click', (e) => {
+                        e.stopPropagation(); // 阻止事件冒泡
+                        toggleSubheadings(li, level);
+                    });
+
+                    li.appendChild(triangle);
+                } else if (level < 3 && !hasSubheadings) {
+                    // 没有子标题的h1和h2标题显示向右的小三角
+                    const triangle = document.createElement('span');
+                    triangle.className = 'toc-triangle';
+                    triangle.innerHTML = '▶'; // 没有子标题默认收起
+                    triangle.style.marginRight = '0.5rem';
+                    triangle.style.fontSize = '0.8rem';
+                    triangle.style.color = 'var(--secondary-color)';
+                    triangle.style.cursor = 'pointer';
+
+                    li.appendChild(triangle);
+                }
+
+                // 创建文本节点
+                const textNode = document.createTextNode(heading.textContent);
+                li.appendChild(textNode);
+                li.addEventListener('click', () => handleTocClick(headingId));
+                tocList.appendChild(li);
+            });
+
+        // 检查当前标题是否有子标题
+        function checkForSubheadings(headings, index, level) {
+            for (let i = index + 1; i < headings.length; i++) {
+                const nextLevel = parseInt(headings[i].tagName.charAt(1));
+                if (nextLevel > level) {
+                    return true;
+                } else if (nextLevel <= level) {
+                    break;
+                }
+            }
+            return false;
+        }
+
+            // 显示目录
+            tocContainer.classList.add('show');
+        }
+
+        // 切换小标题的显示/隐藏
+        function toggleSubheadings(li, level) {
+            const triangle = li.querySelector('.toc-triangle');
+            if (!triangle) return;
+
+            // 切换三角方向
+            if (triangle.innerHTML === '▶') {
+                triangle.innerHTML = '▼'; // 向下的三角，展开状态
+            } else {
+                triangle.innerHTML = '▶'; // 向右的三角，收起状态
+            }
+
+            // 查找当前标题后的所有小标题
+            let nextLi = li.nextElementSibling;
+            while (nextLi) {
+                // 获取下一个li中的标题级别
+                const nextHeading = getHeadingLevel(nextLi);
+                if (nextHeading > level) {
+                    nextLi.style.display = nextLi.style.display === 'none' ? 'block' : 'none';
+                } else {
+                    break; // 遇到同级或更高级别的标题时停止
+                }
+                nextLi = nextLi.nextElementSibling;
+            }
+        }
+
+        // 获取目录项对应的标题级别
+        function getHeadingLevel(tocItem) {
+            // 根据目录项的缩进判断标题级别
+            const style = window.getComputedStyle(tocItem);
+            const paddingLeft = parseInt(style.paddingLeft);
+            if (paddingLeft === 0) {
+                return 1; // h1 无缩进
+            } else if (paddingLeft === 16) {
+                return 2; // h2 缩进1rem (16px)
+            } else if (paddingLeft === 32) {
+                return 3; // h3 缩进2rem (32px)
+            }
+            return 1; // 默认返回1
+        }
+
+        // 处理目录点击事件
+        function handleTocClick(headingId) {
+            const heading = document.getElementById(headingId);
+            if (heading) {
+                // 计算滚动位置，考虑固定导航栏的高度
+                const offsetTop = heading.offsetTop - 100;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
         // 更新预览
         function updatePreview() {
             const content = document.getElementById('editor').value;
             const preview = document.getElementById('preview');
             preview.innerHTML = marked.parse(content) || '<p style="color: var(--secondary-color); opacity: 0.5;">暂无内容</p>';
+
+            // 生成目录
+            generateTableOfContents();
         }
 
         // 删除文档
