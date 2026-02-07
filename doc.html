@@ -1039,7 +1039,11 @@
             from: function(table) {
                 return {
                     select: async function(query = '*') {
-                        const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${new URLSearchParams({ select: query })}`, {
+                        const url = `${SUPABASE_URL}/rest/v1/${table}?${new URLSearchParams({
+                            select: query,
+                            apikey: SUPABASE_ANON_KEY
+                        })}`;
+                        const response = await fetch(url, {
                             headers: {
                                 'apikey': SUPABASE_ANON_KEY,
                                 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
@@ -1051,7 +1055,10 @@
                         return { data: await response.json(), error: null };
                     },
                     insert: async function(data) {
-                        const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+                        const url = `${SUPABASE_URL}/rest/v1/${table}?${new URLSearchParams({
+                            apikey: SUPABASE_ANON_KEY
+                        })}`;
+                        const response = await fetch(url, {
                             method: 'POST',
                             headers: {
                                 'apikey': SUPABASE_ANON_KEY,
@@ -1066,11 +1073,14 @@
                         return { data: await response.json(), error: null };
                     },
                     update: async function(data, id) {
+                        const url = `${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}&${new URLSearchParams({
+                            apikey: SUPABASE_ANON_KEY
+                        })}`;
                         console.log('Update request:', {
-                            url: `${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`,
+                            url: url,
                             data: data
                         });
-                        const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+                        const response = await fetch(url, {
                             method: 'PATCH',
                             headers: {
                                 'apikey': SUPABASE_ANON_KEY,
@@ -1134,9 +1144,8 @@
 
             try {
                 // 直接构造查询 URL，尝试按类型筛选加载文档
-                const url = `${SUPABASE_URL}/rest/v1/documents?${new URLSearchParams({
-                    select: '*',
-                    'type=eq': 'doc'
+                const url = `${SUPABASE_URL}/rest/v1/documents?select=*&type=eq.doc&${new URLSearchParams({
+                    apikey: SUPABASE_ANON_KEY
                 })}`;
 
                 const response = await fetch(url, {
@@ -1152,7 +1161,8 @@
                 if (!response.ok) {
                     console.warn('按类型筛选失败，加载所有文档:', response.status);
                     const allResponse = await fetch(`${SUPABASE_URL}/rest/v1/documents?${new URLSearchParams({
-                        select: '*'
+                        select: '*',
+                        apikey: SUPABASE_ANON_KEY
                     })}`, {
                         headers: {
                             'apikey': SUPABASE_ANON_KEY,
@@ -1203,16 +1213,35 @@
                 for (const doc of documents) {
                     const existingDoc = allExistingDocs.find(d => d.id === doc.id && d.type === 'doc');
                     if (existingDoc) {
-                        // 更新现有文档
+                        // 更新现有文档（不更新 slug 字段以避免冲突）
                         await supabase.from('documents').update({
                             title: doc.title,
                             content: doc.content,
-                            slug: doc.slug,
                             updated_at: doc.updated_at,
                             published: doc.published || false,
                             type: doc.type || 'doc'
                         }, doc.id);
                     } else {
+                        // 检查是否存在相同 slug 的文档
+                        const existingSlugDoc = allExistingDocs.find(d => d.slug === doc.slug);
+                        if (existingSlugDoc) {
+                            // 如果存在相同 slug 的文档，生成新的唯一 slug
+                            console.warn(`Slug '${doc.slug}' 已存在，正在生成新的 slug`);
+                            doc.slug = generateSlug();
+                        }
+
+                        // 检查 id 是否已经存在于其他类型的文档中
+                        const idExists = allExistingDocs.find(d => d.id === doc.id);
+                        if (idExists) {
+                            // 如果 id 已经存在，生成一个新的 id
+                            const generateUniqueId = () => {
+                                const timestamp = Date.now().toString(36);
+                                const randomStr = Math.random().toString(36).substring(2, 10);
+                                return timestamp + randomStr;
+                            };
+                            doc.id = generateUniqueId();
+                        }
+
                         // 插入新文档
                         await supabase.from('documents').insert(doc);
                     }
