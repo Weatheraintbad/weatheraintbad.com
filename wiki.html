@@ -1560,6 +1560,11 @@
                     hideEditorControls(); // 隐藏顶部编辑控件
                     hideFooterControls(); // 隐藏底部编辑控件
                     hideNavMenu(); // 隐藏导航菜单
+
+                    // 动态调整侧边导航栏的左边距，使其位于导航栏logo的下方
+                    adjustTocPosition();
+                    // 监听窗口大小变化，重新调整侧边导航栏位置
+                    window.addEventListener('resize', adjustTocPosition);
                 } else {
                     // 文档不存在，显示错误页面
                     document.body.innerHTML = `
