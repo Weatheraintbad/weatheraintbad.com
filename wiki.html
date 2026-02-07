@@ -1888,35 +1888,31 @@
                 // 检查当前标题是否有子标题
                 const hasSubheadings = checkForSubheadings(headings, index, level);
 
-                // 只有h1和h2标题需要显示小三角
-                if (level < 3 && hasSubheadings) {
-                    // 创建三角图标
-                    const triangle = document.createElement('span');
-                    triangle.className = 'toc-triangle';
-                    triangle.innerHTML = '▼'; // 有子标题默认展开
-                    triangle.style.marginRight = '0.5rem';
-                    triangle.style.fontSize = '0.8rem';
-                    triangle.style.color = 'var(--secondary-color)';
-                    triangle.style.cursor = 'pointer';
+                // 为h1和h2标题预留三角形指示器的位置，确保同一级标题起始位置相同
+                if (level < 3) {
+                    if (hasSubheadings) {
+                        // 有子标题的h1和h2标题显示小三角
+                        const triangle = document.createElement('span');
+                        triangle.className = 'toc-triangle';
+                        triangle.innerHTML = '▼'; // 有子标题默认展开
+                        triangle.style.marginRight = '0.5rem';
+                        triangle.style.fontSize = '0.8rem';
+                        triangle.style.color = 'var(--secondary-color)';
+                        triangle.style.cursor = 'pointer';
 
-                    // 添加三角点击事件
-                    triangle.addEventListener('click', (e) => {
-                        e.stopPropagation(); // 阻止事件冒泡
-                        toggleSubheadings(li, level);
-                    });
+                        // 添加三角点击事件
+                        triangle.addEventListener('click', (e) => {
+                            e.stopPropagation(); // 阻止事件冒泡
+                            toggleSubheadings(li, level);
+                        });
 
-                    li.appendChild(triangle);
-                } else if (level < 3 && !hasSubheadings) {
-                    // 没有子标题的h1和h2标题显示向右的小三角
-                    const triangle = document.createElement('span');
-                    triangle.className = 'toc-triangle';
-                    triangle.innerHTML = '▶'; // 没有子标题默认收起
-                    triangle.style.marginRight = '0.5rem';
-                    triangle.style.fontSize = '0.8rem';
-                    triangle.style.color = 'var(--secondary-color)';
-                    triangle.style.cursor = 'pointer';
-
-                    li.appendChild(triangle);
+                        li.appendChild(triangle);
+                    } else {
+                        // 没有子标题的h1和h2标题添加占位空间，以保持起始位置一致
+                        const placeholder = document.createElement('span');
+                        placeholder.style.marginRight = '1.1rem'; // 与三角形宽度+边距相同
+                        li.appendChild(placeholder);
+                    }
                 }
 
                 // 创建文本节点
