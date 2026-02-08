@@ -33,7 +33,7 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            padding: 120px 0 60px;
+            padding: 85px 0 60px; /* 调整顶部距离，与侧边栏保持一致 */
         }
 
         /* 页面布局容器 */
@@ -220,7 +220,7 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 3rem;
+            margin-bottom: 1rem; /* 减小标题区域与内容框之间的距离 */
         }
 
         .editor-title-container {
@@ -1394,6 +1394,7 @@
                     const titleInput = document.getElementById('editor-title');
                     titleInput.value = doc.title;
                     titleInput.readOnly = true; // 分享模式下标题不可修改
+                    titleInput.style.display = 'none'; // 分享模式下隐藏标题输入框
                     const editor = document.getElementById('editor');
                     editor.value = doc.content;
                     editor.readOnly = true; // 分享模式下内容不可修改
@@ -1566,6 +1567,7 @@
                     const titleInput = document.getElementById('editor-title');
                     titleInput.value = doc.title;
                     titleInput.readOnly = true; // 分享模式下标题不可修改
+                    titleInput.style.display = 'none'; // 分享模式下隐藏标题输入框
                     const editor = document.getElementById('editor');
                     editor.value = doc.content;
                     editor.readOnly = true; // 分享模式下内容不可修改
@@ -1696,6 +1698,7 @@
 
             titleInput.value = doc.title;
             titleInput.readOnly = false; // 确保标题可编辑
+            titleInput.style.display = 'block'; // 编辑模式下显示标题输入框
             editor.value = doc.content;
             editor.readOnly = false; // 确保内容可编辑
             updatePreview();
@@ -1771,7 +1774,10 @@
             // 确保编辑器和标题输入框都是可编辑状态（以便下次打开文档时正常）
             const titleInput = document.getElementById('editor-title');
             const editor = document.getElementById('editor');
-            if (titleInput) titleInput.readOnly = false;
+            if (titleInput) {
+                titleInput.readOnly = false;
+                titleInput.style.display = 'block'; // 恢复标题输入框显示
+            }
             if (editor) editor.readOnly = false;
 
             // 隐藏侧边导航栏
@@ -1997,7 +2003,20 @@
         function updatePreview() {
             const content = document.getElementById('editor').value;
             const preview = document.getElementById('preview');
-            preview.innerHTML = marked.parse(content) || '<p style="color: var(--secondary-color); opacity: 0.5;">暂无内容</p>';
+            const title = document.getElementById('editor-title').value;
+
+            // 检查当前是否是预览模式或分享模式
+            const isPreviewMode = document.querySelector('.preview-btn.active') !== null;
+            if ((isPreviewMode || isShareMode) && title) {
+                // 预览模式或分享模式下，将标题放到内容框中
+                preview.innerHTML = `
+                    <h1 style="font-size: 3rem; font-weight: 700; color: var(--primary-color); margin-bottom: 1.5rem; margin-top: -1rem; font-family: 'Noto Serif SC', 'Times New Roman', serif;">${title}</h1>
+                    ${marked.parse(content) || '<p style="color: var(--secondary-color); opacity: 0.5;">暂无内容</p>'}
+                `;
+            } else {
+                // 编辑模式下，只显示内容
+                preview.innerHTML = marked.parse(content) || '<p style="color: var(--secondary-color); opacity: 0.5;">暂无内容</p>';
+            }
 
             // 生成目录
             generateTableOfContents();
@@ -2199,11 +2218,21 @@
                 document.querySelector('.edit-btn').classList.add('active');
                 document.getElementById('editor').style.display = 'block';
                 document.getElementById('preview').style.display = 'none';
+                // 编辑模式下显示标题输入框
+                document.getElementById('editor-title').style.display = 'block';
+                // 编辑模式下显示返回按钮
+                const backBtn = document.querySelector('.btn-back');
+                if (backBtn) backBtn.style.display = 'block';
             } else {
                 document.querySelector('.preview-btn').classList.add('active');
                 updatePreview();
                 document.getElementById('editor').style.display = 'none';
                 document.getElementById('preview').style.display = 'block';
+                // 预览模式下隐藏标题输入框
+                document.getElementById('editor-title').style.display = 'none';
+                // 预览模式下隐藏返回按钮，保持与分享页面相同的逻辑
+                const backBtn = document.querySelector('.btn-back');
+                if (backBtn) backBtn.style.display = 'none';
             }
         }
 
