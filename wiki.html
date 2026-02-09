@@ -989,7 +989,7 @@
     <!-- 导航栏 -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo">Wiki</div>
+            <div class="logo">Weatheraintbad.Wiki</div>
             <ul class="nav-menu">
                 <li><a href="dashboard.html">数据看板</a></li>
                 <li><a href="doc.html">文档管理</a></li>
@@ -1047,7 +1047,10 @@
                 <div id="list-view">
                     <div class="doc-header">
                         <h1 class="doc-title">Wiki管理</h1>
-                        <button class="btn-new" onclick="showCreateModal()">新建Wiki</button>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn-new" onclick="showCreateModal()">新建Wiki</button>
+                            <button class="btn-new" onclick="showCorrectionList()">查看修正</button>
+                        </div>
                     </div>
                     <div id="doc-list" class="doc-list">
                         <!-- 文档列表将通过 JavaScript 动态生成 -->
@@ -2177,6 +2180,47 @@
             document.querySelector('.nav-menu').style.display = 'flex';
         }
 
+        // 进入编辑页面提示模态框
+        function showEditPromptModal() {
+            const modal = document.createElement('div');
+            modal.className = 'modal active';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-title">进入编辑页面</div>
+                    <p style="color: var(--secondary-color); margin-bottom: 1rem;">您将进入编辑页面，修改后的内容将作为修正版本保存。</p>
+                    <div class="modal-buttons">
+                        <button class="btn-cancel" onclick="hideEditPromptModal()">取消</button>
+                        <button class="btn-confirm" onclick="goToEditPage()">确定</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // 隐藏进入编辑页面提示模态框
+        function hideEditPromptModal() {
+            const modal = document.querySelector('.modal.active');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // 跳转到编辑页面
+        function goToEditPage() {
+            hideEditPromptModal();
+            const doc = documents.find(d => d.id === currentDocId);
+            if (doc) {
+                // 传递文档信息到编辑页面，可以通过URL参数或localStorage
+                localStorage.setItem('editDoc', JSON.stringify(doc));
+                window.open('wikiedit.html', '_blank');
+            }
+        }
+
+        // 跳转到修正列表页面
+        function showCorrectionList() {
+            window.location.href = 'wikicorrection.html';
+        }
+
         // 密码验证模态框
         function showPasswordModal() {
             const modal = document.createElement('div');
@@ -2213,11 +2257,11 @@
             }
         }
 
-        // 重写 switchMode 函数，在分享模式下点击编辑按钮时显示密码输入框
+        // 重写 switchMode 函数，在分享模式下点击编辑按钮时显示进入编辑页面的提示
         function switchMode(mode) {
             // 如果是分享模式且点击的是编辑按钮
             if (isShareMode && mode === 'edit') {
-                showPasswordModal();
+                showEditPromptModal();
                 return;
             }
 

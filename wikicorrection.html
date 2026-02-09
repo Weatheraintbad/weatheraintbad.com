@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki修正列表</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto Serif SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ==================== 全局样式 ==================== */
+
+        /* Wiki页面特定样式 */
+        .doc-manager {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%); /* 页面背景渐变颜色 */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doc-manager::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(250, 167, 85, 0.05) 0%, transparent 70%); /* 背景光晕效果颜色 */
+            z-index: 0;
+        }
+
+        .doc-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 85px 0 60px; /* 调整顶部距离，与侧边栏保持一致 */
+        }
+
+        /* 页面布局容器 */
+        .doc-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ==================== 页面标题 ==================== */
+        .doc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .doc-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color); /* 页面标题颜色 */
+            font-family: 'Noto Serif SC', 'Times New Roman', serif;
+        }
+
+        /* ==================== 按钮样式 ==================== */
+
+        /* 返回按钮 */
+        .btn-back {
+            background: rgba(255, 255, 255, 0.1); /* 返回按钮背景颜色 */
+            color: var(--primary-color); /* 返回按钮文字颜色 */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* 返回按钮边框颜色 */
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.2); /* 返回按钮hover背景颜色 */
+        }
+
+        /* ==================== 文档列表 ==================== */
+        .doc-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .doc-item {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05)); /* 文档卡片背景颜色 */
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1); /* 文档卡片边框颜色 */
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doc-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); /* 卡片hover时的光效颜色 */
+            transition: left 0.6s;
+        }
+
+        .doc-item:hover::before {
+            left: 100%;
+        }
+
+        .doc-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); /* 卡片hover时的阴影颜色 */
+            border-color: rgba(250, 167, 85, 0.3); /* 卡片hover时的边框颜色 */
+        }
+
+        .doc-item-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color); /* 文档标题颜色 */
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .doc-item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--secondary-color); /* 文档元信息颜色 */
+            opacity: 0.7;
+        }
+
+        /* ==================== 预览区域 ==================== */
+        .preview {
+            color: var(--primary-color); /* 预览区域文字颜色 */
+            line-height: 1.6;
+        }
+
+        /* 标题样式 */
+        .preview h1, .preview h2, .preview h3 {
+            color: var(--primary-color); /* 标题颜色 */
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview h1 {
+            font-size: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* H1下划线颜色 */
+            padding-bottom: 0.5rem;
+        }
+
+        .preview h2 {
+            font-size: 1.5rem;
+        }
+
+        .preview h3 {
+            font-size: 1.2rem;
+        }
+
+        .preview p {
+            margin-bottom: 1rem;
+        }
+
+        .preview ul, .preview ol {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+
+        /* 代码块样式 */
+        .preview code {
+            background: rgba(0, 0, 0, 0.3); /* 内联代码背景颜色 */
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .preview pre {
+            background: rgba(0, 0, 0, 0.3); /* 代码块背景颜色 */
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+
+        .preview pre code {
+            background: transparent;
+            padding: 0;
+        }
+
+        /* 引用样式 */
+        .preview blockquote {
+            border-left: 3px solid var(--accent-color); /* 引用边框颜色 */
+            padding-left: 1rem;
+            margin-left: 0;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        /* 表格样式 */
+        .preview table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .preview th, .preview td {
+            border: 1px solid rgba(255, 255, 255, 0.1); /* 表格边框颜色 */
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        .preview th {
+            background: rgba(0, 0, 0, 0.3); /* 表格表头背景颜色 */
+        }
+
+        /* 表格圆角优化 */
+        .preview th:first-child {
+            border-top-left-radius: 8px;
+        }
+
+        .preview th:last-child {
+            border-top-right-radius: 8px;
+        }
+
+        .preview tr:last-child td:first-child {
+            border-bottom-left-radius: 8px;
+        }
+
+        .preview tr:last-child td:last-child {
+            border-bottom-right-radius: 8px;
+        }
+
+        /* 链接样式 */
+        .preview a {
+            color: #6495ed; /* 淡蓝色链接颜色 */
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .preview a:hover {
+            color: #4169e1; /* 链接hover时颜色加深 */
+            border-bottom-color: #6495ed; /* 链接hover时显示下划线 */
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--primary-color);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            box-sizing: border-box;
+        }
+
+        /* ==================== 浅色模式样式 ==================== */
+
+        /* 浅色模式下的各种圆角矩形框样式 */
+        @media (prefers-color-scheme: light) {
+            .modal-input {
+                background: #e0e0e0; /* 模态框输入框背景颜色 */
+                border: 1px solid #d0d0d0; /* 模态框输入框边框颜色 */
+                color: #000000; /* 模态框输入框文字颜色 */
+            }
+
+            .doc-item {
+                background: #F2F2F2; /* 文档卡片背景颜色 */
+                border: 1px solid #d0d0d0; /* 文档卡片边框颜色 */
+            }
+
+            .modal-content {
+                background: #f0f0f0 !important; /* 模态框内容背景颜色 */
+            }
+        }
+
+        .light-theme .modal-input {
+            background: #F2F2F2 !important; /* 模态框输入框背景颜色 */
+            border: 1px solid #d0d0d0 !important; /* 模态框输入框边框颜色 */
+            color: #000000 !important; /* 模态框输入框文字颜色 */
+        }
+
+        .light-theme .doc-item {
+            background: #F2F2F2 !important; /* 文档卡片背景颜色 */
+            border: 1px solid #d0d0d0 !important; /* 文档卡片边框颜色 */
+        }
+
+        .light-theme .modal-content {
+            background: #f0f0f0 !important; /* 模态框内容背景颜色 */
+        }
+
+        /* ==================== 响应式设计 ==================== */
+        @media (max-width: 768px) {
+            .doc-title {
+                font-size: 2rem;
+            }
+
+            .doc-list {
+                grid-template-columns: 1fr;
+            }
+
+            .doc-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            /* 缩小页面容器左右边距 */
+            .doc-container {
+                padding: 0 1rem;
+            }
+
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">Wiki修正列表</div>
+            <div class="nav-buttons">
+                <button id="theme-toggle" class="theme-toggle" aria-label="切换主题">
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区域 -->
+    <section class="doc-manager">
+        <div class="doc-content">
+            <div class="doc-container">
+                <!-- 修正列表页面 -->
+                <div id="list-view">
+                    <div class="doc-header">
+                        <h1 class="doc-title">Wiki修正列表</h1>
+                        <button class="btn-back" onclick="window.location.href='wiki.html'">← 返回</button>
+                    </div>
+                    <div id="correction-list" class="doc-list">
+                        <!-- 修正列表将通过 JavaScript 动态生成 -->
+                    </div>
+                    <div id="empty-state" class="empty-state" style="display: none;">
+                        <div class="empty-state-icon">📄</div>
+                        <div>暂无修正文档</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 加载动画 -->
+    <div class="loader-overlay" id="loader">
+        <div class="loader-decoration">
+            <div class="floating-element el-1"></div>
+            <div class="floating-element el-2"></div>
+            <div class="floating-element el-3"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // 修正文档数据
+        let correctionDocs = [];
+
+        // Supabase 配置
+        const SUPABASE_URL = 'https://wyoofofxviolwdebkpkt.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_TOTiug5k7UCGYLeLib0cUw_Vqm06ZyC';
+
+        // 初始化 Supabase 客户端
+        const supabase = {
+            url: SUPABASE_URL,
+            anonKey: SUPABASE_ANON_KEY,
+            from: function(table) {
+                return {
+                    select: async function(query = '*') {
+                        const url = `${SUPABASE_URL}/rest/v1/${table}?${new URLSearchParams({
+                            select: query,
+                            apikey: SUPABASE_ANON_KEY
+                        })}`;
+                        const response = await fetch(url, {
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        if (!response.ok) throw new Error(`Select failed: ${response.status}`);
+                        return { data: await response.json(), error: null };
+                    },
+                    insert: async function(data) {
+                        const url = `${SUPABASE_URL}/rest/v1/${table}?${new URLSearchParams({
+                            apikey: SUPABASE_ANON_KEY
+                        })}`;
+                        const response = await fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'Prefer': 'return=representation'
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        if (!response.ok) throw new Error(`Insert failed: ${response.status}`);
+                        return { data: await response.json(), error: null };
+                    },
+                    update: async function(data, id) {
+                        const url = `${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}&${new URLSearchParams({
+                            apikey: SUPABASE_ANON_KEY
+                        })}`;
+                        const response = await fetch(url, {
+                            method: 'PATCH',
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'Prefer': 'return=representation'
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        if (!response.ok) throw new Error(`Update failed: ${response.status}`);
+                        const result = await response.json();
+                        return { data: result, error: null };
+                    },
+                    delete: async function(id = null) {
+                        let url;
+                        if (id) {
+                            url = `${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`;
+                        } else {
+                            url = `${SUPABASE_URL}/rest/v1/${table}?id=neq.0`;
+                        }
+                        const response = await fetch(url, {
+                            method: 'DELETE',
+                            headers: {
+                                'apikey': SUPABASE_ANON_KEY,
+                                'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            }
+                        });
+                        if (!response.ok) throw new Error(`Delete failed: ${response.status}`);
+                        return { data: null, error: null };
+                    }
+                };
+            }
+        };
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCorrectionDocs();
+        });
+
+        // 从 Supabase 加载修正文档
+        async function loadCorrectionDocs() {
+            try {
+                // 显示加载动画
+                document.getElementById('loader').style.display = 'block';
+
+                // 加载 type 为 wikiedited 的文档
+                const url = `${SUPABASE_URL}/rest/v1/documents?select=*&type=eq.wikiedited&${new URLSearchParams({
+                    apikey: SUPABASE_ANON_KEY
+                })}`;
+
+                const response = await fetch(url, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to load correction documents: ${response.status}`);
+                }
+
+                correctionDocs = await response.json();
+                console.log('从 Supabase 加载了', correctionDocs.length, '个修正文档');
+
+                // 渲染修正列表
+                renderCorrectionList();
+            } catch (error) {
+                console.error('加载修正文档失败:', error);
+                correctionDocs = [];
+                renderCorrectionList();
+            } finally {
+                // 隐藏加载动画
+                document.getElementById('loader').style.display = 'none';
+            }
+        }
+
+        // 渲染修正列表
+        function renderCorrectionList() {
+            const listContainer = document.getElementById('correction-list');
+            const emptyState = document.getElementById('empty-state');
+
+            if (correctionDocs.length === 0) {
+                emptyState.style.display = 'block';
+                listContainer.innerHTML = '';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            // 按创建时间降序排序
+            const sortedDocs = [...correctionDocs].sort((a, b) =>
+                new Date(b.created_at) - new Date(a.created_at)
+            );
+
+            listContainer.innerHTML = sortedDocs.map(doc => `
+                <div class="doc-item">
+                    <div class="doc-item-header">
+                        <div class="doc-item-title" onclick="showCorrectionPreview('${doc.id}')">
+                            ${escapeHtml(doc.title)}
+                        </div>
+                    </div>
+                    <div class="doc-item-meta">
+                        <span class="doc-item-date">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            ${formatDate(doc.created_at)}
+                        </span>
+                    </div>
+                    <div style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">
+                        ${getPreviewText(doc.content)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 显示修正文档预览
+        function showCorrectionPreview(docId) {
+            const doc = correctionDocs.find(d => d.id === docId);
+            if (doc) {
+                // 显示预览模态框
+                const modal = document.createElement('div');
+                modal.className = 'modal active';
+                modal.innerHTML = `
+                    <div class="modal-content" style="max-width: 800px; width: 95%; max-height: 80vh; overflow-y: auto;">
+                        <div class="modal-title">${escapeHtml(doc.title)}</div>
+                        <div class="doc-item-meta">
+                            <span class="doc-item-date">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                </svg>
+                                ${formatDate(doc.created_at)}
+                            </span>
+                        </div>
+                        <div class="preview" style="margin-top: 1rem;">
+                            ${marked.parse(doc.content)}
+                        </div>
+                        <div class="modal-buttons">
+                            <button class="btn-cancel" onclick="this.closest('.modal').remove()">关闭</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+        }
+
+        // 获取内容预览文本
+        function getPreviewText(content) {
+            // 去除Markdown标签和HTML标签
+            const plainText = content.replace(/[#*`~>]/g, '').replace(/<[^>]*>/g, '');
+            return plainText.length > 100 ? plainText.slice(0, 100) + '...' : plainText;
+        }
+
+        // 格式化日期
+        function formatDate(isoString) {
+            const date = new Date(isoString);
+            const now = new Date();
+            const diff = now - date;
+
+            if (diff < 60000) { // 小于1分钟
+                return '刚刚';
+            } else if (diff < 3600000) { // 小于1小时
+                return Math.floor(diff / 60000) + '分钟前';
+            } else if (diff < 86400000) { // 小于1天
+                return Math.floor(diff / 3600000) + '小时前';
+            } else {
+                return date.toLocaleDateString('zh-CN');
+            }
+        }
+
+        // HTML转义函数
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"]/g, function(m) { return map[m]; });
+        }
+    </script>
+</body>
+</html>
