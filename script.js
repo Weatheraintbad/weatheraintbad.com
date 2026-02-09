@@ -456,7 +456,13 @@ function initGreeting() {
     const timePeriod = getTimePeriod();
     const greetingElement = document.getElementById('greeting');
     const welcomeElement = document.getElementById('welcome');
-// 更华丽的过渡样式
+
+    // 检查元素是否存在，避免在没有这些元素的页面上出错
+    if (!greetingElement || !welcomeElement) {
+        return;
+    }
+
+    // 更华丽的过渡样式
     greetingElement.style.transition = 'opacity 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
     welcomeElement.style.transition = 'opacity 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s, transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.3s';
 
