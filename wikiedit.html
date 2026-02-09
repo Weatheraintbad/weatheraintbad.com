@@ -111,6 +111,71 @@
             padding: 0 2rem;
         }
 
+        /* 侧边导航栏 */
+        .toc-container {
+            position: fixed;
+            top: 100px; /* 与导航栏高度一致 */
+            left: 2rem; /* 与页面布局容器的左边距对齐 */
+            width: 250px;
+            height: calc(97.5vh - 100px); /* 页面高度 - 导航栏高度 */
+            overflow-y: auto; /* 添加垂直滚动 */
+            overflow-x: hidden; /* 隐藏水平滚动 */
+            background: rgba(255, 255, 255, 0.1); /* 与编辑框背景相同 */
+            border: 1px solid rgba(255, 255, 255, 0.2); /* 与编辑框边框相同 */
+            border-radius: 12px; /* 与编辑框边框半径相同 */
+            padding: 1.5rem; /* 与编辑框内边距相同 */
+            box-shadow: var(--shadow-md);
+            z-index: 100;
+            display: none; /* 默认隐藏 */
+            border-top: none; /* 去掉顶部边框，与导航栏相连 */
+        }
+
+        .toc-container.show {
+            display: block;
+        }
+
+        .toc-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .toc-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .toc-item {
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .toc-item:hover {
+            color: var(--accent-color);
+        }
+
+        .toc-item h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .toc-item h2 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            padding-left: 1rem;
+        }
+
+        .toc-item h3 {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--secondary-color);
+            padding-left: 2rem;
+        }
+
         /* 编辑器容器 */
         .editor-container {
             max-width: 900px;
@@ -551,6 +616,43 @@
             .modal-content {
                 background: #f0f0f0 !important;
             }
+
+            /* 浅色模式下的预览区域样式 */
+            .preview code {
+                background: #e8e8e8;
+                border: 1px solid #d0d0d0;
+                color: #000000;
+            }
+
+            .preview pre {
+                background: #e8e8e8;
+                border: 1px solid #d0d0d0;
+                color: #000000;
+            }
+
+            .preview pre code {
+                background: transparent;
+                border: none;
+            }
+
+            .preview blockquote {
+                border-left: 3px solid var(--accent-color);
+            }
+
+            .preview table {
+                border-collapse: separate;
+                border-spacing: 0;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .preview th, .preview td {
+                border: 1px solid #d0d0d0;
+            }
+
+            .preview h1 {
+                border-bottom: 1px solid #d0d0d0;
+            }
         }
 
         .light-theme .modal-input {
@@ -576,6 +678,42 @@
 
         .light-theme .modal-content {
             background: #f0f0f0 !important;
+        }
+
+        .light-theme .preview code {
+            background: #e8e8e8 !important;
+            border: 1px solid #d0d0d0 !important;
+            color: #000000 !important;
+        }
+
+        .light-theme .preview pre {
+            background: #e8e8e8 !important;
+            border: 1px solid #d0d0d0 !important;
+            color: #000000 !important;
+        }
+
+        .light-theme .preview pre code {
+            background: transparent !important;
+            border: none !important;
+        }
+
+        .light-theme .preview blockquote {
+            border-left: 3px solid var(--accent-color) !important;
+        }
+
+        .light-theme .preview table {
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+        }
+
+        .light-theme .preview th, .light-theme .preview td {
+            border: 1px solid #d0d0d0 !important;
+        }
+
+        .light-theme .preview h1 {
+            border-bottom: 1px solid #d0d0d0 !important;
         }
     </style>
 </head>
@@ -619,6 +757,14 @@
             </div>
         </div>
     </nav>
+
+    <!-- 侧边导航栏 -->
+    <div class="toc-container" id="toc-container">
+        <div class="toc-title">目录</div>
+        <ul class="toc-list" id="toc-list">
+            <!-- 目录将通过 JavaScript 动态生成 -->
+        </ul>
+    </div>
 
     <!-- 主内容区域 -->
     <section class="doc-manager">
@@ -708,7 +854,11 @@
                             },
                             body: JSON.stringify(data)
                         });
-                        if (!response.ok) throw new Error(`Insert failed: ${response.status}`);
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error('Insert failed response:', response.status, errorText);
+                            throw new Error(`Insert failed: ${response.status} - ${errorText}`);
+                        }
                         return { data: await response.json(), error: null };
                     },
                     update: async function(data, id) {
@@ -762,7 +912,23 @@
                 document.getElementById('editor-title').value = currentDoc.title;
                 document.getElementById('editor').value = currentDoc.content;
             }
+
+            // 动态调整侧边导航栏的左边距，使其位于导航栏logo的下方
+            adjustTocPosition();
+            // 监听窗口大小变化，重新调整侧边导航栏位置
+            window.addEventListener('resize', adjustTocPosition);
         });
+
+        // 调整侧边导航栏位置
+        function adjustTocPosition() {
+            const logo = document.querySelector('.logo');
+            const tocContainer = document.getElementById('toc-container');
+            if (logo && tocContainer) {
+                const logoRect = logo.getBoundingClientRect();
+                // 侧边导航栏的左边距设置为logo的左边距
+                tocContainer.style.left = logoRect.left + 'px';
+            }
+        }
 
         // 切换编辑/预览模式
         function switchMode(mode) {
@@ -783,11 +949,97 @@
             }
         }
 
+        // 配置 marked 库，允许解析 HTML 和添加图片样式
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            sanitize: false,  // 允许 HTML 标签
+            mangle: false
+        });
+
         // 更新预览
         function updatePreview() {
             const content = document.getElementById('editor').value;
             const previewDiv = document.getElementById('preview');
-            previewDiv.innerHTML = marked.parse(content);
+            const title = document.getElementById('editor-title').value;
+
+            // 检查当前是否是预览模式
+            const isPreviewMode = document.querySelector('.preview-btn.active') !== null;
+            if (isPreviewMode && title) {
+                previewDiv.innerHTML = `
+                    <h1 style="font-size: 3rem; font-weight: 700; color: var(--primary-color); margin-bottom: 1.5rem; margin-top: -1rem; font-family: 'Noto Serif SC', 'Times New Roman', serif;">${title}</h1>
+                    ${marked.parse(content) || '<p style="color: var(--secondary-color); opacity: 0.5;">暂无内容</p>'}
+                `;
+            } else {
+                previewDiv.innerHTML = marked.parse(content) || '<p style="color: var(--secondary-color); opacity: 0.5;">暂无内容</p>';
+            }
+
+            // 生成目录
+            generateTableOfContents();
+        }
+
+        // 生成目录
+        function generateTableOfContents() {
+            const preview = document.getElementById('preview');
+            const tocList = document.getElementById('toc-list');
+            const tocContainer = document.getElementById('toc-container');
+
+            // 清空现有目录
+            tocList.innerHTML = '';
+
+            // 查找所有标题
+            const headings = preview.querySelectorAll('h1, h2, h3');
+
+            if (headings.length === 0) {
+                // 没有标题时隐藏目录
+                tocContainer.classList.remove('show');
+                return;
+            }
+
+            // 生成目录项
+            headings.forEach((heading, index) => {
+                // 为标题添加唯一的 id
+                const headingId = `heading-${index}`;
+                heading.id = headingId;
+
+                // 创建目录项
+                const li = document.createElement('li');
+                li.className = 'toc-item';
+
+                // 根据标题级别设置样式
+                const level = parseInt(heading.tagName.charAt(1));
+
+                // 设置不同级别的缩进
+                if (level === 1) {
+                    li.style.paddingLeft = '0';
+                } else if (level === 2) {
+                    li.style.paddingLeft = '1rem';
+                } else if (level === 3) {
+                    li.style.paddingLeft = '2rem';
+                }
+
+                // 创建文本节点
+                const textNode = document.createTextNode(heading.textContent);
+                li.appendChild(textNode);
+                li.addEventListener('click', () => handleTocClick(headingId));
+                tocList.appendChild(li);
+            });
+
+            // 显示目录
+            tocContainer.classList.add('show');
+        }
+
+        // 处理目录点击事件
+        function handleTocClick(headingId) {
+            const heading = document.getElementById(headingId);
+            if (heading) {
+                // 计算滚动位置，考虑固定导航栏的高度
+                const offsetTop = heading.offsetTop - 100;
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
+                });
+            }
         }
 
         // 提交修改
@@ -806,7 +1058,6 @@
 
                 // 创建修正版本的文档
                 const editedDoc = {
-                    id: currentDoc.id + '_edited_' + Date.now(), // 生成唯一ID
                     title: title,
                     content: content,
                     type: 'wikiedited',
