@@ -989,9 +989,7 @@
     <!-- 导航栏 -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo">
-                <a href="index.html" style="text-decoration: none; color: inherit;">Weatheraintbad.com</a>
-            </div>
+            <div class="logo">Wiki</div>
             <ul class="nav-menu">
                 <li><a href="dashboard.html">数据看板</a></li>
                 <li><a href="doc.html">文档管理</a></li>
@@ -1407,6 +1405,12 @@
                     hideEditorControls();
                     hideFooterControls();
                     hideNavMenu();
+
+                    // 分享模式下隐藏编辑和预览按钮
+                    const editBtn = document.querySelector('.edit-btn');
+                    const previewBtn = document.querySelector('.preview-btn');
+                    if (editBtn) editBtn.style.display = 'none';
+                    if (previewBtn) previewBtn.style.display = 'none';
                 } else {
                     alert('文档不存在');
                 }
@@ -2080,6 +2084,12 @@
                 const editor = document.getElementById('editor');
                 titleInput.readOnly = false;
                 editor.readOnly = false;
+
+                // 显示编辑和预览按钮
+                const editBtn = document.querySelector('.edit-btn');
+                const previewBtn = document.querySelector('.preview-btn');
+                if (editBtn) editBtn.style.display = 'block';
+                if (previewBtn) previewBtn.style.display = 'block';
 
                 // 切换到编辑模式
                 switchMode('edit');
