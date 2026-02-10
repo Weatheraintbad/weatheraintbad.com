@@ -302,6 +302,12 @@
             padding-bottom: 0.5rem;
         }
 
+        .preview hr {
+            border: none;
+            border-top: 1px solid var(--border-color); /* 分隔线颜色 - 与背景边框相同 */
+            margin: 2rem 0;
+        }
+
         .preview h2 {
             font-size: 1.5rem;
         }
@@ -361,7 +367,7 @@
         }
 
         .preview th, .preview td {
-            border: 1px solid rgba(255, 255, 255, 0.1); /* 表格边框颜色 */
+            border: 1px solid var(--border-color); /* 表格边框颜色 - 与背景边框相同 */
             padding: 0.5rem;
             text-align: left;
         }
@@ -715,6 +721,12 @@
         .light-theme .preview h1 {
             border-bottom: 1px solid #d0d0d0 !important;
         }
+
+        .light-theme .preview hr {
+            border: none !important;
+            border-top: 1px solid #d0d0d0 !important; /* 分隔线颜色 - 与背景边框相同 */
+            margin: 2rem 0 !important;
+        }
     </style>
 </head>
 <body>
@@ -1056,8 +1068,16 @@
                 // 显示加载动画
                 document.getElementById('loader').style.display = 'block';
 
+                // 生成唯一标识符
+                const generateUniqueId = () => {
+                    const timestamp = Date.now().toString(36);
+                    const randomStr = Math.random().toString(36).substring(2, 10);
+                    return timestamp + randomStr;
+                };
+
                 // 创建修正版本的文档
                 const editedDoc = {
+                    id: generateUniqueId(),
                     title: title,
                     content: content,
                     type: 'wikiedited',

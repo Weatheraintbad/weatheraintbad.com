@@ -157,6 +157,12 @@
             padding-bottom: 0.5rem;
         }
 
+        .preview hr {
+            border: none;
+            border-top: 1px solid var(--border-color); /* 分隔线颜色 - 与背景边框相同 */
+            margin: 2rem 0;
+        }
+
         .preview h2 {
             font-size: 1.5rem;
         }
@@ -332,6 +338,13 @@
             .modal-content {
                 background: #f0f0f0 !important; /* 模态框内容背景颜色 */
             }
+
+            /* 预览区域浅色模式样式 */
+            .preview hr {
+                border: none;
+                border-top: 1px solid #d0d0d0; /* 分隔线颜色 - 与背景边框相同 */
+                margin: 2rem 0;
+            }
         }
 
         .light-theme .modal-input {
@@ -347,6 +360,13 @@
 
         .light-theme .modal-content {
             background: #f0f0f0 !important; /* 模态框内容背景颜色 */
+        }
+
+        /* 预览区域浅色模式样式 */
+        .light-theme .preview hr {
+            border: none !important;
+            border-top: 1px solid #d0d0d0 !important; /* 分隔线颜色 - 与背景边框相同 */
+            margin: 2rem 0 !important;
         }
 
         /* ==================== 响应式设计 ==================== */
