@@ -645,6 +645,12 @@
                 border-left: 3px solid var(--accent-color);
             }
 
+            .preview hr {
+                border: none;
+                border-top: 1px solid #d0d0d0; /* 分隔线颜色 - 与背景边框相同 */
+                margin: 2rem 0;
+            }
+
             .preview table {
                 border-collapse: separate;
                 border-spacing: 0;
@@ -726,6 +732,13 @@
             border: none !important;
             border-top: 1px solid #d0d0d0 !important; /* 分隔线颜色 - 与背景边框相同 */
             margin: 2rem 0 !important;
+        }
+
+        /* 深色模式下的分隔线样式 */
+        .dark-theme .preview hr {
+            border: none !important;
+            border-top: 1px solid var(--border-color) !important; /* 分隔线颜色 - 与背景边框相同 */
+            margin: 2rem 0 !important; /* 上下间隔 */
         }
     </style>
 </head>

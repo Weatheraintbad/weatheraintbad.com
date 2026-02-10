@@ -447,6 +447,13 @@
             line-height: 1.6;
         }
 
+        /* 分隔线样式 - 深色模式默认 */
+        .preview hr {
+            border: none;
+            border-top: 1px solid var(--border-color); /* 分隔线颜色 - 与背景边框相同 */
+            margin: 2rem 0; /* 上下间隔 */
+        }
+
         /* 标题样式 */
         .preview h1, .preview h2, .preview h3 {
             color: var(--primary-color); /* 标题颜色 */
@@ -790,7 +797,7 @@
 
             .preview hr {
                 border: none;
-                border-top: 1px solid var(--border-color); /* 分隔线颜色 - 与背景边框相同 */
+                border-top: 1px solid #d0d0d0; /* 分隔线颜色 - 与背景边框相同 */
                 margin: 2rem 0;
             }
         }
@@ -850,7 +857,7 @@
 
         .light-theme .preview hr {
             border: none !important;
-            border-top: 1px solid var(--border-color) !important; /* 分隔线颜色 - 与背景边框相同 */
+            border-top: 1px solid #d0d0d0 !important; /* 分隔线颜色 - 与背景边框相同 */
             margin: 2rem 0 !important;
         }
 
@@ -892,6 +899,13 @@
         .dark-theme .preview a:hover {
             color: #4169e1 !important; /* 链接hover时颜色加深 */
             border-bottom-color: #6495ed !important; /* 链接hover时显示下划线 */
+        }
+
+        /* 深色模式下的分隔线样式 */
+        .dark-theme .preview hr {
+            border: none !important;
+            border-top: 1px solid var(--border-color) !important; /* 分隔线颜色 - 与背景边框相同 */
+            margin: 2rem 0 !important; /* 上下间隔 */
         }
 
         .modal-input::placeholder {
