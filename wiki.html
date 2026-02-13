@@ -209,6 +209,52 @@
             padding-left: 2rem;
         }
 
+        /* ==================== 目录高亮滑块 ==================== */
+        #toc-highlight {
+            position: absolute;
+            left: 5%; /* 左侧空出2%的距离，使滑块居中 */
+            width: 90%; /* 稍微缩减宽度 */
+            height: 0;
+            border-radius: 8px;
+            z-index: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+        }
+
+        /* 深色模式下的高亮颜色 - 与代码块背景一致 */
+        #toc-highlight {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 浅色模式下的高亮颜色 - 与代码块背景一致 */
+        @media (prefers-color-scheme: light) {
+            #toc-highlight {
+                background: #e8e8e8;
+                border: 1px solid #d0d0d0;
+            }
+        }
+
+        .light-theme #toc-highlight {
+            background: #e8e8e8 !important;
+            border: 1px solid #d0d0d0 !important;
+        }
+
+        /* 深色主题下的高亮颜色 */
+        .dark-theme #toc-highlight {
+            background: rgba(0, 0, 0, 0.3) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .toc-item {
+            position: relative;
+            z-index: 1;
+        }
+
+        .toc-item.active {
+            color: var(--primary-color);
+        }
+
         /* ==================== 编辑器页面 ==================== */
         .editor-container {
             max-width: 900px;
@@ -800,7 +846,7 @@
             .preview h1 {
                 border-bottom: 1px solid #d0d0d0; /* H1下划线颜色 - 浅灰色 */
             }
-
+3
             .preview hr {
                 border: none;
                 border-top: 1px solid #d0d0d0; /* 分隔线颜色 - 与背景边框相同 */
@@ -1909,6 +1955,7 @@
             }
 
             // 生成目录项
+            // console.log('Generating TOC for', headings.length, 'headings');
             headings.forEach((heading, index) => {
                 // 为标题添加唯一的 id
                 const headingId = `heading-${index}`;
@@ -1980,8 +2027,82 @@
             return false;
         }
 
+            // 创建高亮滑块元素（只创建一次）
+            let highlightSlider = document.getElementById('toc-highlight');
+            if (!highlightSlider) {
+                highlightSlider = document.createElement('div');
+                highlightSlider.id = 'toc-highlight';
+                tocContainer.appendChild(highlightSlider);
+            }
+
             // 显示目录
             tocContainer.classList.add('show');
+
+            // 添加滚动监听事件（只添加一次）
+            if (!window.hasScrollListener) {
+                window.hasScrollListener = true;
+                window.addEventListener('scroll', handleScrollHighlight);
+            }
+        }
+
+        // 滚动监听函数，用于高亮当前可见标题对应的目录项
+        function handleScrollHighlight() {
+            const preview = document.getElementById('preview');
+            const headings = preview.querySelectorAll('h1, h2, h3');
+            const tocItems = document.querySelectorAll('.toc-item');
+            const highlightSlider = document.getElementById('toc-highlight');
+
+            // 检查是否有目录项
+            // console.log('Headings:', headings.length);
+            // console.log('TOC items:', tocItems.length);
+
+            let currentActiveHeading = null;
+            const scrollPosition = window.scrollY + 100; // 调整偏移量，与导航栏高度一致
+
+            // 找到当前可见的标题
+            // 优先选择完全可见的标题，其次选择顶部可见的标题
+            let visibleHeadings = [];
+            headings.forEach(heading => {
+                const headingTop = heading.offsetTop;
+                const headingBottom = headingTop + heading.offsetHeight;
+
+                if (scrollPosition >= headingTop && scrollPosition < headingBottom) {
+                    currentActiveHeading = heading;
+                } else if (scrollPosition >= headingTop) {
+                    visibleHeadings.push(heading);
+                }
+            });
+
+            // 如果没有完全可见的标题，选择最后一个顶部可见的标题
+            if (!currentActiveHeading && visibleHeadings.length > 0) {
+                currentActiveHeading = visibleHeadings[visibleHeadings.length - 1];
+            }
+
+            // 移除所有目录项的 active 类
+            tocItems.forEach(item => item.classList.remove('active'));
+
+            // 移动滑块到对应的目录项位置
+            if (currentActiveHeading) {
+                const headingIndex = Array.from(headings).indexOf(currentActiveHeading);
+                if (headingIndex >= 0 && tocItems[headingIndex]) {
+                    const activeTocItem = tocItems[headingIndex];
+                    activeTocItem.classList.add('active');
+
+                    // 更新滑块位置和尺寸
+                    // 增加高度并调整垂直位置以居中
+                    const additionalHeight = 10;
+                    highlightSlider.style.top = (activeTocItem.offsetTop - additionalHeight / 2) + 'px';
+                    highlightSlider.style.height = (activeTocItem.offsetHeight + additionalHeight) + 'px';
+                    highlightSlider.style.opacity = '1';
+                    // console.log('Active heading:', currentActiveHeading.textContent);
+                    // console.log('Slider position:', activeTocItem.offsetTop + 'px');
+                } else {
+                    // console.log('No matching TOC item for heading:', currentActiveHeading.textContent);
+                }
+            } else {
+                // 如果没有可见标题，隐藏滑块
+                highlightSlider.style.opacity = '0';
+            }
         }
 
         // 切换小标题的显示/隐藏
