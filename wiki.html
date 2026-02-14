@@ -217,7 +217,7 @@
             height: 0;
             border-radius: 8px;
             z-index: 0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.20s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: none;
         }
 
@@ -1075,6 +1075,42 @@
             .modal-content {
                 padding: 1.5rem;
             }
+
+            /* 分享模式的手机端样式 */
+            .doc-manager.isShareMode {
+                display: flex;
+                flex-direction: column;
+                height: 100vh;
+            }
+
+            /* 标题导航栏 */
+            .doc-manager.isShareMode .doc-header {
+                height: 25vh; /* 占1/4高度 */
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.05);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+            }
+
+            /* 正文内容 */
+            .doc-manager.isShareMode .doc-content {
+                height: 75vh; /* 占3/4高度 */
+                overflow-y: auto;
+                width: 100%;
+                padding: 1rem;
+            }
+
+            /* 分享模式下的页面布局 */
+            .doc-manager.isShareMode .doc-container {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -1681,6 +1717,9 @@
                     hideFooterControls(); // 隐藏底部编辑控件
                     hideNavMenu(); // 隐藏导航菜单
 
+                    // 为页面添加分享模式类，用于应用手机端响应式样式
+                    document.querySelector('.doc-manager').classList.add('isShareMode');
+
                     // 动态调整侧边导航栏的左边距，使其位于导航栏logo的下方
                     adjustTocPosition();
                     // 监听窗口大小变化，重新调整侧边导航栏位置
@@ -1879,6 +1918,9 @@
                 titleInput.style.display = 'block'; // 恢复标题输入框显示
             }
             if (editor) editor.readOnly = false;
+
+            // 移除分享模式类
+            document.querySelector('.doc-manager').classList.remove('isShareMode');
 
             // 隐藏侧边导航栏
             const tocContainer = document.getElementById('toc-container');
@@ -2249,6 +2291,9 @@
                 showFooterControls(); // 显示底部编辑控件
                 showNavMenu(); // 显示导航菜单
                 isShareMode = false;
+
+                // 移除分享模式类
+                document.querySelector('.doc-manager').classList.remove('isShareMode');
 
                 // 确保标题和内容可编辑
                 const titleInput = document.getElementById('editor-title');
