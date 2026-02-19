@@ -1038,18 +1038,13 @@
 
         /* 响应式设计 */
         @media (max-width: 768px) {
-            .doc-title {
-                font-size: 2rem;
+            /* 隐藏Wiki管理标题和新建Wiki按钮 */
+            .doc-header {
+                display: none;
             }
 
             .doc-list {
                 grid-template-columns: 1fr;
-            }
-
-            .doc-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
             }
 
             /* 缩小页面容器左右边距 */
