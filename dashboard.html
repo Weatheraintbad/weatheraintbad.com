@@ -388,12 +388,53 @@
             }
 
             .chart-container {
-                height: 250px;
+                height: 500px; /* 增加图表高度，防止显示不全 */
+            }
+
+            /* 隐藏日历组件 */
+            .top-row .data-card:nth-child(2) {
+                display: none !important;
+            }
+
+            /* 上排网格在小屏幕上调整 - 只显示折线图 */
+            .top-row {
+                grid-template-columns: 1fr !important;
             }
 
             /* 下排网格在小屏幕上调整 */
+            .bottom-row {
+                grid-template-columns: 1fr !important;
+                grid-template-rows: auto !important; /* 自动高度，适应内容 */
+            }
+
+            /* 确保所有组件单独一行显示 */
             .bottom-row .data-card {
                 grid-column: 1 / 2 !important;
+                grid-row: auto !important;
+            }
+
+            /* 确保所有下排组件单独一行显示 */
+            .bottom-row div[data-card-type="bar-chart"] {
+                grid-column: 1 / 2 !important;
+                grid-row: 1 !important;
+            }
+            .bottom-row div[data-card-type="download-list"] {
+                grid-column: 1 / 2 !important;
+                grid-row: 2 !important;
+            }
+            .bottom-row div[data-card-type="total-downloads"] {
+                grid-column: 1 / 2 !important;
+                grid-row: 3 !important;
+            }
+            .bottom-row div[data-card-type="today-downloads"] {
+                grid-column: 1 / 2 !important;
+                grid-row: 4 !important;
+            }
+
+            /* 确保所有组件都单独一行显示 */
+            .bottom-row .data-card {
+                grid-column: 1 / 2 !important;
+                grid-row: auto !important;
             }
 
             .bottom-row div[style*="grid-template-columns"] {
@@ -489,10 +530,10 @@
                     </div>
                 </div>
 
-                <!-- 下排：项目下载详情、项目下载量柱状图、总下载量和今日新增 -->
+                <!-- 下排：项目下载量柱状图、下载量详情、总下载量和今日新增 -->
                 <div class="bottom-row">
                     <!-- 项目下载量柱状图 -->
-                    <div class="data-card" style="grid-column: 1 / 2; display: flex; flex-direction: column;">
+                    <div class="data-card" data-card-type="bar-chart" style="grid-column: 1 / 2; display: flex; flex-direction: column;">
                         <h3 class="card-title">项目下载量</h3>
                         <div class="chart-container" style="height: 350px;">
                             <canvas id="downloads-bar-chart"></canvas>
@@ -500,26 +541,23 @@
                     </div>
 
                     <!-- 项目下载量（列表） -->
-                    <div class="data-card" style="grid-column: 2 / 3; display: flex; flex-direction: column; grid-row: 1 / 2;">
+                    <div class="data-card" data-card-type="download-list" style="grid-column: 2 / 3; display: flex; flex-direction: column; grid-row: 1 / 2;">
                         <h3 class="card-title">下载量详情</h3>
                         <div class="download-list" id="download-list"></div>
                     </div>
 
-                    <!-- 统计卡片 -->
-                    <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 2rem; grid-column: 3 / 4; grid-row: 1 / 2;">
-                        <!-- 总下载量 -->
-                        <div class="data-card stat-card" style="display: flex; flex-direction: column; justify-content: center;">
-<!--                            <h3 class="card-title">总下载量</h3>-->
-                            <div class="stat-value" id="total-downloads">0</div>
-                            <div class="stat-label">所有项目累计</div>
-                        </div>
+                    <!-- 总下载量 -->
+                    <div class="data-card stat-card" data-card-type="total-downloads" style="grid-column: 3 / 4; display: flex; flex-direction: column; justify-content: center;">
+<!--                        <h3 class="card-title">总下载量</h3>-->
+                        <div class="stat-value" id="total-downloads">0</div>
+                        <div class="stat-label">所有项目累计</div>
+                    </div>
 
-                        <!-- 今日新增下载量 -->
-                        <div class="data-card stat-card" style="display: flex; flex-direction: column; justify-content: center;">
-<!--                            <h3 class="card-title">今日新增</h3>-->
-                            <div class="stat-value" id="today-downloads">0</div>
-                            <div class="stat-label">24小时内增长</div>
-                        </div>
+                    <!-- 今日新增下载量 -->
+                    <div class="data-card stat-card" data-card-type="today-downloads" style="grid-column: 3 / 4; grid-row: 2 / 3; display: flex; flex-direction: column; justify-content: center;">
+<!--                        <h3 class="card-title">今日新增</h3>-->
+                        <div class="stat-value" id="today-downloads">0</div>
+                        <div class="stat-label">24小时内增长</div>
                     </div>
                 </div>
             </div>
