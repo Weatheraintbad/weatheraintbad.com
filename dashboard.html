@@ -546,18 +546,21 @@
                         <div class="download-list" id="download-list"></div>
                     </div>
 
-                    <!-- 总下载量 -->
-                    <div class="data-card stat-card" data-card-type="total-downloads" style="grid-column: 3 / 4; display: flex; flex-direction: column; justify-content: center;">
-<!--                        <h3 class="card-title">总下载量</h3>-->
-                        <div class="stat-value" id="total-downloads">0</div>
-                        <div class="stat-label">所有项目累计</div>
-                    </div>
+                    <!-- 统计卡片 -->
+                    <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 2rem; grid-column: 3 / 4; grid-row: 1 / 2;">
+                        <!-- 总下载量 -->
+                        <div class="data-card stat-card" data-card-type="total-downloads" style="display: flex; flex-direction: column; justify-content: center;">
+<!--                            <h3 class="card-title">总下载量</h3>-->
+                            <div class="stat-value" id="total-downloads">0</div>
+                            <div class="stat-label">所有项目累计</div>
+                        </div>
 
-                    <!-- 今日新增下载量 -->
-                    <div class="data-card stat-card" data-card-type="today-downloads" style="grid-column: 3 / 4; grid-row: 2 / 3; display: flex; flex-direction: column; justify-content: center;">
-<!--                        <h3 class="card-title">今日新增</h3>-->
-                        <div class="stat-value" id="today-downloads">0</div>
-                        <div class="stat-label">24小时内增长</div>
+                        <!-- 今日新增下载量 -->
+                        <div class="data-card stat-card" data-card-type="today-downloads" style="display: flex; flex-direction: column; justify-content: center;">
+<!--                            <h3 class="card-title">今日新增</h3>-->
+                            <div class="stat-value" id="today-downloads">0</div>
+                            <div class="stat-label">24小时内增长</div>
+                        </div>
                     </div>
                 </div>
             </div>
