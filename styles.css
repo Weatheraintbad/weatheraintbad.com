@@ -1024,7 +1024,7 @@ transition: var(--transition);
 
 /* 为每个图标设置不同的 hover 颜色 */
 .hero-social a[aria-label="GitHub"]:hover {
-    color: #ffffff; /* 白色 */
+    color: #ffffff; /* 白色（深色模式） */
 }
 
 .hero-social a[aria-label="Modrinth"]:hover {
@@ -1035,9 +1035,19 @@ transition: var(--transition);
     color: #f391a9; /* 粉色 */
 }
 
-/* CurseForge 保持默认的强调色 */
 .hero-social a[aria-label="CurseForge"]:hover {
-    color: #f26522;
+    color: #f26522; /* CurseForge 橙色 */
+}
+
+/* 浅色模式下 GitHub 图标 hover 颜色为黑色 */
+@media (prefers-color-scheme: light) {
+    .hero-social a[aria-label="GitHub"]:hover {
+        color: #000000; /* 黑色 */
+    }
+}
+
+.light-theme .hero-social a[aria-label="GitHub"]:hover {
+    color: #000000; /* 黑色 */
 }
 
 .hero-social svg {
@@ -1760,7 +1770,7 @@ left: 0;
 
 /* 为页脚每个图标设置不同的 hover 颜色，与英雄区保持一致 */
 .footer-social a[aria-label="GitHub"]:hover {
-    color: #ffffff; /* 白色 */
+    color: #ffffff; /* 白色（深色模式） */
 }
 
 .footer-social a[aria-label="Modrinth"]:hover {
@@ -1773,6 +1783,17 @@ left: 0;
 
 .footer-social a[aria-label="CurseForge"]:hover {
     color: #f26522; /* CurseForge 橙色 */
+}
+
+/* 浅色模式下 GitHub 图标 hover 颜色为黑色 */
+@media (prefers-color-scheme: light) {
+    .footer-social a[aria-label="GitHub"]:hover {
+        color: #000000; /* 黑色 */
+    }
+}
+
+.light-theme .footer-social a[aria-label="GitHub"]:hover {
+    color: #000000; /* 黑色 */
 }
 
 .footer-social svg {
