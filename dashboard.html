@@ -405,28 +405,56 @@
             .bottom-row {
                 grid-template-columns: 1fr !important;
                 grid-template-rows: auto !important; /* 自动高度，适应内容 */
+                gap: 0 !important; /* 取消 bottom-row 的 gap，避免与 stats-container 内部的 gap 重复 */
             }
 
             /* 确保所有组件单独一行显示 */
             .bottom-row .data-card {
                 grid-column: 1 / 2 !important;
                 grid-row: auto !important;
+                margin-bottom: 0 !important; /* 取消组件的底部 margin */
+            }
+
+            /* 确保统计卡片外层容器在手机端正确显示 */
+            .bottom-row .stats-container {
+                grid-column: 1 / 2 !important;
+                grid-row: auto !important;
+                grid-template-rows: auto !important; /* 调整为 auto 高度，适应内容 */
+                gap: 1.5rem !important; /* 只保留 stats-container 内部的 gap */
+            }
+
+            /* 确保统计卡片在手机端单独一行显示 */
+            .bottom-row .stats-container .data-card {
+                grid-column: 1 / 2 !important;
+                grid-row: auto !important;
+                margin-bottom: 0 !important; /* 取消统计卡片的底部 margin */
             }
 
             /* 确保所有下排组件单独一行显示 */
             .bottom-row div[data-card-type="bar-chart"] {
                 grid-column: 1 / 2 !important;
                 grid-row: 1 !important;
+                margin-bottom: 1.5rem !important;
             }
             .bottom-row div[data-card-type="download-list"] {
                 grid-column: 1 / 2 !important;
                 grid-row: 2 !important;
+                margin-bottom: 1.5rem !important;
             }
-            .bottom-row div[data-card-type="total-downloads"] {
+            .bottom-row .stats-container div[data-card-type="total-downloads"] {
                 grid-column: 1 / 2 !important;
                 grid-row: 3 !important;
+                margin-top: -3rem !important; /* 向上移动3rem */
+                min-height: 150px !important; /* 添加最小高度，确保与今日新增组件高度相同 */
             }
-            .bottom-row div[data-card-type="today-downloads"] {
+
+            /* 确保今日新增组件与总下载量组件高度相同 */
+            .bottom-row .stats-container div[data-card-type="today-downloads"] {
+                grid-column: 1 / 2 !important;
+                grid-row: 4 !important;
+                min-height: 120px !important; /* 添加最小高度，确保与总下载量组件高度相同 */
+            }
+            .bottom-row .stats-container div[data-card-type="today-downloads"] {
                 grid-column: 1 / 2 !important;
                 grid-row: 4 !important;
             }
@@ -435,11 +463,6 @@
             .bottom-row .data-card {
                 grid-column: 1 / 2 !important;
                 grid-row: auto !important;
-            }
-
-            .bottom-row div[style*="grid-template-columns"] {
-                grid-column: 1 / 2 !important;
-                grid-template-columns: 1fr !important;
             }
         }
     </style>
@@ -547,7 +570,7 @@
                     </div>
 
                     <!-- 统计卡片 -->
-                    <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 2rem; grid-column: 3 / 4; grid-row: 1 / 2;">
+                    <div class="stats-container" style="display: grid; grid-template-rows: 1fr 1fr; gap: 2rem; grid-column: 3 / 4; grid-row: 1 / 2;">
                         <!-- 总下载量 -->
                         <div class="data-card stat-card" data-card-type="total-downloads" style="display: flex; flex-direction: column; justify-content: center;">
 <!--                            <h3 class="card-title">总下载量</h3>-->
