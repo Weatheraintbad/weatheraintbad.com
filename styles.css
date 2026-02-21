@@ -360,8 +360,8 @@ body {
 
 /* 容器样式 - 居中布局 */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
     padding: 0 20px;
 }
 
@@ -380,8 +380,8 @@ body {
 }
 
 .nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
     padding: 0 20px;
     display: flex;
     justify-content: space-between;
@@ -783,8 +783,8 @@ body {
 
 /* 容器样式 - 居中布局 */
 .container {
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
     padding: 0 20px;
 }
 
@@ -803,8 +803,8 @@ body {
 }
 
 .nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
     padding: 0 20px;
     display: flex;
     justify-content: space-between;

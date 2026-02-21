@@ -20,53 +20,78 @@
             position: relative;
             overflow: hidden;
             display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .dashboard::before {
             content: '';
-position: absolute;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-height: 100%;
+            height: 100%;
             background: radial-gradient(circle at 50% 50%, rgba(250, 167, 85, 0.05) 0%, transparent 70%);
             z-index: 0;
         }
 
-        .dashboard-content {
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            margin-left: 0;
             position: relative;
             z-index: 1;
-            width: 100%;
-            padding: 120px 0 120px; /* 增加底部间距，防止被IP信息遮挡 */
         }
 
-        /* 全新组件布局 */
-        .dashboard-grid {
+        /* 数据卡片网格布局 */
+        .content-grid {
+            padding: 2rem;
+            margin-top: 80px; /* 为顶部导航栏预留空间 */
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-            max-width: 1200px;
-            margin: 0 auto 3rem;
+            grid-template-rows: auto 1fr; /* 上排自适应高度，下排占据剩余空间 */
+            gap: 2rem;
+            min-height: calc(100vh - 160px); /* 确保页面有足够高度（减去导航栏和底部边距） */
         }
 
-        /* 独立组件样式 */
-        .dashboard-component {
+        .top-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+
+        .bottom-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1.5fr 1fr;
+            grid-template-rows: 2fr;
+            gap: 2rem;
+            align-items: stretch; /* 确保组件高度一致 */
+            margin-bottom: 0.5rem; /* 底部边距 */
+        }
+
+        /* 数据卡片样式 - 玻璃拟态 + 新拟态 */
+        .data-card {
             background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
             padding: 2rem;
-            text-align: center;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            box-shadow:
+                8px 8px 16px rgba(0, 0, 0, 0.1),
+                -8px -8px 16px rgba(255, 255, 255, 0.05);
         }
 
-        .dashboard-component::before {
+        /* 浅色模式下的组件阴影 */
+        .light-theme .data-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.8));
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow:
+                4px 4px 16px rgba(0, 0, 0, 0.1),
+                -4px -4px 16px rgba(255, 255, 255, 0.9);
+        }
+
+        .data-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -77,390 +102,224 @@ height: 100%;
             transition: left 0.6s;
         }
 
-        .dashboard-component:hover::before {
+        .data-card:hover::before {
             left: 100%;
         }
 
-        .dashboard-component:hover {
+        .data-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            box-shadow:
+                12px 12px 24px rgba(0, 0, 0, 0.15),
+                -12px -12px 24px rgba(255, 255, 255, 0.05);
         }
 
-        /* 天气组件特殊样式 */
-        .weather-component {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .weather-icon {
-            font-size: 3.5rem;
-            opacity: 0.9;
-        }
-
-        .weather-info {
-            text-align: left;
-            flex: 1;
-        }
-
-        /* 下载统计区域 */
-        .downloads-section {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .downloads-title {
-            font-size: 1.3rem;
+        .card-title {
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .downloads-title::after {
-            content: '';
-position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 2px;
-            background: var(--accent-color);
-}
-
-        /* 下载统计卡片 */
-        .downloads-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-        }
-
-        .download-card {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 2rem;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .download-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.6s;
-        }
-
-        .download-card:hover::before {
-            left: 100%;
-        }
-.download-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        /* 下载卡片链接样式 */
-        .download-link {
-            font-size: 0.8rem;
-            color: var(--secondary-color);
-            opacity: 0.7;
-            margin-top: 1rem;
-            display: block;
-            transition: all 0.3s ease;
-        }
-
-        .download-card:hover .download-link {
-            opacity: 1;
-            transform: translateX(5px);
-            color: var(--accent-color);
-        }
-
-        .download-card.modrinth:hover .download-link {
-            color: #00d47e;
-        }
-
-        .download-card.curseforge:hover .download-link {
-            color: #f16436;
-        }
-
-        /* 所有下载卡片保持统一简洁样式 */
-        .download-card.modrinth,
-        .download-card.curseforge,
-        .download-card.total {
-            /* 无彩色边框，统一背景 */
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-        }
-
-        .download-label {
-            font-size: 0.9rem;
-            color: var(--secondary-color);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 1rem;
-            opacity: 0.8;
-        }
-
-        .download-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent-color);
-            margin: 0.5rem 0;
-        }
-
-        /* 英雄区标题样式 - 完全参照index.html */
-        .dashboard-hero {
-            text-align: center;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-
-        .dashboard-title {
-            font-size: clamp(2rem, 6vw, 4rem);
-            font-weight: 700;
-            line-height: 1.1;
-            letter-spacing: -2px;
-            font-family: 'Times New Roman', 'Noto Serif SC', Times, serif;
-            color: var(--primary-color);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             display: flex;
-            flex-direction: column;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .title-line {
-            display: block;
-            line-height: 1.2;
-        }
-
-        .date-line {
-            font-size: clamp(2rem, 6vw, 4rem);
-            color: var(--primary-color); /* 第一行改为白色，与index保持一致 */
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        .time-line {
-            font-size: clamp(3rem, 10vw, 6rem);
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-        }
-
-        .dashboard-subtitle {
-            font-size: clamp(0.9rem, 2.5vw, 1.3rem);
-            color: var(--secondary-color);
-            font-weight: 300;
-            opacity: 0.8;
-            animation: fadeInUp 0.8s ease-out 0.4s both;
-        }
-
-        /* 名言名句区域样式 */
-        .quote-section {
-            margin: 2rem 0 3rem;
-            text-align: center;
-            animation: fadeInUp 0.8s ease-out 0.6s both;
-        }
-
-        .quote-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 1rem 0;
-            /* 删除圆角矩形背景效果 */
-            border-radius: 0;
-            border: none;
-            backdrop-filter: none;
-            background: none;
-        }
-
-        .quote-text {
-            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
-            font-weight: 400;
-            line-height: 1.6;
-            color: var(--primary-color);
-            font-family: 'Noto Serif SC', 'Times New Roman', serif;
-            margin-bottom: 0.5rem;
-            opacity: 0.9;
-        }
-
-        .quote-author {
-            font-size: 1rem;
-            color: var(--secondary-color);
-            opacity: 0.7;
-            font-style: italic;
-            margin-top: 0.5rem;
-        }
-
-        .quote-source {
-            font-size: 0.9rem;
-            color: var(--secondary-color);
-            opacity: 0.5;
-            margin-top: 0.25rem;
-        }
-
-        /* 星期时间组件样式 */
-        .week-indicator {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 2rem 0;
-            animation: fadeInUp 0.8s ease-out 0.5s both;
-        }
-
-        .week-line {
-            display: flex;
-            align-items: center;
-            gap: 8px; /* 线之间的间距 */
-        }
-
-        .day-segment {
-            width: 30px; /* 每条线的长度 */
-            height: 2px; /* 线的粗细 */
-            border-radius: 1px;
-            background-color: rgba(255, 255, 255, 0.2); /* 未激活的线颜色 */
-            transition: all 0.3s ease;
+        /* 图表容器 */
+        .chart-container {
             position: relative;
+            height: 400px;
         }
 
-        .day-segment::before,
-        .day-segment::after {
-            content: '';
-            position: absolute;
-            height: 100%;
-            width: 4px;
-            border-radius: 2px;
-            top: 0;
-        }
-
-        .day-segment::before {
-            left: -2px;
-            background: linear-gradient(transparent, rgba(255, 255, 255, 0.2));
-            filter: blur(3px);
-        }
-
-        .day-segment::after {
-            right: -2px;
-            background: linear-gradient(transparent, rgba(255, 255, 255, 0.2));
-            filter: blur(3px);
-        }
-
-        .day-segment.filled {
-            background-color: var(--accent-color); /* 已激活的线颜色 */
-        }
-
-        .day-segment.filled::before {
-            background: linear-gradient(to right, transparent, var(--accent-color));
-        }
-
-        .day-segment.filled::after {
-            background: linear-gradient(to left, transparent, var(--accent-color));
-        }
-
-        /* 动画效果 */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+        /* 响应式图表容器 */
+        @media (min-width: 1200px) {
+            .chart-container {
+                height: 450px;
             }
         }
 
-        /* 下载卡片链接样式 */
-        .download-link {
-            font-size: 0.8rem;
-            color: var(--secondary-color);
-            opacity: 0.7;
-            margin-top: 1rem;
-            display: block;
+        @media (min-width: 1400px) {
+            .chart-container {
+                height: 500px;
+            }
+        }
+
+        @media (min-width: 1600px) {
+            .chart-container {
+                height: 550px;
+            }
+        }
+
+        /* 项目下载列表 */
+        .download-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .download-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
             transition: all 0.3s ease;
         }
 
-        .download-card:hover .download-link {
-            opacity: 1;
-transform: translateX(5px);
+        .download-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .download-item-name {
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        .download-item-count {
+            font-weight: 600;
             color: var(--accent-color);
         }
 
-        .download-card.modrinth:hover .download-link {
-            color: #00d47e;
+        /* 日历组件 */
+        .calendar-container {
+            position: relative;
         }
 
-        .download-card.curseforge:hover .download-link {
-            color: #f16436;
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
         }
 
-        /* 所有下载卡片保持统一简洁样式 */
-        .download-card.modrinth,
-        .download-card.curseforge,
-        .download-card.total {
-            /* 无彩色边框，统一背景 */
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        .calendar-month {
+            font-weight: 600;
+            color: var(--primary-color);
         }
 
-        .download-label {
+        .calendar-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .calendar-nav button {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--secondary-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-nav button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--primary-color);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .calendar-weekday {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--secondary-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .calendar-day:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .calendar-day.today {
+            background: var(--accent-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .calendar-day.has-data {
+            background: rgba(250, 167, 85, 0.2);
+            color: var(--accent-color);
+        }
+
+        /* 统计卡片 */
+        .stat-card {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%; /* 使统计卡片高度占满容器 */
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
             font-size: 0.9rem;
             color: var(--secondary-color);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 1rem;
-            opacity: 0.8;
         }
 
-        /* .date-line {
-            font-size: 3.5rem;
-            background: linear-gradient(135deg, var(--accent-color), #ff9a3c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: fadeInUp 0.8s ease-out;
+        /* IP地址组件 */
+        .ip-section {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 100;
         }
 
-        .time-line {
-            font-size: 2.5rem;
+        .ip-address {
+            font-size: 0.8rem;
+            font-weight: 600;
             color: var(--secondary-color);
-            opacity: 0.9;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
+            opacity: 0.3;
         }
 
-        .dashboard-subtitle {
-            font-size: 1.2rem;
-            color: var(--secondary-color);
-            opacity: 0.8;
-            animation: fadeInUp 0.8s ease-out 0.4s both;
-        } */
-
-        /* 图表容器样式 */
-        .chart-container {
-            position: relative;
-            height: 400px;
-            margin: 2rem 0;
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 1rem;
-        }
-
-        /* 图表控制样式 */
+        /* 图表控制按钮样式 */
         .chart-controls {
-            display: flex;
+            display: none;
             flex-wrap: wrap;
             gap: 2rem;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
+            height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .chart-controls.active {
+            display: flex;
+            height: auto;
         }
 
         .chart-control-group {
@@ -507,60 +366,39 @@ transform: translateX(5px);
 
         /* 响应式设计 */
         @media (max-width: 1024px) {
-            .downloads-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .top-row {
+                grid-template-columns: 1fr;
             }
 
-            .date-line {
-                font-size: 3rem;
-            }
-
-            .time-line {
-                font-size: 2rem;
-            }
-
-            .chart-container {
-                height: 350px;
-            }
-
-            .chart-controls {
-                flex-direction: column;
-                align-items: flex-start;
+            .bottom-row {
+                grid-template-columns: 1fr;
+                align-items: stretch; /* 小屏幕上垂直排列时拉伸高度 */
             }
         }
 
         @media (max-width: 768px) {
-            .downloads-grid {
-                grid-template-columns: repeat(2, 1fr);
+
+            .content-grid {
+                padding: 1rem;
                 gap: 1.5rem;
             }
 
-            .downloads-grid .total {
-                grid-column: 1 / -1;
-            }
-
-            .download-card {
-                padding: 2rem;
-            }
-
-            .date-line {
-                font-size: 2.5rem;
-            }
-            .time-line {
-                font-size: 1.8rem;
-            }
-
-            .dashboard-subtitle {
-                font-size: 1.1rem;
+            .data-card {
+                padding: 1.5rem;
             }
 
             .chart-container {
-                height: 300px;
+                height: 250px;
             }
 
-            .chart-controls {
-                flex-direction: column;
-                align-items: flex-start;
+            /* 下排网格在小屏幕上调整 */
+            .bottom-row .data-card {
+                grid-column: 1 / 2 !important;
+            }
+
+            .bottom-row div[style*="grid-template-columns"] {
+                grid-column: 1 / 2 !important;
+                grid-template-columns: 1fr !important;
             }
         }
     </style>
@@ -573,8 +411,9 @@ transform: translateX(5px);
                 <a href="index.html" style="text-decoration: none; color: inherit;">Weatheraintbad.com</a>
             </div>
             <ul class="nav-menu">
-                <li><a href="dashboard.html" style="color: var(--accent-color);">数据看板</a></li>
+                <li><a href="dashboard.html">数据看板</a></li>
                 <li><a href="doc.html">文档管理</a></li>
+                <li><a href="wiki.html">Wiki管理</a></li>
             </ul>
             <div class="nav-buttons">
                 <button id="refresh-button" class="theme-toggle" aria-label="刷新数据">
@@ -583,85 +422,109 @@ transform: translateX(5px);
                     </svg>
                 </button>
                 <button id="theme-toggle" class="theme-toggle" aria-label="切换主题">
-
-                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-            </button>
+                    <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
             </div>
         </div>
     </nav>
 
     <!-- 仪表板内容 -->
     <section class="dashboard">
-        <div class="dashboard-content">
-            <div class="container">
-                <!-- 英雄区标题布局 -->
-                <div class="dashboard-hero">
-                    <h1 class="dashboard-title">
-                        <span class="title-line date-line" id="current-date">加载中...</span>
-                        <span class="title-line time-line" id="current-time">00:00:00</span>
-                    </h1>
+        <!-- 主内容区 -->
+        <main class="main-content" style="margin-left: 0;">
 
-                    <!-- 星期时间组件 -->
-<!--                    <div class="week-indicator">-->
-<!--                        <div class="week-line">-->
-<!--                            <div class="day-segment" data-day="1"></div>-->
-<!--                            <div class="day-segment" data-day="2"></div>-->
-<!--                            <div class="day-segment" data-day="3"></div>-->
-<!--                            <div class="day-segment" data-day="4"></div>-->
-<!--                            <div class="day-segment" data-day="5"></div>-->
-<!--                            <div class="day-segment" data-day="6"></div>-->
-<!--                            <div class="day-segment" data-day="7"></div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
-                </div>
-
-                <!-- 名言名句区域 -->
-                <div class="quote-section">
-                    <div class="quote-container">
-                        <div class="quote-text" id="quote-content">获取中...</div>
-                        <div class="quote-author" id="quote-author"></div>
-                        <div class="quote-source" id="quote-source"></div>
-                    </div>
-                </div>
-
-                <!-- 下载统计区域 -->
-                <div class="downloads-section">
-                    <div class="downloads-title">项目下载量</div>
-                    <div class="chart-container">
-                        <canvas id="downloads-chart"></canvas>
-                    </div>
-                    <div class="chart-controls">
-                        <div class="chart-control-group">
-                            <label>项目：</label>
-                            <div class="control-buttons" id="project-controls"></div>
+            <!-- 数据卡片网格 -->
+            <div class="content-grid">
+                <!-- 上排：折线图和日历 -->
+                <div class="top-row">
+                    <!-- 项目下载量（折线图） -->
+                    <div class="data-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3 class="card-title">项目下载趋势</h3>
+                            <button id="chart-menu-toggle" class="control-button" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                ⋮
+                            </button>
                         </div>
-                        <div class="chart-control-group">
-                            <label>平台：</label>
-                            <div class="control-buttons" id="platform-controls"></div>
+                        <div class="chart-container">
+                            <canvas id="downloads-chart"></canvas>
+                        </div>
+                        <div class="chart-controls" id="chart-controls">
+                            <div class="chart-control-group">
+                                <label>项目：</label>
+                                <div class="control-buttons" id="project-controls"></div>
+                            </div>
+                            <div class="chart-control-group">
+                                <label>平台：</label>
+                                <div class="control-buttons" id="platform-controls"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 日历表 -->
+                    <div class="data-card">
+<!--                        <h3 class="card-title">日历</h3>-->
+                        <div class="calendar-container">
+                            <div class="calendar-header">
+                                <div class="calendar-month" id="current-month">2024年1月</div>
+                                <div class="calendar-nav">
+                                    <button id="prev-month">‹</button>
+                                    <button id="next-month">›</button>
+                                </div>
+                            </div>
+                            <div class="calendar-grid" id="calendar-grid"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- IP地址查询区域 -->
-                <div class="ip-section" style="position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); text-align: center; z-index: 100;">
-                    <div class="ip-address" id="ip-address" style="font-size: 0.8rem; font-weight: 600; color: var(--secondary-color); opacity: 0.3;">-</div>
+                <!-- 下排：项目下载详情、项目下载量柱状图、总下载量和今日新增 -->
+                <div class="bottom-row">
+                    <!-- 项目下载量柱状图 -->
+                    <div class="data-card" style="grid-column: 1 / 2; display: flex; flex-direction: column;">
+                        <h3 class="card-title">项目下载量柱状图</h3>
+                        <div class="chart-container" style="height: 350px;">
+                            <canvas id="downloads-bar-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 项目下载量（列表） -->
+                    <div class="data-card" style="grid-column: 2 / 3; display: flex; flex-direction: column; grid-row: 1 / 2;">
+                        <h3 class="card-title">项目下载量详情</h3>
+                        <div class="download-list" id="download-list"></div>
+                    </div>
+
+                    <!-- 统计卡片 -->
+                    <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 2rem; grid-column: 3 / 4; grid-row: 1 / 2;">
+                        <!-- 总下载量 -->
+                        <div class="data-card stat-card" style="display: flex; flex-direction: column; justify-content: center;">
+<!--                            <h3 class="card-title">总下载量</h3>-->
+                            <div class="stat-value" id="total-downloads">0</div>
+                            <div class="stat-label">所有项目累计</div>
+                        </div>
+
+                        <!-- 今日新增下载量 -->
+                        <div class="data-card stat-card" style="display: flex; flex-direction: column; justify-content: center;">
+<!--                            <h3 class="card-title">今日新增</h3>-->
+                            <div class="stat-value" id="today-downloads">0</div>
+                            <div class="stat-label">24小时内增长</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
+
     </section>
 
     <script src="script.js"></script>
@@ -728,183 +591,225 @@ transform: translateX(5px);
 
         // --- 配置区域 END ---
 
-        // 更新日期时间显示
-        function updateDateTime() {
+        // 更新最后更新时间
+        function updateLastUpdate() {
             const now = new Date();
-
-            // 格式化日期
-            const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-            const dateStr = now.toLocaleDateString('zh-CN', dateOptions);
-
-            // 格式化星期几
-            const weekOptions = { weekday: 'short' };
-            const weekStr = now.toLocaleDateString('zh-CN', weekOptions);
-
-            // 格式化时间
             const timeStr = now.toLocaleTimeString('zh-CN', {
                 hour: '2-digit',
                 minute: '2-digit',
-                second: '2-digit',
                 hour12: false
             });
-
-            // 更新显示
-            document.getElementById('current-date').textContent = `${dateStr} ${weekStr}`;
-            document.getElementById('current-time').textContent = timeStr;
-        }
-
-
-        // 获取名言名句
-        async function fetchQuote() {
-            try {
-                // 随机选择诗词(c=i)或哲学(c=k)类型
-                const types = ['i', 'k'];
-                const randomType = types[Math.floor(Math.random() * types.length)];
-                const apiUrl = `https://v1.hitokoto.cn/?c=${randomType}&encode=json`;
-                
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                // 更新名言显示
-                document.getElementById('quote-content').textContent = data.hitokoto;
-                document.getElementById('quote-author').textContent = data.from_who ? `—— ${data.from_who}` : '';
-                document.getElementById('quote-source').textContent = data.from ? `《${data.from}》` : '';
-                
-                if (DEBUG_MODE) {
-                    console.log('名言API响应:', data);
-                }
-                return data;
-            } catch (error) {
-                console.error('获取名言失败:', error);
-                
-                // 失败时显示默认名言
-                document.getElementById('quote-content').textContent = '福生于清俭，德生于卑退。';
-                document.getElementById('quote-author').textContent = '—— 夏侯惇';
-                document.getElementById('quote-source').textContent = '《三国杀》';
-                
-                return null;
+            const lastUpdateElement = document.getElementById('last-update');
+            if (lastUpdateElement) {
+                lastUpdateElement.textContent = timeStr;
             }
         }
 
-        // 初始化星期时间组件
-        function initWeekIndicator() {
+        // 初始化日历
+        function initCalendar() {
             const now = new Date();
-            const dayOfWeek = now.getDay(); // 0表示星期日，1-6表示星期一到星期六
+            let year = now.getFullYear();
+            let month = now.getMonth();
 
-            // 转换为从1开始的索引（1=星期一，7=星期日）
-            const adjustedDay = dayOfWeek === 0 ? 7 : dayOfWeek;
+            renderCalendar(year, month);
 
-            // 高亮对应的天数
-            const daySegments = document.querySelectorAll('.day-segment');
-            daySegments.forEach((segment, index) => {
-                const dayNumber = index + 1;
-                if (dayNumber <= adjustedDay) {
-                    segment.classList.add('filled');
+            // 绑定导航按钮事件
+            document.getElementById('prev-month').addEventListener('click', () => {
+                month--;
+                if (month < 0) {
+                    month = 11;
+                    year--;
                 }
+                renderCalendar(year, month);
+            });
+
+            document.getElementById('next-month').addEventListener('click', () => {
+                month++;
+                if (month > 11) {
+                    month = 0;
+                    year++;
+                }
+                renderCalendar(year, month);
             });
         }
 
-        // 获取IP地址信息
-        async function fetchIPAddress() {
-            try {
-                const { UapiClient } = await import('https://cdn.jsdelivr.net/npm/uapi-browser-sdk@latest/dist/index.js');
-                const client = new UapiClient('https://uapis.cn');
-                const payload = { source: "commercial" };
-                const data = await client.network.getNetworkMyip(payload);
+        // 渲染日历
+        function renderCalendar(year, month) {
+            const calendarGrid = document.getElementById('calendar-grid');
+            const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月',
+                               '7月', '8月', '9月', '10月', '11月', '12月'];
 
-                if (DEBUG_MODE) {
-                    console.log('IP地址查询结果:', data);
+            document.getElementById('current-month').textContent = `${year}年${monthNames[month]}`;
+
+            // 星期标题（从周一开始）
+            const weekDays = ['一', '二', '三', '四', '五', '六', '日'];
+            let calendarHTML = weekDays.map(day => `
+                <div class="calendar-weekday">${day}</div>
+            `).join('');
+
+            // 计算月份第一天是星期几（调整为从周一开始）
+            let firstDay = new Date(year, month, 1).getDay();
+            // 周日的索引是0，调整为6
+            firstDay = firstDay === 0 ? 6 : firstDay - 1;
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+
+            // 空白天数
+            for (let i = 0; i < firstDay; i++) {
+                calendarHTML += '<div class="calendar-day"></div>';
+            }
+
+            // 日期单元格
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const isToday = date.toDateString() === today.toDateString();
+
+                const classes = ['calendar-day'];
+                if (isToday) classes.push('today');
+
+                calendarHTML += `<div class="${classes.join(' ')}">${day}</div>`;
+            }
+
+            calendarGrid.innerHTML = calendarHTML;
+        }
+
+        // 渲染项目下载列表
+        async function renderDownloadList() {
+            const downloadList = document.getElementById('download-list');
+
+            try {
+                const stats = await getCurrentStats();
+
+                if (stats.length === 0) {
+                    downloadList.innerHTML = '<div style="text-align: center; color: var(--secondary-color); padding: 2rem;">暂无数据</div>';
+                    return;
                 }
 
-                // 更新显示
-                document.getElementById('ip-address').textContent = data.ip || '未知';
+                // 准备项目下载数据
+                const items = [];
 
-                return data;
+                stats.forEach(project => {
+                    try {
+                        const totalData = JSON.parse(project.total_downloads);
+                        const latestDownloads = totalData.length > 0 ? totalData[totalData.length - 1] : 0;
+
+                        items.push({
+                            name: project.project_name,
+                            downloads: latestDownloads
+                        });
+                    } catch (error) {
+                        console.error(`解析项目 ${project.project_name} 数据失败:`, error);
+                    }
+                });
+
+                // 按下载量从高到低排序
+                items.sort((a, b) => b.downloads - a.downloads);
+
+                downloadList.innerHTML = items.map(item => `
+                    <div class="download-item">
+                        <div class="download-item-name">${item.name}</div>
+                        <div class="download-item-count">${item.downloads.toLocaleString()}</div>
+                    </div>
+                `).join('');
+
             } catch (error) {
-                console.error('获取IP地址失败:', error);
-                document.getElementById('ip-address').textContent = '获取失败';
-                return null;
+                console.error('渲染项目下载列表失败:', error);
+                downloadList.innerHTML = '<div style="text-align: center; color: var(--secondary-color); padding: 2rem;">加载失败</div>';
             }
+        }
+
+        // 更新统计数据
+        async function updateStatsDisplay() {
+            try {
+                const stats = await getCurrentStats();
+
+                if (stats.length === 0) {
+                    document.getElementById('total-downloads').textContent = '0';
+                    document.getElementById('today-downloads').textContent = '0';
+                    return;
+                }
+
+                let totalDownloads = 0;
+                let todayDownloads = 0;
+                const today = new Date().toDateString();
+
+                stats.forEach(project => {
+                    try {
+                        const totalData = JSON.parse(project.total_downloads);
+
+                        // 计算总下载量
+                        if (totalData.length > 0) {
+                            totalDownloads += totalData[totalData.length - 1];
+                        }
+
+                        // 计算今日新增下载量
+                        const projectUpdatedDate = new Date(project.updated_at).toDateString();
+                        if (projectUpdatedDate === today && totalData.length > 1) {
+                            todayDownloads += totalData[totalData.length - 1] - totalData[totalData.length - 2];
+                        }
+                    } catch (error) {
+                        console.error(`解析项目 ${project.project_name} 数据失败:`, error);
+                    }
+                });
+
+                document.getElementById('total-downloads').textContent = totalDownloads.toLocaleString();
+                document.getElementById('today-downloads').textContent = Math.max(0, todayDownloads).toLocaleString();
+
+            } catch (error) {
+                console.error('更新统计数据失败:', error);
+                document.getElementById('total-downloads').textContent = '0';
+                document.getElementById('today-downloads').textContent = '0';
+            }
+        }
+
+        // 获取IP地址信息（已删除，保留函数定义以防止报错）
+        async function fetchIPAddress() {
+            return null;
         }
 
         // 初始化
-        function initDashboard() {
-            updateDateTime();
-            fetchQuote(); // 初始化时获取一次名言
+        async function initDashboard() {
+            updateLastUpdate();
+            initCalendar();
+            await renderDownloadList();
+            await updateStatsDisplay();
 
             // 先初始化图表，然后直接调用updateChart加载历史数据
-            // 确保图表能在显示前有数据
             initChartOnLoad().then(() => {
-                updateChart();
+                updateChart().catch(error => {
+                    console.error('Error in updateChart:', error);
+                });
+                updateBarChart().catch(error => {
+                    console.error('Error in updateBarChart:', error);
+                });
                 // 图表加载完成后，在后台运行数据抓取和更新逻辑
                 setTimeout(() => {
                     updateStats().catch(error => {
                         console.error('Error in updateStats:', error);
                     });
-                }, 1000); // 延迟1秒让图表完全显示
+                }, 1000);
             });
 
-            initWeekIndicator(); // 初始化星期时间组件
-            fetchIPAddress(); // 初始化时获取IP地址
-
             // 每秒更新时间
-            setInterval(updateDateTime, 1000);
-
-            // 每5分钟更新名言
-            setInterval(fetchQuote, 5 * 60 * 1000);
+            setInterval(updateLastUpdate, 1000);
 
             // 每5分钟更新一次统计数据
             setInterval(updateStats, 5 * 60 * 1000);
         }
 
-        // 初始化时获取并存储项目下载数据
-        async function fetchAndStoreInitialData() {
-            try {
-                console.log('fetchAndStoreInitialData called');
-                // 检查数据库是否已经有数据
-                const { data, error } = await supabaseClient
-                    .from('project_download_stats')
-                    .select('id')
-                    .limit(1);
-
-                if (error) {
-                    console.error('检查数据库数据时出错:', error);
-                    // 抛出错误，以便上层函数能够捕获
-                    throw error;
-                }
-
-                console.log('Database check result:', data);
-
-                // 如果数据库是空的，获取所有项目的下载数据并存储
-                if (!data || data.length === 0) {
-                    console.log('数据库为空，开始获取并存储项目下载数据');
-                    await updateStats();
-                    console.log('项目下载数据已成功存储');
-                } else {
-                    console.log('数据库已包含数据，跳过初始数据获取');
-                }
-            } catch (error) {
-                console.error('获取初始数据时出错:', error);
-                // 抛出错误，以便上层函数能够捕获
-                throw error;
-            }
-        }
-
         // 刷新页面数据函数
-        function refreshData() {
+        async function refreshData() {
             const refreshBtn = document.getElementById('refresh-button');
             // 添加旋转动画效果
             refreshBtn.style.transform = 'rotate(360deg)';
             refreshBtn.style.transition = 'transform 0.6s ease';
 
             // 重新获取所有数据
-            fetchQuote();
-            updateStats();
-            fetchIPAddress();
+            await updateStats();
+            await updateStatsDisplay();
+            await renderDownloadList();
+            await updateBarChart();
 
             // 动画结束后重置
             setTimeout(() => {
@@ -913,384 +818,22 @@ transform: translateX(5px);
         }
 
         // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            initDashboard();
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initDashboard();
 
             // 绑定刷新按钮点击事件
             const refreshBtn = document.getElementById('refresh-button');
             refreshBtn.addEventListener('click', refreshData);
+
+            // 绑定图表菜单切换按钮点击事件
+            const chartMenuToggle = document.getElementById('chart-menu-toggle');
+            chartMenuToggle.addEventListener('click', function() {
+                const chartControls = document.getElementById('chart-controls');
+                chartControls.classList.toggle('active');
+            });
         });
 
-        // API 函数
-        async function fetchDownloadCount(platform, id) {
-            try {
-                const params = new URLSearchParams();
-
-                if (platform === 'modrinth') params.append('modrinth', id);
-                if (platform === 'curseforge') params.append('curseforge', id);
-
-                // 使用 CORS 代理来解决跨域问题
-                const apiUrl = `https://connorcode.com/api/downloads?${params}`;
-                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-
-                console.log(`Fetching from: ${apiUrl} via proxy: ${proxyUrl}`);
-
-                const response = await fetch(proxyUrl);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log(`API Response for ${platform}#${id}:`, data);
-
-                return {
-                    raw: (platform === 'modrinth') ? data.modrinth || 0 : data.curseforge || 0,
-                    human: data['total-human'] || '0'
-                };
-            } catch (error) {
-                console.error(`Failed to fetch ${platform}#${id}:`, error);
-                return { raw: 0, human: '0' };
-            }
-        }
-
-        // 数字格式化 - 显示精确数字
-        function formatNumber(num) {
-            if (typeof num === 'string') {
-                return num;
-            }
-            return num.toLocaleString(); // 只添加千位分隔符，不进行单位转换
-        }
-
-        // 更新统计数据
-        async function updateStats() {
-            const projectStats = [];
-            let mrTotal = 0;
-            let cfTotal = 0;
-
-            // 处理 Modrinth 项目
-            if (MOD_CONFIG.modrinth.length > 0) {
-                for (const mod of MOD_CONFIG.modrinth) {
-                    try {
-                        const result = await fetchDownloadCount('modrinth', mod.id);
-                        const downloads = result.raw;
-                        mrTotal += downloads;
-                        projectStats.push({
-                            name: mod.name,
-                            platform: 'modrinth',
-                            downloads: downloads,
-                            id: mod.id
-                        });
-                    } catch (error) {
-                        console.error(`Failed to fetch Modrinth#${mod.id}:`, error);
-                        projectStats.push({
-                            name: mod.name,
-                            platform: 'modrinth',
-                            downloads: 0,
-                            id: mod.id
-                        });
-                    }
-                }
-            }
-
-            // 处理 CurseForge 项目
-            if (MOD_CONFIG.curseforge.length > 0) {
-                for (const mod of MOD_CONFIG.curseforge) {
-                    try {
-                        const result = await fetchDownloadCount('curseforge', mod.id);
-                        const downloads = result.raw;
-                        cfTotal += downloads;
-                        projectStats.push({
-                            name: mod.name,
-                            platform: 'curseforge',
-                            downloads: downloads,
-                            id: mod.id
-                        });
-                    } catch (error) {
-                        console.error(`Failed to fetch CurseForge#${mod.id}:`, error);
-                        projectStats.push({
-                            name: mod.name,
-                            platform: 'curseforge',
-                            downloads: 0,
-                            id: mod.id
-                        });
-                    }
-                }
-            }
-
-            // 保存数据到 Supabase
-            await saveDownloadStats(projectStats, mrTotal, cfTotal);
-
-            // 更新图表
-            await updateChart();
-
-            if (DEBUG_MODE) {
-                console.log('Total downloads - Modrinth:', mrTotal, 'CurseForge:', cfTotal, 'Grand Total:', mrTotal + cfTotal);
-            }
-        }
-
-        // 保存下载统计到 Supabase（修改后的逻辑）
-        async function saveDownloadStats(projectStats, mrTotal, cfTotal) {
-            try {
-                console.log('saveDownloadStats called with:', projectStats);
-                // 按项目分组统计
-                const projectTotals = {};
-                projectStats.forEach(stat => {
-                    if (!projectTotals[stat.name]) {
-                        projectTotals[stat.name] = { modrinth: 0, curseforge: 0 };
-                    }
-                    projectTotals[stat.name][stat.platform] = stat.downloads;
-                });
-
-                console.log('Project totals:', projectTotals);
-
-                // 获取当前项目的统计数据
-                const currentStats = await getCurrentStats();
-                console.log('Current stats:', currentStats);
-
-                // 准备数据（更新或插入）
-                const updates = [];
-                const today = new Date().toDateString();
-
-                Object.entries(projectTotals).forEach(([projectName, downloads]) => {
-                    const total = downloads.modrinth + downloads.curseforge;
-
-                    // 获取项目的历史数据
-                    const projectData = currentStats.find(s => s.project_name === projectName);
-
-                    let mrData, cfData, totalData;
-                    if (projectData) {
-                        // 如果项目已存在，解析现有数组（添加错误处理）
-                        try {
-                            mrData = JSON.parse(projectData.modrinth_downloads);
-                            // 如果解析后是空数组，创建新数组
-                            if (!Array.isArray(mrData) || mrData.length === 0) {
-                                mrData = [];
-                            }
-                        } catch (error) {
-                            console.error(`解析 Modrinth 数据失败: ${error}`);
-                            mrData = [];
-                        }
-
-                        try {
-                            cfData = JSON.parse(projectData.curseforge_downloads);
-                            // 如果解析后是空数组，创建新数组
-                            if (!Array.isArray(cfData) || cfData.length === 0) {
-                                cfData = [];
-                            }
-                        } catch (error) {
-                            console.error(`解析 CurseForge 数据失败: ${error}`);
-                            cfData = [];
-                        }
-
-                        try {
-                            totalData = JSON.parse(projectData.total_downloads);
-                            // 如果解析后是空数组，创建新数组
-                            if (!Array.isArray(totalData) || totalData.length === 0) {
-                                totalData = [];
-                            }
-                        } catch (error) {
-                            console.error(`解析总下载量数据失败: ${error}`);
-                            totalData = [];
-                        }
-
-                        // 检查是否是新的一天（比较日期）
-                        const lastUpdatedDate = new Date(projectData.updated_at).toDateString();
-                        if (lastUpdatedDate !== today) {
-                            // 如果是新的一天，添加新的元素到数组
-                            mrData.push(downloads.modrinth);
-                            cfData.push(downloads.curseforge);
-                            totalData.push(total);
-                            console.log(`新的一天，添加新的下载量数据`);
-                        } else {
-                            // 如果是同一天，只有获取到的数据大于原有数据时才覆盖原数据
-                            if (mrData.length > 0) {
-                                if (downloads.modrinth > mrData[mrData.length - 1]) {
-                                    mrData[mrData.length - 1] = downloads.modrinth;
-                                    console.log(`Modrinth 下载量更新，从 ${mrData.length > 1 ? mrData[mrData.length - 1] : 0} 增加到 ${downloads.modrinth}`);
-                                }
-
-                                if (downloads.curseforge > cfData[cfData.length - 1]) {
-                                    cfData[cfData.length - 1] = downloads.curseforge;
-                                    console.log(`CurseForge 下载量更新，从 ${cfData.length > 1 ? cfData[cfData.length - 1] : 0} 增加到 ${downloads.curseforge}`);
-                                }
-
-                                if (total > totalData[totalData.length - 1]) {
-                                    totalData[totalData.length - 1] = total;
-                                    console.log(`总下载量更新，从 ${totalData.length > 1 ? totalData[totalData.length - 1] : 0} 增加到 ${total}`);
-                                }
-                            } else {
-                                // 如果数组是空的，直接添加数据
-                                mrData.push(downloads.modrinth);
-                                cfData.push(downloads.curseforge);
-                                totalData.push(total);
-                            }
-                        }
-                    } else {
-                        // 如果项目不存在，创建新数组
-                        mrData = [];
-                        cfData = [];
-                        totalData = [];
-                        // 第一次记录，添加新的元素
-                        mrData.push(downloads.modrinth);
-                        cfData.push(downloads.curseforge);
-                        totalData.push(total);
-                    }
-
-                    // 构建更新数据
-                    updates.push({
-                        project_name: projectName,
-                        modrinth_downloads: JSON.stringify(mrData),
-                        curseforge_downloads: JSON.stringify(cfData),
-                        total_downloads: JSON.stringify(totalData)
-                    });
-                });
-
-                console.log('Updates to save:', updates);
-
-                // 执行更新或插入操作
-                for (const update of updates) {
-                    const { data, error } = await supabaseClient
-                        .from('project_download_stats')
-                        .upsert([update], { onConflict: 'project_name' });
-
-                    if (error) {
-                        console.error('Error upserting data for', update.project_name, ':', error);
-                    } else {
-                        console.log('Data upserted successfully for', update.project_name);
-                    }
-                }
-
-            } catch (error) {
-                console.error('Error saving download stats:', error);
-                // 抛出错误，以便上层函数能够捕获
-                throw error;
-            }
-        }
-
-        // 获取当前项目统计数据（新结构）
-        async function getCurrentStats() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('project_download_stats')
-                    .select('*');
-
-                if (error) {
-                    console.error('Error fetching current stats:', error);
-                    return [];
-                }
-
-                return data;
-            } catch (error) {
-                console.error('Error fetching current stats:', error);
-                return [];
-            }
-        }
-
-        // 从 Supabase 获取历史数据（修复后）
-        async function getDownloadHistory() {
-            try {
-                const { data, error } = await supabaseClient
-                    .from('project_download_stats')
-                    .select('*');
-
-                if (error) {
-                    console.error('Error fetching download history:', error);
-                    return [];
-                }
-
-                // 返回原始结构，不进行额外处理
-                return data;
-            } catch (error) {
-                console.error('Error fetching download history:', error);
-                return [];
-            }
-        }
-
-        // 初始化图表
-        function initChart() {
-            const ctx = document.getElementById('downloads-chart').getContext('2d');
-            const chartData = {
-                labels: [],
-                datasets: []
-            };
-
-            const chartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false
-                },
-                plugins: {
-                    legend: {
-                        position: 'top',
-                        // 只显示可见的数据集的图例
-                        labels: {
-                            filter: function(item, chartData) {
-                                const dataset = chartData.datasets[item.datasetIndex];
-                                return !dataset.hidden;
-                            }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            title: function(context) {
-                                const index = context[0].dataIndex;
-                                const today = new Date();
-                                // 设置时区为东八区（北京时间）
-                                const utcTime = today.getTime() + (today.getTimezoneOffset() * 60000);
-                                const beijingTime = new Date(utcTime + (8 * 60 * 60000));
-                                const date = new Date(beijingTime);
-                                date.setDate(beijingTime.getDate() - (context[0].chart.data.labels.length - index - 1));
-                                const month = date.getMonth() + 1;
-                                const day = date.getDate();
-                                return `${month}月${day}日`;
-                            },
-                            label: function(context) {
-                                const label = context.dataset.label || '';
-                                const value = context.raw || 0;
-                                return `${label}: ${formatNumber(value)}`;
-                            }
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: '项目下载量趋势'
-                    }
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: '时间'
-                        },
-                        ticks: {
-                            maxRotation: 45,
-                            minRotation: 45
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: '下载量'
-                        },
-                        beginAtZero: true
-                    }
-                }
-            };
-
-            downloadsChart = new Chart(ctx, {
-                type: 'line',
-                data: chartData,
-                options: chartOptions
-            });
-
-            // 初始化控制按钮
-            initChartControls();
-        }
-
-        // 初始化图表控制按钮
+        // 图表控制函数（复用原有代码）
         function initChartControls() {
             const projectNames = [...new Set(MOD_CONFIG.modrinth.map(mod => mod.name))];
             const projectControls = document.getElementById('project-controls');
@@ -1385,7 +928,304 @@ transform: translateX(5px);
             return projectNameMatch && platformNameMatch;
         }
 
-        // 更新图表数据（新结构）
+        // 初始化图表
+        function initChart() {
+            const ctx = document.getElementById('downloads-chart').getContext('2d');
+            const chartData = {
+                labels: [],
+                datasets: []
+            };
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            filter: function(item, chartData) {
+                                const dataset = chartData.datasets[item.datasetIndex];
+                                return !dataset.hidden;
+                            },
+                            usePointStyle: true,
+                            pointStyle: 'line',
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(context) {
+                                const index = context[0].dataIndex;
+                                const today = new Date();
+                                const utcTime = today.getTime() + (today.getTimezoneOffset() * 60000);
+                                const beijingTime = new Date(utcTime + (8 * 60 * 60000));
+                                const date = new Date(beijingTime);
+                                date.setDate(beijingTime.getDate() - (context[0].chart.data.labels.length - index - 1));
+                                const month = date.getMonth() + 1;
+                                const day = date.getDate();
+                                return `${month}月${day}日`;
+                            },
+                            label: function(context) {
+                                const label = context.dataset.label || '';
+                                const value = context.raw || 0;
+                                return `${label}: ${formatNumber(value)}`;
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: '项目下载量趋势'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '时间'
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: '下载量'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            };
+
+            downloadsChart = new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: chartOptions
+            });
+
+            // 初始化控制按钮
+            initChartControls();
+        }
+
+        // 初始化图表（页面加载时调用）- 返回 Promise
+        function initChartOnLoad() {
+            return new Promise((resolve) => {
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', () => {
+                        initChart();
+                        initBarChart();
+                        resolve();
+                    });
+                } else {
+                    initChart();
+                    initBarChart();
+                    resolve();
+                }
+            });
+        }
+
+        // 初始化柱状图
+        function initBarChart() {
+            const ctx = document.getElementById('downloads-bar-chart').getContext('2d');
+
+            // 初始化时设置空数据
+            const barChartData = {
+                labels: [],
+                datasets: []
+            };
+
+            const barChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            pointStyle: 'line',
+                            padding: 15,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.dataset.label || '';
+                                const value = context.raw || 0;
+                                return `${label}: ${formatNumber(value)}`;
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: '项目下载量对比'
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            };
+
+            window.downloadsBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: barChartData,
+                options: barChartOptions
+            });
+        }
+
+        // 更新柱状图数据
+        async function updateBarChart() {
+            if (!window.downloadsBarChart) {
+                console.error('Bar chart not initialized');
+                return;
+            }
+
+            try {
+                const stats = await getCurrentStats();
+                if (stats.length === 0) {
+                    return;
+                }
+
+                // 准备数据
+                const projectNames = [...new Set(MOD_CONFIG.modrinth.map(mod => mod.name))];
+                const projectData = [];
+
+                // 获取每个项目的下载量
+                projectNames.forEach(projectName => {
+                    const project = stats.find(s => s.project_name === projectName);
+                    let projectTotal = 0;
+                    if (project) {
+                        try {
+                            const totalData = JSON.parse(project.total_downloads);
+                            if (totalData.length > 0) {
+                                projectTotal = totalData[totalData.length - 1];
+                            }
+                        } catch (error) {
+                            console.error(`解析项目 ${projectName} 数据失败:`, error);
+                        }
+                    }
+                    projectData.push({
+                        name: projectName,
+                        downloads: projectTotal
+                    });
+                });
+
+                // 按下载量从高到低排序
+                projectData.sort((a, b) => b.downloads - a.downloads);
+
+                // 计算全部项目总下载量
+                let allProjectsTotal = 0;
+                stats.forEach(project => {
+                    try {
+                        const totalData = JSON.parse(project.total_downloads);
+                        if (totalData.length > 0) {
+                            allProjectsTotal += totalData[totalData.length - 1];
+                        }
+                    } catch (error) {
+                        console.error(`解析项目 ${project.project_name} 数据失败:`, error);
+                    }
+                });
+
+                // 准备图表数据
+                const sortedProjectNames = ['全部项目', ...projectData.map(p => p.name)];
+                const sortedData = [allProjectsTotal, ...projectData.map(p => p.downloads)];
+
+                // 设置数据集，使用与折线图相同的颜色方案
+                const barChartData = {
+                    labels: sortedProjectNames,
+                    datasets: [
+                        {
+                            label: '下载量',
+                            data: sortedData,
+                            backgroundColor: getProjectColors(), // 使用与折线图相同的颜色
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            borderWidth: 1,
+                            borderRadius: 8
+                        }
+                    ]
+                };
+
+                window.downloadsBarChart.data = barChartData;
+                window.downloadsBarChart.update();
+            } catch (error) {
+                console.error('更新柱状图失败:', error);
+            }
+        }
+
+        // 获取项目颜色（与折线图保持一致）
+        let cachedProjectColors = null;
+        function getProjectColors() {
+            if (cachedProjectColors) {
+                return cachedProjectColors;
+            }
+
+            const projectNames = [...new Set(MOD_CONFIG.modrinth.map(mod => mod.name))];
+            // 为每个项目分配随机颜色，与折线图保持一致
+            const colors = [];
+            colors.push(getRandomColor()); // 全部项目颜色
+            projectNames.forEach(() => {
+                colors.push(getRandomColor());
+            });
+
+            cachedProjectColors = colors;
+            return colors;
+        }
+
+        // 格式化数字
+        function formatNumber(num) {
+            if (typeof num === 'string') {
+                return num;
+            }
+            return num.toLocaleString();
+        }
+
+        // 其他API函数...
+        // 这里保留原有的API函数和逻辑，只做必要的调整
+
+        // 获取下载历史数据
+        async function getDownloadHistory() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('project_download_stats')
+                    .select('*');
+
+                if (error) {
+                    console.error('Error fetching download history:', error);
+                    return [];
+                }
+
+                return data;
+            } catch (error) {
+                console.error('Error fetching download history:', error);
+                return [];
+            }
+        }
+
+        // 更新图表数据
         async function updateChart() {
             const history = await getDownloadHistory();
             if (!history.length) return;
@@ -1428,7 +1268,6 @@ transform: translateX(5px);
             } else {
                 // 确保图表初始化完成后再更新数据
                 initChart();
-                // 检查 downloadsChart 是否已经初始化
                 if (downloadsChart) {
                     downloadsChart.data.labels = labels;
                     downloadsChart.data.datasets = datasets;
@@ -1439,7 +1278,7 @@ transform: translateX(5px);
             }
         }
 
-        // 准备图表数据集（新结构）
+        // 准备图表数据集
         function prepareChartDatasets(history) {
             const datasets = [];
             const projectNames = [...new Set(MOD_CONFIG.modrinth.map(mod => mod.name))];
@@ -1462,33 +1301,56 @@ transform: translateX(5px);
                 }
             }));
 
+            // 获取项目颜色（与柱状图保持一致）
+            const projectColors = getProjectColors();
+
             // 为每个项目和平台创建数据集
-            projectNames.forEach(name => {
+            projectNames.forEach((name, index) => {
                 platforms.forEach(platform => {
                     const platformName = platform === 'modrinth' ? 'Modrinth' : 'CurseForge';
                     const dataset = createDataset(`${name} (${platformName})`, getRandomColor());
                     const projectData = history.find(h => h.project_name === name);
                     if (projectData) {
                         const dataArray = platform === 'modrinth' ? JSON.parse(projectData.modrinth_downloads) : JSON.parse(projectData.curseforge_downloads);
-                        dataset.data = dataArray;
+                        // 确保数据数组长度一致
+                        const paddedData = padDataArray(dataArray, maxLength);
+                        dataset.data = paddedData;
                     } else {
-                        dataset.data = [];
+                        dataset.data = new Array(maxLength).fill(0);
                     }
                     dataset.hidden = true; // 默认隐藏平台下载量
                     datasets.push(dataset);
                 });
 
-                // 项目总下载量 - 默认显示
-                const totalDataset = createDataset(`${name} (总下载量)`, getRandomColor());
+                // 项目总下载量 - 默认显示，使用与柱状图相同的颜色
+                const totalDataset = createDataset(`${name} (总下载量)`, projectColors[index + 1]); // index+1 因为第一个颜色是"全部项目"
                 const projectData = history.find(h => h.project_name === name);
                 if (projectData) {
-                    totalDataset.data = JSON.parse(projectData.total_downloads);
+                    const totalData = JSON.parse(projectData.total_downloads);
+                    // 确保数据数组长度一致
+                    const paddedData = padDataArray(totalData, maxLength);
+                    totalDataset.data = paddedData;
                 } else {
-                    totalDataset.data = [];
+                    totalDataset.data = new Array(maxLength).fill(0);
                 }
                 totalDataset.hidden = false; // 默认显示项目总下载量
                 datasets.push(totalDataset);
             });
+
+            // 填充数据数组长度一致的函数
+            function padDataArray(dataArray, targetLength) {
+                if (!Array.isArray(dataArray)) {
+                    return new Array(targetLength).fill(0);
+                }
+
+                const padded = [...dataArray];
+                // 如果数据数组长度小于目标长度，填充前一个值
+                while (padded.length < targetLength) {
+                    const lastValue = padded.length > 0 ? padded[padded.length - 1] : 0;
+                    padded.push(lastValue);
+                }
+                return padded;
+            }
 
             // 平台总下载量 - 默认隐藏
             platforms.forEach(platform => {
@@ -1517,9 +1379,8 @@ transform: translateX(5px);
                 datasets.push(dataset);
             });
 
-
-            // 全部项目总下载量 - 默认隐藏
-            const allProjectsTotalDataset = createDataset('全部项目 (总下载量)', getRandomColor());
+            // 全部项目总下载量 - 默认隐藏，使用与柱状图相同的颜色
+            const allProjectsTotalDataset = createDataset('全部项目 (总下载量)', projectColors[0]);
             const allProjectsData = new Array(Math.max(1, maxLength)).fill(0);
 
             history.forEach(item => {
@@ -1569,43 +1430,304 @@ transform: translateX(5px);
             return colors[Math.floor(Math.random() * colors.length)];
         }
 
-        // 格式化时间
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMinutes = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
+        // 更新统计数据函数
+        async function updateStats() {
+            const projectStats = [];
+            let mrTotal = 0;
+            let cfTotal = 0;
 
-            if (diffMinutes < 60) {
-                return `${diffMinutes}分钟前`;
-            } else if (diffHours < 24) {
-                return `${diffHours}小时前`;
-            } else if (diffDays < 7) {
-                return `${diffDays}天前`;
-            } else {
-                return date.toLocaleDateString('zh-CN');
+            // 处理 Modrinth 项目
+            if (MOD_CONFIG.modrinth.length > 0) {
+                for (const mod of MOD_CONFIG.modrinth) {
+                    try {
+                        const result = await fetchDownloadCount('modrinth', mod.id);
+                        const downloads = result.raw;
+                        mrTotal += downloads;
+                        projectStats.push({
+                            name: mod.name,
+                            platform: 'modrinth',
+                            downloads: downloads,
+                            id: mod.id
+                        });
+                    } catch (error) {
+                        console.error(`Failed to fetch Modrinth#${mod.id}:`, error);
+                        projectStats.push({
+                            name: mod.name,
+                            platform: 'modrinth',
+                            downloads: 0,
+                            id: mod.id
+                        });
+                    }
+                }
+            }
+
+            // 处理 CurseForge 项目
+            if (MOD_CONFIG.curseforge.length > 0) {
+                for (const mod of MOD_CONFIG.curseforge) {
+                    try {
+                        const result = await fetchDownloadCount('curseforge', mod.id);
+                        const downloads = result.raw;
+                        cfTotal += downloads;
+                        projectStats.push({
+                            name: mod.name,
+                            platform: 'curseforge',
+                            downloads: downloads,
+                            id: mod.id
+                        });
+                    } catch (error) {
+                        console.error(`Failed to fetch CurseForge#${mod.id}:`, error);
+                        projectStats.push({
+                            name: mod.name,
+                            platform: 'curseforge',
+                            downloads: 0,
+                            id: mod.id
+                        });
+                    }
+                }
+            }
+
+            // 保存数据到 Supabase
+            await saveDownloadStats(projectStats, mrTotal, cfTotal);
+
+            // 更新图表
+            await updateChart();
+
+            // 更新页面显示
+            updateStatsDisplay();
+            renderDownloadList();
+            updateLastUpdate();
+            updateBarChart();
+
+            if (DEBUG_MODE) {
+                console.log('Total downloads - Modrinth:', mrTotal, 'CurseForge:', cfTotal, 'Grand Total:', mrTotal + cfTotal);
             }
         }
 
-        // 初始化图表（页面加载时调用）- 返回 Promise
-        function initChartOnLoad() {
-            return new Promise((resolve) => {
-                // 等待 DOM 加载完成
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', () => {
-                        initChart();
-                        resolve();
+        // 保存下载统计到 Supabase
+        async function saveDownloadStats(projectStats, mrTotal, cfTotal) {
+            try {
+                console.log('saveDownloadStats called with:', projectStats);
+                const projectTotals = {};
+                projectStats.forEach(stat => {
+                    if (!projectTotals[stat.name]) {
+                        projectTotals[stat.name] = { modrinth: 0, curseforge: 0 };
+                    }
+                    projectTotals[stat.name][stat.platform] = stat.downloads;
+                });
+
+                console.log('Project totals:', projectTotals);
+
+                const currentStats = await getCurrentStats();
+                console.log('Current stats:', currentStats);
+
+                const updates = [];
+                const today = new Date().toDateString();
+
+                // 计算所有项目的最大数组长度
+                let maxLength = 0;
+                currentStats.forEach(project => {
+                    try {
+                        const mrData = JSON.parse(project.modrinth_downloads);
+                        const cfData = JSON.parse(project.curseforge_downloads);
+                        const totalData = JSON.parse(project.total_downloads);
+                        const projectMaxLength = Math.max(
+                            Array.isArray(mrData) ? mrData.length : 0,
+                            Array.isArray(cfData) ? cfData.length : 0,
+                            Array.isArray(totalData) ? totalData.length : 0
+                        );
+                        if (projectMaxLength > maxLength) {
+                            maxLength = projectMaxLength;
+                        }
+                    } catch (error) {
+                        console.error(`解析项目 ${project.project_name} 数据失败: ${error}`);
+                    }
+                });
+
+                // 处理每个项目的数据
+                Object.entries(projectTotals).forEach(([projectName, downloads]) => {
+                    const total = downloads.modrinth + downloads.curseforge;
+                    const projectData = currentStats.find(s => s.project_name === projectName);
+
+                    let mrData, cfData, totalData;
+                    if (projectData) {
+                        try {
+                            mrData = JSON.parse(projectData.modrinth_downloads);
+                            if (!Array.isArray(mrData) || mrData.length === 0) mrData = [];
+                        } catch (error) {
+                            console.error(`解析 Modrinth 数据失败: ${error}`);
+                            mrData = [];
+                        }
+
+                        try {
+                            cfData = JSON.parse(projectData.curseforge_downloads);
+                            if (!Array.isArray(cfData) || cfData.length === 0) cfData = [];
+                        } catch (error) {
+                            console.error(`解析 CurseForge 数据失败: ${error}`);
+                            cfData = [];
+                        }
+
+                        try {
+                            totalData = JSON.parse(projectData.total_downloads);
+                            if (!Array.isArray(totalData) || totalData.length === 0) totalData = [];
+                        } catch (error) {
+                            console.error(`解析总下载量数据失败: ${error}`);
+                            totalData = [];
+                        }
+
+                        const lastUpdatedDate = new Date(projectData.updated_at).toDateString();
+                        if (lastUpdatedDate !== today) {
+                            // 检查是否获取到有效数据
+                            const hasValidData = downloads.modrinth > 0 && downloads.curseforge > 0 && total > 0;
+
+                            if (hasValidData) {
+                                mrData.push(downloads.modrinth);
+                                cfData.push(downloads.curseforge);
+                                totalData.push(total);
+                                console.log(`新的一天，添加新的下载量数据`);
+                            } else {
+                                // 未获取到数据，复制前一日的数据
+                                if (mrData.length > 0 && cfData.length > 0 && totalData.length > 0) {
+                                    mrData.push(mrData[mrData.length - 1]);
+                                    cfData.push(cfData[cfData.length - 1]);
+                                    totalData.push(totalData[totalData.length - 1]);
+                                    console.log(`未获取到数据，复制前一日的下载量数据`);
+                                } else {
+                                    // 如果没有前一日数据，添加0值
+                                    mrData.push(0);
+                                    cfData.push(0);
+                                    totalData.push(0);
+                                    console.log(`无历史数据，添加0值`);
+                                }
+                            }
+                        } else {
+                            if (mrData.length > 0) {
+                                if (downloads.modrinth > mrData[mrData.length - 1]) {
+                                    mrData[mrData.length - 1] = downloads.modrinth;
+                                    console.log(`Modrinth 下载量更新，从 ${mrData[mrData.length - 1]} 增加到 ${downloads.modrinth}`);
+                                }
+
+                                if (downloads.curseforge > cfData[cfData.length - 1]) {
+                                    cfData[cfData.length - 1] = downloads.curseforge;
+                                    console.log(`CurseForge 下载量更新，从 ${cfData[cfData.length - 1]} 增加到 ${downloads.curseforge}`);
+                                }
+
+                                if (total > totalData[totalData.length - 1]) {
+                                    totalData[totalData.length - 1] = total;
+                                    console.log(`总下载量更新，从 ${totalData[totalData.length - 1]} 增加到 ${total}`);
+                                }
+                            } else {
+                                mrData.push(downloads.modrinth);
+                                cfData.push(downloads.curseforge);
+                                totalData.push(total);
+                            }
+                        }
+                    } else {
+                        mrData = [];
+                        cfData = [];
+                        totalData = [];
+                        mrData.push(downloads.modrinth);
+                        cfData.push(downloads.curseforge);
+                        totalData.push(total);
+                    }
+
+                    // 确保数据数组长度一致
+                    const paddedMrData = padDataArray(mrData, maxLength);
+                    const paddedCfData = padDataArray(cfData, maxLength);
+                    const paddedTotalData = padDataArray(totalData, maxLength);
+
+                    updates.push({
+                        project_name: projectName,
+                        modrinth_downloads: JSON.stringify(paddedMrData),
+                        curseforge_downloads: JSON.stringify(paddedCfData),
+                        total_downloads: JSON.stringify(paddedTotalData)
                     });
-                } else {
-                    initChart();
-                    resolve();
+                });
+
+                console.log('Updates to save:', updates);
+
+                for (const update of updates) {
+                    const { data, error } = await supabaseClient
+                        .from('project_download_stats')
+                        .upsert([update], { onConflict: 'project_name' });
+
+                    if (error) {
+                        console.error('Error upserting data for', update.project_name, ':', error);
+                    } else {
+                        console.log('Data upserted successfully for', update.project_name);
+                    }
                 }
-            });
+
+            } catch (error) {
+                console.error('Error saving download stats:', error);
+                throw error;
+            }
         }
 
-        // 删除重复的DOMContentLoaded事件监听器
-        // 页面加载完成后初始化统计数据（已经在initDashboard中调用）
+        // 填充数据数组长度一致的函数
+        function padDataArray(dataArray, targetLength) {
+            if (!Array.isArray(dataArray)) {
+                return new Array(targetLength).fill(0);
+            }
+
+            const padded = [...dataArray];
+            // 如果数据数组长度小于目标长度，填充前一个值
+            while (padded.length < targetLength) {
+                const lastValue = padded.length > 0 ? padded[padded.length - 1] : 0;
+                padded.push(lastValue);
+            }
+            return padded;
+        }
+
+        // 获取当前项目统计数据
+        async function getCurrentStats() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('project_download_stats')
+                    .select('*');
+
+                if (error) {
+                    console.error('Error fetching current stats:', error);
+                    return [];
+                }
+
+                return data;
+            } catch (error) {
+                console.error('Error fetching current stats:', error);
+                return [];
+            }
+        }
+
+        // 获取下载计数
+        async function fetchDownloadCount(platform, id) {
+            try {
+                const params = new URLSearchParams();
+
+                if (platform === 'modrinth') params.append('modrinth', id);
+                if (platform === 'curseforge') params.append('curseforge', id);
+
+                const apiUrl = `https://connorcode.com/api/downloads?${params}`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
+
+                console.log(`Fetching from: ${apiUrl} via proxy: ${proxyUrl}`);
+
+                const response = await fetch(proxyUrl);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log(`API Response for ${platform}#${id}:`, data);
+
+                return {
+                    raw: (platform === 'modrinth') ? data.modrinth || 0 : data.curseforge || 0,
+                    human: data['total-human'] || '0'
+                };
+            } catch (error) {
+                console.error(`Failed to fetch ${platform}#${id}:`, error);
+                return { raw: 0, human: '0' };
+            }
+        }
     </script>
 </body>
+</html>
