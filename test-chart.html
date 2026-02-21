@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图表测试页面</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-container {
+            background-color: #f5f5f5;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        .chart-container {
+            height: 400px;
+            margin-bottom: 2rem;
+        }
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .control-group {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 0.5rem 1rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button.active {
+            background-color: #28a745;
+        }
+        .test-result {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>图表组件测试</h1>
+
+    <div class="test-container">
+        <h2>1. 图表初始化测试</h2>
+        <div class="chart-container">
+            <canvas id="test-chart"></canvas>
+        </div>
+        <div class="controls">
+            <div class="control-group">
+                <h3>测试项目</h3>
+                <button class="control-button active" data-project="Project1">项目1</button>
+                <button class="control-button active" data-project="Project2">项目2</button>
+                <button class="control-button active" data-project="Project3">项目3</button>
+            </div>
+            <div class="control-group">
+                <h3>测试平台</h3>
+                <button class="control-button active" data-platform="Modrinth">Modrinth</button>
+                <button class="control-button active" data-platform="CurseForge">CurseForge</button>
+                <button class="control-button active" data-platform="Total">总下载量</button>
+            </div>
+        </div>
+        <div class="test-result" id="chart-test-result">
+            测试中...
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>2. 图表功能测试</h2>
+        <div class="controls">
+            <button id="test-data-update">更新数据</button>
+            <button id="test-add-dataset">添加数据集</button>
+            <button id="test-reset">重置图表</button>
+        </div>
+        <div class="test-result" id="function-test-result">
+            请点击按钮进行测试
+        </div>
+    </div>
+
+    <script>
+        let testChart;
+        let testData = {
+            labels: [],
+            datasets: []
+        };
+
+        // 生成测试数据
+        function generateTestData() {
+            const labels = [];
+            const data = {};
+
+            // 生成过去7天的标签
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('zh-CN'));
+            }
+
+            // 为每个项目和平台生成测试数据
+            const projects = ['Project1', 'Project2', 'Project3'];
+            const platforms = ['Modrinth', 'CurseForge', 'Total'];
+
+            projects.forEach(project => {
+                platforms.forEach(platform => {
+                    const key = `${project}_${platform}`;
+                    data[key] = labels.map(() => Math.floor(Math.random() * 10000));
+                });
+            });
+
+            return { labels, data };
+        }
+
+        // 创建图表数据集
+        function createDataset(label, color) {
+            return {
+                label: label,
+                data: [],
+                borderColor: color,
+                backgroundColor: color + '20',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+                hidden: false
+            };
+        }
+
+        // 初始化测试图表
+        function initTestChart() {
+            try {
+                const ctx = document.getElementById('test-chart').getContext('2d');
+                const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9', '#F8B739'];
+
+                // 生成测试数据
+                const testData = generateTestData();
+
+                // 创建数据集
+                const datasets = [];
+                let colorIndex = 0;
+                const projects = ['Project1', 'Project2', 'Project3'];
+                const platforms = ['Modrinth', 'CurseForge', 'Total'];
+
+                projects.forEach(project => {
+                    platforms.forEach(platform => {
+                        const label = `${project} (${platform})`;
+                        const dataset = createDataset(label, colors[colorIndex % colors.length]);
+                        const dataKey = `${project}_${platform}`;
+                        dataset.data = testData.data[dataKey];
+                        datasets.push(dataset);
+                        colorIndex++;
+                    });
+                });
+
+                testChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: testData.labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.dataset.label || '';
+                                        const value = context.raw || 0;
+                                        return `${label}: ${value.toLocaleString()}`;
+                                    }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: '项目下载量趋势'
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: '时间'
+                                },
+                                ticks: {
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: '下载量'
+                                },
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                document.getElementById('chart-test-result').innerHTML =
+                    '<span class="success">✓ 图表初始化成功！</span>';
+            } catch (error) {
+                document.getElementById('chart-test-result').innerHTML =
+                    `<span class="error">✗ 图表初始化失败：${error.message}</span>`;
+                console.error('图表初始化错误：', error);
+            }
+        }
+
+        // 测试数据更新功能
+        function testDataUpdate() {
+            try {
+                const newData = generateTestData();
+
+                // 更新数据
+                testChart.data.labels = newData.labels;
+                Object.keys(newData.data).forEach((key, index) => {
+                    if (testChart.data.datasets[index]) {
+                        testChart.data.datasets[index].data = newData.data[key];
+                    }
+                });
+
+                testChart.update('none');
+
+                document.getElementById('function-test-result').innerHTML =
+                    '<span class="success">✓ 数据更新成功！</span>';
+            } catch (error) {
+                document.getElementById('function-test-result').innerHTML =
+                    `<span class="error">✗ 数据更新失败：${error.message}</span>`;
+                console.error('数据更新错误：', error);
+            }
+        }
+
+        // 测试添加数据集功能
+        function testAddDataset() {
+            try {
+                const newProject = `Project${testChart.data.datasets.length / 3 + 1}`;
+                const platforms = ['Modrinth', 'CurseForge', 'Total'];
+                const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9', '#F8B739'];
+
+                platforms.forEach(platform => {
+                    const label = `${newProject} (${platform})`;
+                    const dataset = createDataset(label, colors[testChart.data.datasets.length % colors.length]);
+
+                    // 生成新数据集的测试数据
+                    const newData = [];
+                    const dataCount = testChart.data.labels.length;
+                    for (let i = 0; i < dataCount; i++) {
+                        newData.push(Math.floor(Math.random() * 10000));
+                    }
+
+                    dataset.data = newData;
+                    testChart.data.datasets.push(dataset);
+                });
+
+                testChart.update('none');
+
+                document.getElementById('function-test-result').innerHTML =
+                    `<span class="success">✓ 添加数据集成功！新增项目：${newProject}</span>`;
+            } catch (error) {
+                document.getElementById('function-test-result').innerHTML =
+                    `<span class="error">✗ 添加数据集失败：${error.message}</span>`;
+                console.error('添加数据集错误：', error);
+            }
+        }
+
+        // 测试重置图表功能
+        function testReset() {
+            try {
+                if (testChart) {
+                    testChart.destroy();
+                }
+                initTestChart();
+
+                document.getElementById('function-test-result').innerHTML =
+                    '<span class="success">✓ 图表重置成功！</span>';
+            } catch (error) {
+                document.getElementById('function-test-result').innerHTML =
+                    `<span class="error">✗ 图表重置失败：${error.message}</span>`;
+                console.error('图表重置错误：', error);
+            }
+        }
+
+        // 控制按钮事件
+        document.querySelectorAll('[data-project]').forEach(button => {
+            button.addEventListener('click', function() {
+                const project = this.dataset.project;
+                this.classList.toggle('active');
+                const isActive = this.classList.contains('active');
+
+                testChart.data.datasets.forEach(dataset => {
+                    if (dataset.label.includes(project)) {
+                        dataset.hidden = !isActive;
+                    }
+                });
+                testChart.update('none');
+            });
+        });
+
+        document.querySelectorAll('[data-platform]').forEach(button => {
+            button.addEventListener('click', function() {
+                const platform = this.dataset.platform;
+                this.classList.toggle('active');
+                const isActive = this.classList.contains('active');
+
+                testChart.data.datasets.forEach(dataset => {
+                    if (dataset.label.includes(platform)) {
+                        dataset.hidden = !isActive;
+                    }
+                });
+                testChart.update('none');
+            });
+        });
+
+        // 功能测试按钮事件
+        document.getElementById('test-data-update').addEventListener('click', testDataUpdate);
+        document.getElementById('test-add-dataset').addEventListener('click', testAddDataset);
+        document.getElementById('test-reset').addEventListener('click', testReset);
+
+        // 页面加载时初始化图表
+        document.addEventListener('DOMContentLoaded', function() {
+            initTestChart();
+        });
+    </script>
+</body>
+</html>

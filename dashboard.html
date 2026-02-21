@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* 仪表板特定样式 */
         .dashboard {
@@ -440,18 +441,90 @@ transform: translateX(5px);
             animation: fadeInUp 0.8s ease-out 0.4s both;
         } */
 
+        /* 图表容器样式 */
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 2rem 0;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1rem;
+        }
+
+        /* 图表控制样式 */
+        .chart-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .chart-control-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chart-control-group label {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .control-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .control-button {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--secondary-color);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .control-button.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+
         /* 响应式设计 */
         @media (max-width: 1024px) {
             .downloads-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
+
             .date-line {
-font-size: 3rem;
+                font-size: 3rem;
             }
-            
+
             .time-line {
                 font-size: 2rem;
+            }
+
+            .chart-container {
+                height: 350px;
+            }
+
+            .chart-controls {
+                flex-direction: column;
+                align-items: flex-start;
             }
         }
 
@@ -479,8 +552,16 @@ font-size: 3rem;
             .dashboard-subtitle {
                 font-size: 1.1rem;
             }
+
+            .chart-container {
+                height: 300px;
+            }
+
+            .chart-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
-    </style>
 </head>
 <body>
     <!-- 导航栏 -->
@@ -557,20 +638,18 @@ font-size: 3rem;
 
                 <!-- 下载统计区域 -->
                 <div class="downloads-section">
-                    <div class="downloads-grid">
-                        <div class="download-card modrinth" onclick="openModrinth()">
-                            <div class="download-label">Modrinth 下载量</div>
-                            <div class="download-value" id="modrinth-total">-</div>
+                    <div class="downloads-title">项目下载量趋势</div>
+                    <div class="chart-container">
+                        <canvas id="downloads-chart"></canvas>
+                    </div>
+                    <div class="chart-controls">
+                        <div class="chart-control-group">
+                            <label>显示项目：</label>
+                            <div class="control-buttons" id="project-controls"></div>
                         </div>
-
-                        <div class="download-card curseforge" onclick="openCurseForge()">
-                            <div class="download-label">CurseForge 下载量</div>
-                            <div class="download-value" id="curseforge-total">-</div>
-                        </div>
-
-                        <div class="download-card total">
-                            <div class="download-label">总下载量</div>
-                            <div class="download-value" id="grand-total">-</div>
+                        <div class="chart-control-group">
+                            <label>显示平台：</label>
+                            <div class="control-buttons" id="platform-controls"></div>
                         </div>
                     </div>
                 </div>
@@ -634,6 +713,16 @@ font-size: 3rem;
 
         // 是否启用调试模式（控制台输出详细信息）
         const DEBUG_MODE = true;
+
+        // Supabase 配置
+        const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL'; // 从 SUPABASE_CONFIG.md 复制
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_PUBLIC_KEY';
+
+        // 初始化 Supabase 客户端
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 图表实例
+        let downloadsChart = null;
 
         // --- 配置区域 END ---
 
@@ -744,6 +833,7 @@ font-size: 3rem;
         function initDashboard() {
             updateDateTime();
             fetchQuote(); // 初始化时获取一次名言
+            initChartOnLoad(); // 初始化图表
             updateStats(); // 初始化统计数据
             initWeekIndicator(); // 初始化星期时间组件
             fetchIPAddress(); // 初始化时获取IP地址
@@ -828,66 +918,447 @@ font-size: 3rem;
 
         // 更新统计数据
         async function updateStats() {
-            // 统计变量
+            const projectStats = [];
             let mrTotal = 0;
             let cfTotal = 0;
 
-            // 处理 Modrinth
+            // 处理 Modrinth 项目
             if (MOD_CONFIG.modrinth.length > 0) {
                 for (const mod of MOD_CONFIG.modrinth) {
                     try {
                         const apiUrl = `https://connorcode.com/api/downloads?modrinth=${mod.id}`;
-                        console.log(`Fetching Modrinth#${mod.id} from: ${apiUrl}`);
-
-                        // 使用原来的代理
                         const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
                         const response = await fetch(proxyUrl);
 
                         if (response.ok) {
                             const data = await response.json();
-                            console.log(`Modrinth#${mod.id} response:`, data);
-                            mrTotal += data.modrinth || 0;
-                        } else {
-                            console.error(`Modrinth#${mod.id} response not OK:`, response.status);
+                            const downloads = data.modrinth || 0;
+                            mrTotal += downloads;
+                            projectStats.push({
+                                name: mod.name,
+                                platform: 'modrinth',
+                                downloads: downloads,
+                                id: mod.id
+                            });
                         }
                     } catch (error) {
                         console.error(`Failed to fetch Modrinth#${mod.id}:`, error);
-                        // 如果请求失败，设置一个默认值或跳过该项目
+                        projectStats.push({
+                            name: mod.name,
+                            platform: 'modrinth',
+                            downloads: 0,
+                            id: mod.id
+                        });
                     }
                 }
             }
 
-            // 处理 CurseForge
+            // 处理 CurseForge 项目
             if (MOD_CONFIG.curseforge.length > 0) {
                 for (const mod of MOD_CONFIG.curseforge) {
                     try {
                         const apiUrl = `https://connorcode.com/api/downloads?curseforge=${mod.id}`;
-                        console.log(`Fetching CurseForge#${mod.id} from: ${apiUrl}`);
-
-                        // 使用原来的代理
                         const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
                         const response = await fetch(proxyUrl);
 
                         if (response.ok) {
                             const data = await response.json();
-                            console.log(`CurseForge#${mod.id} response:`, data);
-                            cfTotal += data.curseforge || 0;
-                        } else {
-                            console.error(`CurseForge#${mod.id} response not OK:`, response.status);
+                            const downloads = data.curseforge || 0;
+                            cfTotal += downloads;
+                            projectStats.push({
+                                name: mod.name,
+                                platform: 'curseforge',
+                                downloads: downloads,
+                                id: mod.id
+                            });
                         }
                     } catch (error) {
                         console.error(`Failed to fetch CurseForge#${mod.id}:`, error);
+                        projectStats.push({
+                            name: mod.name,
+                            platform: 'curseforge',
+                            downloads: 0,
+                            id: mod.id
+                        });
                     }
                 }
             }
 
-            // 更新显示
-            document.getElementById('modrinth-total').textContent = formatNumber(mrTotal);
-            document.getElementById('curseforge-total').textContent = formatNumber(cfTotal);
-            document.getElementById('grand-total').textContent = formatNumber(mrTotal + cfTotal);
+            // 保存数据到 Supabase
+            await saveDownloadStats(projectStats, mrTotal, cfTotal);
+
+            // 更新图表
+            await updateChart();
 
             if (DEBUG_MODE) {
                 console.log('Total downloads - Modrinth:', mrTotal, 'CurseForge:', cfTotal, 'Grand Total:', mrTotal + cfTotal);
+            }
+        }
+
+        // 保存下载统计到 Supabase
+        async function saveDownloadStats(projectStats, mrTotal, cfTotal) {
+            try {
+                // 按项目分组统计
+                const projectTotals = {};
+                projectStats.forEach(stat => {
+                    if (!projectTotals[stat.name]) {
+                        projectTotals[stat.name] = { modrinth: 0, curseforge: 0 };
+                    }
+                    projectTotals[stat.name][stat.platform] = stat.downloads;
+                });
+
+                // 获取历史最高值
+                const maxStats = await getMaxDownloadStats();
+
+                // 准备数据
+                const statsToSave = [];
+                Object.entries(projectTotals).forEach(([projectName, downloads]) => {
+                    const total = downloads.modrinth + downloads.curseforge;
+                    const currentMax = maxStats[projectName] || { modrinth: 0, curseforge: 0, total: 0 };
+
+                    // 检查是否有新的最高值
+                    const newMaxModrinth = Math.max(downloads.modrinth, currentMax.modrinth);
+                    const newMaxCurseforge = Math.max(downloads.curseforge, currentMax.curseforge);
+                    const newMaxTotal = Math.max(total, currentMax.total);
+
+                    statsToSave.push({
+                        project_name: projectName,
+                        modrinth_downloads: downloads.modrinth,
+                        curseforge_downloads: downloads.curseforge,
+                        total_downloads: total,
+                        max_modrinth_downloads: newMaxModrinth,
+                        max_curseforge_downloads: newMaxCurseforge,
+                        max_total_downloads: newMaxTotal
+                    });
+                });
+
+                // 插入数据
+                const { data, error } = await supabase
+                    .from('download_statistics')
+                    .insert(statsToSave);
+
+                if (error) {
+                    console.error('Error saving download stats:', error);
+                } else {
+                    if (DEBUG_MODE) {
+                        console.log('Download stats saved successfully');
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving download stats:', error);
+            }
+        }
+
+        // 获取历史最高下载统计
+        async function getMaxDownloadStats() {
+            try {
+                const { data, error } = await supabase
+                    .from('download_statistics')
+                    .select('project_name, max_modrinth_downloads, max_curseforge_downloads, max_total_downloads');
+
+                if (error) {
+                    console.error('Error fetching max download stats:', error);
+                    return {};
+                }
+
+                const maxStats = {};
+                data.forEach(stat => {
+                    if (!maxStats[stat.project_name] || stat.max_total_downloads > maxStats[stat.project_name].total) {
+                        maxStats[stat.project_name] = {
+                            modrinth: stat.max_modrinth_downloads,
+                            curseforge: stat.max_curseforge_downloads,
+                            total: stat.max_total_downloads
+                        };
+                    }
+                });
+
+                return maxStats;
+            } catch (error) {
+                console.error('Error fetching max download stats:', error);
+                return {};
+            }
+        }
+
+        // 从 Supabase 获取历史数据
+        async function getDownloadHistory() {
+            try {
+                const { data, error } = await supabase
+                    .from('download_statistics')
+                    .select('*')
+                    .order('timestamp', { ascending: true });
+
+                if (error) {
+                    console.error('Error fetching download history:', error);
+                    return [];
+                }
+
+                return data;
+            } catch (error) {
+                console.error('Error fetching download history:', error);
+                return [];
+            }
+        }
+
+        // 初始化图表
+        function initChart() {
+            const ctx = document.getElementById('downloads-chart').getContext('2d');
+            const chartData = {
+                labels: [],
+                datasets: []
+            };
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.dataset.label || '';
+                                const value = context.raw || 0;
+                                return `${label}: ${formatNumber(value)}`;
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: '项目下载量趋势'
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '时间'
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: '下载量'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            };
+
+            downloadsChart = new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: chartOptions
+            });
+
+            // 初始化控制按钮
+            initChartControls();
+        }
+
+        // 初始化图表控制按钮
+        function initChartControls() {
+            const projectNames = [...new Set(MOD_CONFIG.modrinth.map(mod => mod.name))];
+            const projectControls = document.getElementById('project-controls');
+            projectNames.forEach(name => {
+                const button = document.createElement('button');
+                button.className = 'control-button active';
+                button.textContent = name;
+                button.dataset.type = 'project';
+                button.dataset.name = name;
+                button.addEventListener('click', () => toggleChartSeries(name, 'project'));
+                projectControls.appendChild(button);
+            });
+
+            const platformControls = document.getElementById('platform-controls');
+            const platforms = ['modrinth', 'curseforge', 'total'];
+            platforms.forEach(platform => {
+                const button = document.createElement('button');
+                button.className = 'control-button active';
+                button.textContent = platform === 'total' ? '总下载量' : platform;
+                button.dataset.type = 'platform';
+                button.dataset.name = platform;
+                button.addEventListener('click', () => toggleChartSeries(platform, 'platform'));
+                platformControls.appendChild(button);
+            });
+        }
+
+        // 切换图表数据系列显示
+        function toggleChartSeries(name, type) {
+            const button = document.querySelector(`[data-type="${type}"][data-name="${name}"]`);
+            if (!button) return;
+
+            button.classList.toggle('active');
+            const isActive = button.classList.contains('active');
+
+            // 更新图表
+            if (downloadsChart) {
+                downloadsChart.data.datasets.forEach(dataset => {
+                    const shouldShow = determineSeriesVisibility(dataset.label, name, type, isActive);
+                    dataset.hidden = !shouldShow;
+                });
+                downloadsChart.update();
+            }
+        }
+
+        // 确定数据系列是否可见
+        function determineSeriesVisibility(label, targetName, targetType, isActive) {
+            if (targetType === 'project') {
+                // 检查标签是否包含项目名称
+                const shouldShow = label.includes(targetName);
+                return isActive ? shouldShow : true;
+            } else if (targetType === 'platform') {
+                // 检查标签是否包含平台名称
+                if (targetName === 'total') {
+                    return isActive ? label.includes('总下载量') : true;
+                } else {
+                    const platformName = targetName === 'modrinth' ? 'Modrinth' : 'CurseForge';
+                    return isActive ? label.includes(platformName) : true;
+                }
+            }
+            return true;
+        }
+
+        // 更新图表数据
+        async function updateChart() {
+            const history = await getDownloadHistory();
+            if (!history.length) return;
+
+            // 准备图表数据
+            const labels = [...new Set(history.map(h => formatTime(h.timestamp)))];
+            const datasets = prepareChartDatasets(history);
+
+            // 更新图表
+            if (downloadsChart) {
+                downloadsChart.data.labels = labels;
+                downloadsChart.data.datasets = datasets;
+                downloadsChart.update('none');
+            } else {
+                initChart();
+                downloadsChart.data.labels = labels;
+                downloadsChart.data.datasets = datasets;
+                downloadsChart.update('none');
+            }
+        }
+
+        // 准备图表数据集
+        function prepareChartDatasets(history) {
+            const datasets = [];
+            const projectNames = [...new Set(MOD_CONFIG.modrinth.map(mod => mod.name))];
+            const platforms = ['modrinth', 'curseforge'];
+
+            // 为每个项目和平台创建数据集
+            projectNames.forEach(name => {
+                platforms.forEach(platform => {
+                    const platformName = platform === 'modrinth' ? 'Modrinth' : 'CurseForge';
+                    const dataset = createDataset(`${name} (${platformName})`, getRandomColor());
+                    const data = history
+                        .filter(h => h.project_name === name)
+                        .map(h => platform === 'modrinth' ? h.modrinth_downloads : h.curseforge_downloads);
+                    dataset.data = data;
+                    datasets.push(dataset);
+                });
+
+                // 项目总下载量
+                const totalDataset = createDataset(`${name} (总下载量)`, getRandomColor());
+                const totalData = history
+                    .filter(h => h.project_name === name)
+                    .map(h => h.total_downloads);
+                totalDataset.data = totalData;
+                datasets.push(totalDataset);
+            });
+
+            // 平台总下载量
+            platforms.forEach(platform => {
+                const platformName = platform === 'modrinth' ? 'Modrinth' : 'CurseForge';
+                const dataset = createDataset(`总${platformName}下载量`, getRandomColor());
+                const data = [];
+                const uniqueTimestamps = [...new Set(history.map(h => h.timestamp))];
+                uniqueTimestamps.forEach(timestamp => {
+                    const platformData = history.filter(h => h.timestamp === timestamp);
+                    const total = platformData.reduce((sum, h) => sum + (platform === 'modrinth' ? h.modrinth_downloads : h.curseforge_downloads), 0);
+                    data.push(total);
+                });
+                dataset.data = data;
+                datasets.push(dataset);
+            });
+
+            // 总体总下载量
+            const grandTotalDataset = createDataset('总体总下载量', getRandomColor());
+            const grandTotalData = [];
+            const uniqueTimestamps = [...new Set(history.map(h => h.timestamp))];
+            uniqueTimestamps.forEach(timestamp => {
+                const platformData = history.filter(h => h.timestamp === timestamp);
+                const total = platformData.reduce((sum, h) => sum + h.total_downloads, 0);
+                grandTotalData.push(total);
+            });
+            grandTotalDataset.data = grandTotalData;
+            datasets.push(grandTotalDataset);
+
+            return datasets;
+        }
+
+        // 创建图表数据集
+        function createDataset(label, color) {
+            return {
+                label: label,
+                data: [],
+                borderColor: color,
+                backgroundColor: color + '20', // 20% opacity for area fill
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true,
+                pointRadius: 3,
+                pointHoverRadius: 5,
+                hidden: false
+            };
+        }
+
+        // 生成随机颜色
+        function getRandomColor() {
+            const colors = [
+                '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8',
+                '#F7DC6F', '#BB8FCE', '#85C1E9', '#F8B739', '#52B788'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // 格式化时间
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMinutes = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMinutes < 60) {
+                return `${diffMinutes}分钟前`;
+            } else if (diffHours < 24) {
+                return `${diffHours}小时前`;
+            } else if (diffDays < 7) {
+                return `${diffDays}天前`;
+            } else {
+                return date.toLocaleDateString('zh-CN');
+            }
+        }
+
+        // 初始化图表（页面加载时调用）
+        function initChartOnLoad() {
+            // 等待 DOM 加载完成
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => {
+                    initChart();
+                });
+            } else {
+                initChart();
             }
         }
 
