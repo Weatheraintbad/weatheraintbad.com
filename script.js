@@ -487,6 +487,14 @@ function initGreeting() {
 window.addEventListener('load', () => {
     const loader = document.getElementById('loader');
 
+    // 检查当前页面是否是 dashboard.html
+    if (window.location.pathname.includes('dashboard') || !loader) {
+        // 如果是 dashboard.html 或没有 loader 元素，直接初始化页面内容
+        document.body.style.opacity = '1';
+        initGreeting();
+        return;
+    }
+
     // 确保页面内容加载完成后再隐藏加载动画
     setTimeout(() => {
         loader.classList.add('hidden');

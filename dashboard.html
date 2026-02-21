@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* 仪表板特定样式 */
         .dashboard {
@@ -562,6 +563,7 @@ transform: translateX(5px);
                 align-items: flex-start;
             }
         }
+    </style>
 </head>
 <body>
     <!-- 导航栏 -->
@@ -638,17 +640,17 @@ transform: translateX(5px);
 
                 <!-- 下载统计区域 -->
                 <div class="downloads-section">
-                    <div class="downloads-title">项目下载量趋势</div>
+                    <div class="downloads-title">项目下载量</div>
                     <div class="chart-container">
                         <canvas id="downloads-chart"></canvas>
                     </div>
                     <div class="chart-controls">
                         <div class="chart-control-group">
-                            <label>显示项目：</label>
+                            <label>项目：</label>
                             <div class="control-buttons" id="project-controls"></div>
                         </div>
                         <div class="chart-control-group">
-                            <label>显示平台：</label>
+                            <label>平台：</label>
                             <div class="control-buttons" id="platform-controls"></div>
                         </div>
                     </div>
@@ -715,11 +717,11 @@ transform: translateX(5px);
         const DEBUG_MODE = true;
 
         // Supabase 配置
-        const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL'; // 从 SUPABASE_CONFIG.md 复制
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_PUBLIC_KEY';
+        const SUPABASE_URL = 'https://wyoofofxviolwdebkpkt.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_TOTiug5k7UCGYLeLib0cUw_Vqm06ZyC';
 
         // 初始化 Supabase 客户端
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // 图表实例
         let downloadsChart = null;
@@ -833,8 +835,19 @@ transform: translateX(5px);
         function initDashboard() {
             updateDateTime();
             fetchQuote(); // 初始化时获取一次名言
-            initChartOnLoad(); // 初始化图表
-            updateStats(); // 初始化统计数据
+
+            // 先初始化图表，然后直接调用updateChart加载历史数据
+            // 确保图表能在显示前有数据
+            initChartOnLoad().then(() => {
+                updateChart();
+                // 图表加载完成后，在后台运行数据抓取和更新逻辑
+                setTimeout(() => {
+                    updateStats().catch(error => {
+                        console.error('Error in updateStats:', error);
+                    });
+                }, 1000); // 延迟1秒让图表完全显示
+            });
+
             initWeekIndicator(); // 初始化星期时间组件
             fetchIPAddress(); // 初始化时获取IP地址
 
@@ -846,6 +859,39 @@ transform: translateX(5px);
 
             // 每5分钟更新一次统计数据
             setInterval(updateStats, 5 * 60 * 1000);
+        }
+
+        // 初始化时获取并存储项目下载数据
+        async function fetchAndStoreInitialData() {
+            try {
+                console.log('fetchAndStoreInitialData called');
+                // 检查数据库是否已经有数据
+                const { data, error } = await supabaseClient
+                    .from('project_download_stats')
+                    .select('id')
+                    .limit(1);
+
+                if (error) {
+                    console.error('检查数据库数据时出错:', error);
+                    // 抛出错误，以便上层函数能够捕获
+                    throw error;
+                }
+
+                console.log('Database check result:', data);
+
+                // 如果数据库是空的，获取所有项目的下载数据并存储
+                if (!data || data.length === 0) {
+                    console.log('数据库为空，开始获取并存储项目下载数据');
+                    await updateStats();
+                    console.log('项目下载数据已成功存储');
+                } else {
+                    console.log('数据库已包含数据，跳过初始数据获取');
+                }
+            } catch (error) {
+                console.error('获取初始数据时出错:', error);
+                // 抛出错误，以便上层函数能够捕获
+                throw error;
+            }
         }
 
         // 刷新页面数据函数
@@ -926,21 +972,15 @@ transform: translateX(5px);
             if (MOD_CONFIG.modrinth.length > 0) {
                 for (const mod of MOD_CONFIG.modrinth) {
                     try {
-                        const apiUrl = `https://connorcode.com/api/downloads?modrinth=${mod.id}`;
-                        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-                        const response = await fetch(proxyUrl);
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            const downloads = data.modrinth || 0;
-                            mrTotal += downloads;
-                            projectStats.push({
-                                name: mod.name,
-                                platform: 'modrinth',
-                                downloads: downloads,
-                                id: mod.id
-                            });
-                        }
+                        const result = await fetchDownloadCount('modrinth', mod.id);
+                        const downloads = result.raw;
+                        mrTotal += downloads;
+                        projectStats.push({
+                            name: mod.name,
+                            platform: 'modrinth',
+                            downloads: downloads,
+                            id: mod.id
+                        });
                     } catch (error) {
                         console.error(`Failed to fetch Modrinth#${mod.id}:`, error);
                         projectStats.push({
@@ -957,21 +997,15 @@ transform: translateX(5px);
             if (MOD_CONFIG.curseforge.length > 0) {
                 for (const mod of MOD_CONFIG.curseforge) {
                     try {
-                        const apiUrl = `https://connorcode.com/api/downloads?curseforge=${mod.id}`;
-                        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(apiUrl)}`;
-                        const response = await fetch(proxyUrl);
-
-                        if (response.ok) {
-                            const data = await response.json();
-                            const downloads = data.curseforge || 0;
-                            cfTotal += downloads;
-                            projectStats.push({
-                                name: mod.name,
-                                platform: 'curseforge',
-                                downloads: downloads,
-                                id: mod.id
-                            });
-                        }
+                        const result = await fetchDownloadCount('curseforge', mod.id);
+                        const downloads = result.raw;
+                        cfTotal += downloads;
+                        projectStats.push({
+                            name: mod.name,
+                            platform: 'curseforge',
+                            downloads: downloads,
+                            id: mod.id
+                        });
                     } catch (error) {
                         console.error(`Failed to fetch CurseForge#${mod.id}:`, error);
                         projectStats.push({
@@ -995,9 +1029,10 @@ transform: translateX(5px);
             }
         }
 
-        // 保存下载统计到 Supabase
+        // 保存下载统计到 Supabase（修改后的逻辑）
         async function saveDownloadStats(projectStats, mrTotal, cfTotal) {
             try {
+                console.log('saveDownloadStats called with:', projectStats);
                 // 按项目分组统计
                 const projectTotals = {};
                 projectStats.forEach(stat => {
@@ -1007,91 +1042,164 @@ transform: translateX(5px);
                     projectTotals[stat.name][stat.platform] = stat.downloads;
                 });
 
-                // 获取历史最高值
-                const maxStats = await getMaxDownloadStats();
+                console.log('Project totals:', projectTotals);
 
-                // 准备数据
-                const statsToSave = [];
+                // 获取当前项目的统计数据
+                const currentStats = await getCurrentStats();
+                console.log('Current stats:', currentStats);
+
+                // 准备数据（更新或插入）
+                const updates = [];
+                const today = new Date().toDateString();
+
                 Object.entries(projectTotals).forEach(([projectName, downloads]) => {
                     const total = downloads.modrinth + downloads.curseforge;
-                    const currentMax = maxStats[projectName] || { modrinth: 0, curseforge: 0, total: 0 };
 
-                    // 检查是否有新的最高值
-                    const newMaxModrinth = Math.max(downloads.modrinth, currentMax.modrinth);
-                    const newMaxCurseforge = Math.max(downloads.curseforge, currentMax.curseforge);
-                    const newMaxTotal = Math.max(total, currentMax.total);
+                    // 获取项目的历史数据
+                    const projectData = currentStats.find(s => s.project_name === projectName);
 
-                    statsToSave.push({
+                    let mrData, cfData, totalData;
+                    if (projectData) {
+                        // 如果项目已存在，解析现有数组（添加错误处理）
+                        try {
+                            mrData = JSON.parse(projectData.modrinth_downloads);
+                            // 如果解析后是空数组，创建新数组
+                            if (!Array.isArray(mrData) || mrData.length === 0) {
+                                mrData = [];
+                            }
+                        } catch (error) {
+                            console.error(`解析 Modrinth 数据失败: ${error}`);
+                            mrData = [];
+                        }
+
+                        try {
+                            cfData = JSON.parse(projectData.curseforge_downloads);
+                            // 如果解析后是空数组，创建新数组
+                            if (!Array.isArray(cfData) || cfData.length === 0) {
+                                cfData = [];
+                            }
+                        } catch (error) {
+                            console.error(`解析 CurseForge 数据失败: ${error}`);
+                            cfData = [];
+                        }
+
+                        try {
+                            totalData = JSON.parse(projectData.total_downloads);
+                            // 如果解析后是空数组，创建新数组
+                            if (!Array.isArray(totalData) || totalData.length === 0) {
+                                totalData = [];
+                            }
+                        } catch (error) {
+                            console.error(`解析总下载量数据失败: ${error}`);
+                            totalData = [];
+                        }
+
+                        // 检查是否是新的一天（比较日期）
+                        const lastUpdatedDate = new Date(projectData.updated_at).toDateString();
+                        if (lastUpdatedDate !== today) {
+                            // 如果是新的一天，添加新的元素到数组
+                            mrData.push(downloads.modrinth);
+                            cfData.push(downloads.curseforge);
+                            totalData.push(total);
+                            console.log(`新的一天，添加新的下载量数据`);
+                        } else {
+                            // 如果是同一天，只有获取到的数据大于原有数据时才覆盖原数据
+                            if (mrData.length > 0) {
+                                if (downloads.modrinth > mrData[mrData.length - 1]) {
+                                    mrData[mrData.length - 1] = downloads.modrinth;
+                                    console.log(`Modrinth 下载量更新，从 ${mrData.length > 1 ? mrData[mrData.length - 1] : 0} 增加到 ${downloads.modrinth}`);
+                                }
+
+                                if (downloads.curseforge > cfData[cfData.length - 1]) {
+                                    cfData[cfData.length - 1] = downloads.curseforge;
+                                    console.log(`CurseForge 下载量更新，从 ${cfData.length > 1 ? cfData[cfData.length - 1] : 0} 增加到 ${downloads.curseforge}`);
+                                }
+
+                                if (total > totalData[totalData.length - 1]) {
+                                    totalData[totalData.length - 1] = total;
+                                    console.log(`总下载量更新，从 ${totalData.length > 1 ? totalData[totalData.length - 1] : 0} 增加到 ${total}`);
+                                }
+                            } else {
+                                // 如果数组是空的，直接添加数据
+                                mrData.push(downloads.modrinth);
+                                cfData.push(downloads.curseforge);
+                                totalData.push(total);
+                            }
+                        }
+                    } else {
+                        // 如果项目不存在，创建新数组
+                        mrData = [];
+                        cfData = [];
+                        totalData = [];
+                        // 第一次记录，添加新的元素
+                        mrData.push(downloads.modrinth);
+                        cfData.push(downloads.curseforge);
+                        totalData.push(total);
+                    }
+
+                    // 构建更新数据
+                    updates.push({
                         project_name: projectName,
-                        modrinth_downloads: downloads.modrinth,
-                        curseforge_downloads: downloads.curseforge,
-                        total_downloads: total,
-                        max_modrinth_downloads: newMaxModrinth,
-                        max_curseforge_downloads: newMaxCurseforge,
-                        max_total_downloads: newMaxTotal
+                        modrinth_downloads: JSON.stringify(mrData),
+                        curseforge_downloads: JSON.stringify(cfData),
+                        total_downloads: JSON.stringify(totalData)
                     });
                 });
 
-                // 插入数据
-                const { data, error } = await supabase
-                    .from('download_statistics')
-                    .insert(statsToSave);
+                console.log('Updates to save:', updates);
 
-                if (error) {
-                    console.error('Error saving download stats:', error);
-                } else {
-                    if (DEBUG_MODE) {
-                        console.log('Download stats saved successfully');
+                // 执行更新或插入操作
+                for (const update of updates) {
+                    const { data, error } = await supabaseClient
+                        .from('project_download_stats')
+                        .upsert([update], { onConflict: 'project_name' });
+
+                    if (error) {
+                        console.error('Error upserting data for', update.project_name, ':', error);
+                    } else {
+                        console.log('Data upserted successfully for', update.project_name);
                     }
                 }
+
             } catch (error) {
                 console.error('Error saving download stats:', error);
+                // 抛出错误，以便上层函数能够捕获
+                throw error;
             }
         }
 
-        // 获取历史最高下载统计
-        async function getMaxDownloadStats() {
+        // 获取当前项目统计数据（新结构）
+        async function getCurrentStats() {
             try {
-                const { data, error } = await supabase
-                    .from('download_statistics')
-                    .select('project_name, max_modrinth_downloads, max_curseforge_downloads, max_total_downloads');
+                const { data, error } = await supabaseClient
+                    .from('project_download_stats')
+                    .select('*');
 
                 if (error) {
-                    console.error('Error fetching max download stats:', error);
-                    return {};
+                    console.error('Error fetching current stats:', error);
+                    return [];
                 }
 
-                const maxStats = {};
-                data.forEach(stat => {
-                    if (!maxStats[stat.project_name] || stat.max_total_downloads > maxStats[stat.project_name].total) {
-                        maxStats[stat.project_name] = {
-                            modrinth: stat.max_modrinth_downloads,
-                            curseforge: stat.max_curseforge_downloads,
-                            total: stat.max_total_downloads
-                        };
-                    }
-                });
-
-                return maxStats;
+                return data;
             } catch (error) {
-                console.error('Error fetching max download stats:', error);
-                return {};
+                console.error('Error fetching current stats:', error);
+                return [];
             }
         }
 
-        // 从 Supabase 获取历史数据
+        // 从 Supabase 获取历史数据（修复后）
         async function getDownloadHistory() {
             try {
-                const { data, error } = await supabase
-                    .from('download_statistics')
-                    .select('*')
-                    .order('timestamp', { ascending: true });
+                const { data, error } = await supabaseClient
+                    .from('project_download_stats')
+                    .select('*');
 
                 if (error) {
                     console.error('Error fetching download history:', error);
                     return [];
                 }
 
+                // 返回原始结构，不进行额外处理
                 return data;
             } catch (error) {
                 console.error('Error fetching download history:', error);
@@ -1117,9 +1225,28 @@ transform: translateX(5px);
                 plugins: {
                     legend: {
                         position: 'top',
+                        // 只显示可见的数据集的图例
+                        labels: {
+                            filter: function(item, chartData) {
+                                const dataset = chartData.datasets[item.datasetIndex];
+                                return !dataset.hidden;
+                            }
+                        }
                     },
                     tooltip: {
                         callbacks: {
+                            title: function(context) {
+                                const index = context[0].dataIndex;
+                                const today = new Date();
+                                // 设置时区为东八区（北京时间）
+                                const utcTime = today.getTime() + (today.getTimezoneOffset() * 60000);
+                                const beijingTime = new Date(utcTime + (8 * 60 * 60000));
+                                const date = new Date(beijingTime);
+                                date.setDate(beijingTime.getDate() - (context[0].chart.data.labels.length - index - 1));
+                                const month = date.getMonth() + 1;
+                                const day = date.getDate();
+                                return `${month}月${day}日`;
+                            },
                             label: function(context) {
                                 const label = context.dataset.label || '';
                                 const value = context.raw || 0;
@@ -1167,6 +1294,16 @@ transform: translateX(5px);
         function initChartControls() {
             const projectNames = [...new Set(MOD_CONFIG.modrinth.map(mod => mod.name))];
             const projectControls = document.getElementById('project-controls');
+
+            // 添加"全部项目"按钮
+            const allProjectsButton = document.createElement('button');
+            allProjectsButton.className = 'control-button active';
+            allProjectsButton.textContent = '全部项目';
+            allProjectsButton.dataset.type = 'project';
+            allProjectsButton.dataset.name = '全部项目';
+            allProjectsButton.addEventListener('click', () => toggleChartSeries('全部项目', 'project'));
+            projectControls.appendChild(allProjectsButton);
+
             projectNames.forEach(name => {
                 const button = document.createElement('button');
                 button.className = 'control-button active';
@@ -1181,7 +1318,7 @@ transform: translateX(5px);
             const platforms = ['modrinth', 'curseforge', 'total'];
             platforms.forEach(platform => {
                 const button = document.createElement('button');
-                button.className = 'control-button active';
+                button.className = 'control-button ' + (platform === 'total' ? 'active' : '');
                 button.textContent = platform === 'total' ? '总下载量' : platform;
                 button.dataset.type = 'platform';
                 button.dataset.name = platform;
@@ -1201,7 +1338,7 @@ transform: translateX(5px);
             // 更新图表
             if (downloadsChart) {
                 downloadsChart.data.datasets.forEach(dataset => {
-                    const shouldShow = determineSeriesVisibility(dataset.label, name, type, isActive);
+                    const shouldShow = determineSeriesVisibility(dataset.label, type, name, isActive);
                     dataset.hidden = !shouldShow;
                 });
                 downloadsChart.update();
@@ -1209,30 +1346,78 @@ transform: translateX(5px);
         }
 
         // 确定数据系列是否可见
-        function determineSeriesVisibility(label, targetName, targetType, isActive) {
-            if (targetType === 'project') {
-                // 检查标签是否包含项目名称
-                const shouldShow = label.includes(targetName);
-                return isActive ? shouldShow : true;
-            } else if (targetType === 'platform') {
-                // 检查标签是否包含平台名称
-                if (targetName === 'total') {
-                    return isActive ? label.includes('总下载量') : true;
+        function determineSeriesVisibility(label, type, targetName, isActive) {
+            // 获取当前激活的项目按钮
+            const activeProjectButtons = document.querySelectorAll('#project-controls .control-button.active');
+            const activeProjectNames = Array.from(activeProjectButtons).map(btn => btn.dataset.name);
+
+            // 获取当前激活的平台按钮
+            const activePlatformButtons = document.querySelectorAll('#platform-controls .control-button.active');
+            const activePlatformNames = Array.from(activePlatformButtons).map(btn => btn.dataset.name);
+
+            // 检查项目是否激活 - 取消对"全部项目"的排斥逻辑
+            let projectNameMatch = false;
+
+            // 如果有项目按钮被激活
+            if (activeProjectNames.length > 0) {
+                // 如果"全部项目"按钮被激活，显示所有项目的数据集
+                if (activeProjectNames.includes('全部项目')) {
+                    projectNameMatch = true;
                 } else {
-                    const platformName = targetName === 'modrinth' ? 'Modrinth' : 'CurseForge';
-                    return isActive ? label.includes(platformName) : true;
+                    // 否则只显示被激活的项目的数据集
+                    projectNameMatch = activeProjectNames.some(projectName => label.includes(projectName));
                 }
             }
-            return true;
+
+            // 检查平台是否激活
+            let platformNameMatch = false;
+            if (activePlatformNames.includes('total')) {
+                platformNameMatch = platformNameMatch || label.includes('总下载量');
+            }
+            if (activePlatformNames.includes('modrinth')) {
+                platformNameMatch = platformNameMatch || label.includes('Modrinth');
+            }
+            if (activePlatformNames.includes('curseforge')) {
+                platformNameMatch = platformNameMatch || label.includes('CurseForge');
+            }
+
+            // 只有项目和平台都匹配时才显示，否则完全隐藏
+            return projectNameMatch && platformNameMatch;
         }
 
-        // 更新图表数据
+        // 更新图表数据（新结构）
         async function updateChart() {
             const history = await getDownloadHistory();
             if (!history.length) return;
 
             // 准备图表数据
-            const labels = [...new Set(history.map(h => formatTime(h.timestamp)))];
+            const labels = [];
+            const maxDays = Math.max(
+                ...history.map(item => {
+                    try {
+                        const mrData = JSON.parse(item.modrinth_downloads);
+                        const cfData = JSON.parse(item.curseforge_downloads);
+                        const totalData = JSON.parse(item.total_downloads);
+                        return Math.max(
+                            Array.isArray(mrData) ? mrData.length : 0,
+                            Array.isArray(cfData) ? cfData.length : 0,
+                            Array.isArray(totalData) ? totalData.length : 0
+                        );
+                    } catch (error) {
+                        console.error('Error parsing data for item:', error);
+                        return 0;
+                    }
+                })
+            );
+            const today = new Date();
+            for (let i = 0; i < maxDays; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - (maxDays - i - 1));
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                labels.push(`${month}月${day}日`);
+            }
+
             const datasets = prepareChartDatasets(history);
 
             // 更新图表
@@ -1241,66 +1426,120 @@ transform: translateX(5px);
                 downloadsChart.data.datasets = datasets;
                 downloadsChart.update('none');
             } else {
+                // 确保图表初始化完成后再更新数据
                 initChart();
-                downloadsChart.data.labels = labels;
-                downloadsChart.data.datasets = datasets;
-                downloadsChart.update('none');
+                // 检查 downloadsChart 是否已经初始化
+                if (downloadsChart) {
+                    downloadsChart.data.labels = labels;
+                    downloadsChart.data.datasets = datasets;
+                    downloadsChart.update('none');
+                } else {
+                    console.error('图表初始化失败');
+                }
             }
         }
 
-        // 准备图表数据集
+        // 准备图表数据集（新结构）
         function prepareChartDatasets(history) {
             const datasets = [];
             const projectNames = [...new Set(MOD_CONFIG.modrinth.map(mod => mod.name))];
             const platforms = ['modrinth', 'curseforge'];
+
+            // 计算最大长度，确保是有效的数值
+            const maxLength = Math.max(0, ...history.map(h => {
+                try {
+                    const mrData = JSON.parse(h.modrinth_downloads);
+                    const cfData = JSON.parse(h.curseforge_downloads);
+                    const totalData = JSON.parse(h.total_downloads);
+                    return Math.max(
+                        Array.isArray(mrData) ? mrData.length : 0,
+                        Array.isArray(cfData) ? cfData.length : 0,
+                        Array.isArray(totalData) ? totalData.length : 0
+                    );
+                } catch (error) {
+                    console.error('Error parsing data for item:', error);
+                    return 0;
+                }
+            }));
 
             // 为每个项目和平台创建数据集
             projectNames.forEach(name => {
                 platforms.forEach(platform => {
                     const platformName = platform === 'modrinth' ? 'Modrinth' : 'CurseForge';
                     const dataset = createDataset(`${name} (${platformName})`, getRandomColor());
-                    const data = history
-                        .filter(h => h.project_name === name)
-                        .map(h => platform === 'modrinth' ? h.modrinth_downloads : h.curseforge_downloads);
-                    dataset.data = data;
+                    const projectData = history.find(h => h.project_name === name);
+                    if (projectData) {
+                        const dataArray = platform === 'modrinth' ? JSON.parse(projectData.modrinth_downloads) : JSON.parse(projectData.curseforge_downloads);
+                        dataset.data = dataArray;
+                    } else {
+                        dataset.data = [];
+                    }
+                    dataset.hidden = true; // 默认隐藏平台下载量
                     datasets.push(dataset);
                 });
 
-                // 项目总下载量
+                // 项目总下载量 - 默认显示
                 const totalDataset = createDataset(`${name} (总下载量)`, getRandomColor());
-                const totalData = history
-                    .filter(h => h.project_name === name)
-                    .map(h => h.total_downloads);
-                totalDataset.data = totalData;
+                const projectData = history.find(h => h.project_name === name);
+                if (projectData) {
+                    totalDataset.data = JSON.parse(projectData.total_downloads);
+                } else {
+                    totalDataset.data = [];
+                }
+                totalDataset.hidden = false; // 默认显示项目总下载量
                 datasets.push(totalDataset);
             });
 
-            // 平台总下载量
+            // 平台总下载量 - 默认隐藏
             platforms.forEach(platform => {
                 const platformName = platform === 'modrinth' ? 'Modrinth' : 'CurseForge';
                 const dataset = createDataset(`总${platformName}下载量`, getRandomColor());
-                const data = [];
-                const uniqueTimestamps = [...new Set(history.map(h => h.timestamp))];
-                uniqueTimestamps.forEach(timestamp => {
-                    const platformData = history.filter(h => h.timestamp === timestamp);
-                    const total = platformData.reduce((sum, h) => sum + (platform === 'modrinth' ? h.modrinth_downloads : h.curseforge_downloads), 0);
-                    data.push(total);
+
+                const data = new Array(Math.max(1, maxLength)).fill(0);
+
+                history.forEach(item => {
+                    try {
+                        const itemData = JSON.parse(platform === 'modrinth' ? item.modrinth_downloads : item.curseforge_downloads);
+                        if (Array.isArray(itemData)) {
+                            itemData.forEach((value, index) => {
+                                if (index < data.length) {
+                                    data[index] += value;
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error processing item data:', error);
+                    }
                 });
+
                 dataset.data = data;
+                dataset.hidden = true; // 默认隐藏平台总下载量
                 datasets.push(dataset);
             });
 
-            // 总体总下载量
-            const grandTotalDataset = createDataset('总体总下载量', getRandomColor());
-            const grandTotalData = [];
-            const uniqueTimestamps = [...new Set(history.map(h => h.timestamp))];
-            uniqueTimestamps.forEach(timestamp => {
-                const platformData = history.filter(h => h.timestamp === timestamp);
-                const total = platformData.reduce((sum, h) => sum + h.total_downloads, 0);
-                grandTotalData.push(total);
+
+            // 全部项目总下载量 - 默认隐藏
+            const allProjectsTotalDataset = createDataset('全部项目 (总下载量)', getRandomColor());
+            const allProjectsData = new Array(Math.max(1, maxLength)).fill(0);
+
+            history.forEach(item => {
+                try {
+                    const itemData = JSON.parse(item.total_downloads);
+                    if (Array.isArray(itemData)) {
+                        itemData.forEach((value, index) => {
+                            if (index < allProjectsData.length) {
+                                allProjectsData[index] += value;
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error processing item data:', error);
+                }
             });
-            grandTotalDataset.data = grandTotalData;
-            datasets.push(grandTotalDataset);
+
+            allProjectsTotalDataset.data = allProjectsData;
+            allProjectsTotalDataset.hidden = false; // 默认显示全部项目总下载量
+            datasets.push(allProjectsTotalDataset);
 
             return datasets;
         }
@@ -1350,16 +1589,20 @@ transform: translateX(5px);
             }
         }
 
-        // 初始化图表（页面加载时调用）
+        // 初始化图表（页面加载时调用）- 返回 Promise
         function initChartOnLoad() {
-            // 等待 DOM 加载完成
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => {
+            return new Promise((resolve) => {
+                // 等待 DOM 加载完成
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', () => {
+                        initChart();
+                        resolve();
+                    });
+                } else {
                     initChart();
-                });
-            } else {
-                initChart();
-            }
+                    resolve();
+                }
+            });
         }
 
         // 删除重复的DOMContentLoaded事件监听器
