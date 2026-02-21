@@ -1019,8 +1019,25 @@ transition: var(--transition);
 }
 
 .hero-social a:hover {
-    color: var(--accent-color);
     transform: translateY(-3px);
+}
+
+/* 为每个图标设置不同的 hover 颜色 */
+.hero-social a[aria-label="GitHub"]:hover {
+    color: #ffffff; /* 白色 */
+}
+
+.hero-social a[aria-label="Modrinth"]:hover {
+    color: #4ade80; /* 绿色 */
+}
+
+.hero-social a[aria-label="Bilibili"]:hover {
+    color: #f391a9; /* 粉色 */
+}
+
+/* CurseForge 保持默认的强调色 */
+.hero-social a[aria-label="CurseForge"]:hover {
+    color: #f26522;
 }
 
 .hero-social svg {
@@ -1738,8 +1755,24 @@ left: 0;
 }
 
 .footer-social a:hover {
-    color: var(--accent-color);
     transform: translateY(-3px);
+}
+
+/* 为页脚每个图标设置不同的 hover 颜色，与英雄区保持一致 */
+.footer-social a[aria-label="GitHub"]:hover {
+    color: #ffffff; /* 白色 */
+}
+
+.footer-social a[aria-label="Modrinth"]:hover {
+    color: #4ade80; /* 绿色 */
+}
+
+.footer-social a[aria-label="Bilibili"]:hover {
+    color: #f391a9; /* 粉色 */
+}
+
+.footer-social a[aria-label="CurseForge"]:hover {
+    color: #f26522; /* CurseForge 橙色 */
 }
 
 .footer-social svg {
