@@ -665,11 +665,6 @@
                 return JSON.parse(decrypted);
             } catch (error) {
                 console.error('配置解密失败:', error);
-                // 返回默认配置作为备用方案
-                return {
-                    SUPABASE_URL: 'https://wyoofofxviolwdebkpkt.supabase.co',
-                    SUPABASE_ANON_KEY: 'sb_publishable_TOTiug5k7UCGYLeLib0cUw_Vqm06ZyC'
-                };
             }
         }
 

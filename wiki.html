@@ -1111,6 +1111,7 @@
             }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
     <!-- 导航栏 -->
@@ -1245,9 +1246,30 @@
         // 文档数据存储
         let documents = [];
         let currentDocId = null;
+        // 加密密钥
+        const ENCRYPTION_KEY = 'weatheraintbad-dashboard-2024';
+
+        // 加密后的配置信息
+        const ENCRYPTED_CONFIG = 'U2FsdGVkX197wihXRSjnQnFCV+GJ3jjfiqQwSnf+fTfDlawEkXc//xrlJ7sDm67TNND2Eleja8un9CY59ZSfRoO8+Jjw6IBRxmcPkhg5kQCfMMDMVxx0Jfs9BdugARzJc7tq51C92WzIjf/3JYu9KIS8xmZodSSzB2fM2xu1URMEsV15eg0kr0pBzTVcWcdU68tXPERomxDyoVlj3TvBvQ==';
+
+        // 解密配置信息
+        function decryptConfig(encryptedData, key) {
+            try {
+                const bytes = CryptoJS.AES.decrypt(encryptedData, key);
+                const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+                return JSON.parse(decrypted);
+            } catch (error) {
+                console.error('配置解密失败:', error);
+                throw new Error('无法加载配置信息');
+            }
+        }
+
+        // 加载解密后的配置
+        const CONFIG = decryptConfig(ENCRYPTED_CONFIG, ENCRYPTION_KEY);
+
         // Supabase 配置
-        const SUPABASE_URL = 'https://wyoofofxviolwdebkpkt.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_TOTiug5k7UCGYLeLib0cUw_Vqm06ZyC';
+        const SUPABASE_URL = CONFIG.SUPABASE_URL;
+        const SUPABASE_ANON_KEY = CONFIG.SUPABASE_ANON_KEY;
 
         // 初始化 Supabase 客户端
         const supabase = {
