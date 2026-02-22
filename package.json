@@ -1,6 +1,21 @@
 {
+  "name": "weatheraintbad-dashboard",
+  "version": "1.0.0",
+  "description": "Weatheraintbad Dashboard - Simple version with hardcoded config",
+  "main": "index.html",
+  "scripts": {
+    "build": "node build-env.js",
+    "dev": "node -e \"console.log('请直接在浏览器中打开 index.html 或 dashboard.html')\""
+  },
   "dependencies": {
-    "@supabase/supabase-js": "^2.97.0",
-    "cheerio": "^1.2.0"
-  }
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.0.0"
+  },
+  "keywords": [
+    "weatheraintbad",
+    "dashboard",
+    "supabase"
+  ],
+  "author": "Weatheraintbad",
+  "license": "MIT"
 }

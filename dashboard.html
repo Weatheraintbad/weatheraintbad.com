@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* 仪表板特定样式 */
@@ -643,11 +644,41 @@
         // 是否启用调试模式（控制台输出详细信息）
         const DEBUG_MODE = true;
 
-        // Supabase 配置
-        const SUPABASE_URL = 'https://wyoofofxviolwdebkpkt.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_TOTiug5k7UCGYLeLib0cUw_Vqm06ZyC';
+        // 数据验证配置
+        const DATA_VALIDATION_CONFIG = {
+            maxDownloadsPerDay: 1000000,  // 每日最大下载量限制
+            minDownloadsPerDay: 0,        // 每日最小下载量限制
+            updateInterval: 15 * 60 * 1000  // 更新间隔：15分钟
+        };
 
-        // 初始化 Supabase 客户端
+        // 加密密钥（需要与加密工具使用的密钥一致）
+        const ENCRYPTION_KEY = 'weatheraintbad-dashboard-2024';
+
+        // 加密后的配置信息
+        const ENCRYPTED_CONFIG = 'U2FsdGVkX197wihXRSjnQnFCV+GJ3jjfiqQwSnf+fTfDlawEkXc//xrlJ7sDm67TNND2Eleja8un9CY59ZSfRoO8+Jjw6IBRxmcPkhg5kQCfMMDMVxx0Jfs9BdugARzJc7tq51C92WzIjf/3JYu9KIS8xmZodSSzB2fM2xu1URMEsV15eg0kr0pBzTVcWcdU68tXPERomxDyoVlj3TvBvQ==';
+
+        // 解密配置信息
+        function decryptConfig(encryptedData, key) {
+            try {
+                const bytes = CryptoJS.AES.decrypt(encryptedData, key);
+                const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+                return JSON.parse(decrypted);
+            } catch (error) {
+                console.error('配置解密失败:', error);
+                // 返回默认配置作为备用方案
+                return {
+                    SUPABASE_URL: 'https://wyoofofxviolwdebkpkt.supabase.co',
+                    SUPABASE_ANON_KEY: 'sb_publishable_TOTiug5k7UCGYLeLib0cUw_Vqm06ZyC'
+                };
+            }
+        }
+
+        // 加载解密后的配置
+        const CONFIG = decryptConfig(ENCRYPTED_CONFIG, ENCRYPTION_KEY);
+
+        // Supabase 配置
+        const SUPABASE_URL = CONFIG.SUPABASE_URL;
+        const SUPABASE_ANON_KEY = CONFIG.SUPABASE_ANON_KEY;
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // 图表实例
@@ -834,6 +865,7 @@
 
         // 初始化
         async function initDashboard() {
+
             updateLastUpdate();
             initCalendar();
             await renderDownloadList();
@@ -847,9 +879,9 @@
                 updateBarChart().catch(error => {
                     console.error('Error in updateBarChart:', error);
                 });
-                // 图表加载完成后，在后台运行数据抓取和更新逻辑
+                // 图表加载完成后，强制执行一次数据更新
                 setTimeout(() => {
-                    updateStats().catch(error => {
+                    updateStats(true).catch(error => {  // 强制更新
                         console.error('Error in updateStats:', error);
                     });
                 }, 1000);
@@ -858,8 +890,13 @@
             // 每秒更新时间
             setInterval(updateLastUpdate, 1000);
 
-            // 每5分钟更新一次统计数据
-            setInterval(updateStats, 5 * 60 * 1000);
+            // 按照配置的间隔更新统计数据（15分钟）
+            setInterval(updateStats, DATA_VALIDATION_CONFIG.updateInterval);
+
+            // 加载页面时创建初始备份
+            backupData().catch(error => {
+                console.error('初始备份失败:', error);
+            });
         }
 
         // 刷新页面数据函数
@@ -1494,8 +1531,30 @@
             return colors[Math.floor(Math.random() * colors.length)];
         }
 
-        // 更新统计数据函数
-        async function updateStats() {
+        // 更新统计数据函数（安全改进后的逻辑）
+        async function updateStats(force = false) {
+            console.log('开始更新统计数据');
+
+            // 限制更新频率（避免频繁调用）
+            const lastUpdateTime = localStorage.getItem('lastUpdateTime');
+            const now = Date.now();
+            const shouldSkip = !force && lastUpdateTime && (now - parseInt(lastUpdateTime)) < 5 * 60 * 1000;
+
+            if (shouldSkip) {
+                console.log('更新频率过高，跳过本次更新');
+                return;
+            }
+
+            localStorage.setItem('lastUpdateTime', now.toString());
+
+            // 获取当前项目的历史数据，用于在无法获取新数据时提供前一天的下载量
+            let previousData = [];
+            try {
+                previousData = await getCurrentStats();
+            } catch (error) {
+                console.error('获取历史数据失败:', error);
+            }
+
             const projectStats = [];
             let mrTotal = 0;
             let cfTotal = 0;
@@ -1504,8 +1563,27 @@
             if (MOD_CONFIG.modrinth.length > 0) {
                 for (const mod of MOD_CONFIG.modrinth) {
                     try {
-                        const result = await fetchDownloadCount('modrinth', mod.id);
+                        // 获取该项目前一天的下载量
+                        const previousDownloads = getPreviousDayDownloads(previousData, mod.name, 'modrinth');
+
+                        const result = await fetchDownloadCount('modrinth', mod.id, previousDownloads);
                         const downloads = result.raw;
+
+                        // 验证单项目下载量
+                        if (!Number.isInteger(downloads) ||
+                            downloads < DATA_VALIDATION_CONFIG.minDownloadsPerDay ||
+                            downloads > DATA_VALIDATION_CONFIG.maxDownloadsPerDay) {
+                            console.warn(`Modrinth项目 ${mod.name} 的下载量数据无效（${downloads}），使用前一天的下载量代替`);
+                            projectStats.push({
+                                name: mod.name,
+                                platform: 'modrinth',
+                                downloads: previousDownloads,
+                                id: mod.id
+                            });
+                            mrTotal += previousDownloads;
+                            continue;
+                        }
+
                         mrTotal += downloads;
                         projectStats.push({
                             name: mod.name,
@@ -1515,12 +1593,15 @@
                         });
                     } catch (error) {
                         console.error(`Failed to fetch Modrinth#${mod.id}:`, error);
+                        const previousDownloads = getPreviousDayDownloads(previousData, mod.name, 'modrinth');
+                        console.warn(`使用前一天的下载量代替：${previousDownloads}`);
                         projectStats.push({
                             name: mod.name,
                             platform: 'modrinth',
-                            downloads: 0,
+                            downloads: previousDownloads,
                             id: mod.id
                         });
+                        mrTotal += previousDownloads;
                     }
                 }
             }
@@ -1529,8 +1610,27 @@
             if (MOD_CONFIG.curseforge.length > 0) {
                 for (const mod of MOD_CONFIG.curseforge) {
                     try {
-                        const result = await fetchDownloadCount('curseforge', mod.id);
+                        // 获取该项目前一天的下载量
+                        const previousDownloads = getPreviousDayDownloads(previousData, mod.name, 'curseforge');
+
+                        const result = await fetchDownloadCount('curseforge', mod.id, previousDownloads);
                         const downloads = result.raw;
+
+                        // 验证单项目下载量
+                        if (!Number.isInteger(downloads) ||
+                            downloads < DATA_VALIDATION_CONFIG.minDownloadsPerDay ||
+                            downloads > DATA_VALIDATION_CONFIG.maxDownloadsPerDay) {
+                            console.warn(`CurseForge项目 ${mod.name} 的下载量数据无效（${downloads}），使用前一天的下载量代替`);
+                            projectStats.push({
+                                name: mod.name,
+                                platform: 'curseforge',
+                                downloads: previousDownloads,
+                                id: mod.id
+                            });
+                            cfTotal += previousDownloads;
+                            continue;
+                        }
+
                         cfTotal += downloads;
                         projectStats.push({
                             name: mod.name,
@@ -1540,34 +1640,48 @@
                         });
                     } catch (error) {
                         console.error(`Failed to fetch CurseForge#${mod.id}:`, error);
+                        const previousDownloads = getPreviousDayDownloads(previousData, mod.name, 'curseforge');
+                        console.warn(`使用前一天的下载量代替：${previousDownloads}`);
                         projectStats.push({
                             name: mod.name,
                             platform: 'curseforge',
-                            downloads: 0,
+                            downloads: previousDownloads,
                             id: mod.id
                         });
+                        cfTotal += previousDownloads;
                     }
                 }
             }
 
+            // 验证总下载量
+            const totalDownloads = mrTotal + cfTotal;
+            if (totalDownloads < 0 || totalDownloads > MOD_CONFIG.modrinth.length * DATA_VALIDATION_CONFIG.maxDownloadsPerDay) {
+                console.warn(`总下载量数据异常（${totalDownloads}），跳过本次更新`);
+                return;
+            }
+
             // 保存数据到 Supabase
-            await saveDownloadStats(projectStats, mrTotal, cfTotal);
+            try {
+                await saveDownloadStats(projectStats, mrTotal, cfTotal);
 
-            // 更新图表
-            await updateChart();
+                // 更新图表
+                await updateChart();
 
-            // 更新页面显示
-            updateStatsDisplay();
-            renderDownloadList();
-            updateLastUpdate();
-            updateBarChart();
+                // 更新页面显示
+                updateStatsDisplay();
+                renderDownloadList();
+                updateLastUpdate();
+                updateBarChart();
 
-            if (DEBUG_MODE) {
-                console.log('Total downloads - Modrinth:', mrTotal, 'CurseForge:', cfTotal, 'Grand Total:', mrTotal + cfTotal);
+                if (DEBUG_MODE) {
+                    console.log('Total downloads - Modrinth:', mrTotal, 'CurseForge:', cfTotal, 'Grand Total:', mrTotal + cfTotal);
+                }
+            } catch (error) {
+                console.error('更新统计数据失败:', error);
             }
         }
 
-        // 保存下载统计到 Supabase
+        // 保存下载统计到 Supabase（安全改进后的逻辑）
         async function saveDownloadStats(projectStats, mrTotal, cfTotal) {
             try {
                 console.log('saveDownloadStats called with:', projectStats);
@@ -1587,36 +1701,32 @@
                 const updates = [];
                 const today = new Date().toDateString();
 
-                // 计算所有项目的最大数组长度
-                let maxLength = 0;
-                currentStats.forEach(project => {
-                    try {
-                        const mrData = JSON.parse(project.modrinth_downloads);
-                        const cfData = JSON.parse(project.curseforge_downloads);
-                        const totalData = JSON.parse(project.total_downloads);
-                        const projectMaxLength = Math.max(
-                            Array.isArray(mrData) ? mrData.length : 0,
-                            Array.isArray(cfData) ? cfData.length : 0,
-                            Array.isArray(totalData) ? totalData.length : 0
-                        );
-                        if (projectMaxLength > maxLength) {
-                            maxLength = projectMaxLength;
-                        }
-                    } catch (error) {
-                        console.error(`解析项目 ${project.project_name} 数据失败: ${error}`);
-                    }
-                });
-
-                // 处理每个项目的数据
                 Object.entries(projectTotals).forEach(([projectName, downloads]) => {
                     const total = downloads.modrinth + downloads.curseforge;
+
+                    // 基础数据验证
+                    if (!Number.isInteger(downloads.modrinth) || !Number.isInteger(downloads.curseforge)) {
+                        console.warn(`项目 ${projectName} 的下载数据类型无效，跳过更新`);
+                        return;
+                    }
+
+                    if (downloads.modrinth < DATA_VALIDATION_CONFIG.minDownloadsPerDay ||
+                        downloads.curseforge < DATA_VALIDATION_CONFIG.minDownloadsPerDay ||
+                        downloads.modrinth > DATA_VALIDATION_CONFIG.maxDownloadsPerDay ||
+                        downloads.curseforge > DATA_VALIDATION_CONFIG.maxDownloadsPerDay) {
+                        console.warn(`项目 ${projectName} 的下载数据超出范围，跳过更新`);
+                        return;
+                    }
+
+                    // 获取项目的历史数据
                     const projectData = currentStats.find(s => s.project_name === projectName);
 
                     let mrData, cfData, totalData;
                     if (projectData) {
+                        // 如果项目已存在，解析现有数组
                         try {
                             mrData = JSON.parse(projectData.modrinth_downloads);
-                            if (!Array.isArray(mrData) || mrData.length === 0) mrData = [];
+                            if (!Array.isArray(mrData)) mrData = [];
                         } catch (error) {
                             console.error(`解析 Modrinth 数据失败: ${error}`);
                             mrData = [];
@@ -1624,7 +1734,7 @@
 
                         try {
                             cfData = JSON.parse(projectData.curseforge_downloads);
-                            if (!Array.isArray(cfData) || cfData.length === 0) cfData = [];
+                            if (!Array.isArray(cfData)) cfData = [];
                         } catch (error) {
                             console.error(`解析 CurseForge 数据失败: ${error}`);
                             cfData = [];
@@ -1632,82 +1742,81 @@
 
                         try {
                             totalData = JSON.parse(projectData.total_downloads);
-                            if (!Array.isArray(totalData) || totalData.length === 0) totalData = [];
+                            if (!Array.isArray(totalData)) totalData = [];
                         } catch (error) {
                             console.error(`解析总下载量数据失败: ${error}`);
                             totalData = [];
                         }
 
+                        console.log(`项目 ${projectName} 的历史数据长度: Modrinth=${mrData.length}, CurseForge=${cfData.length}, Total=${totalData.length}`);
+
+                        // 检查是否是新的一天（比较日期）
                         const lastUpdatedDate = new Date(projectData.updated_at).toDateString();
                         if (lastUpdatedDate !== today) {
-                            // 检查是否获取到有效数据
-                            const hasValidData = downloads.modrinth > 0 && downloads.curseforge > 0 && total > 0;
-
-                            if (hasValidData) {
-                                mrData.push(downloads.modrinth);
-                                cfData.push(downloads.curseforge);
-                                totalData.push(total);
-                                console.log(`新的一天，添加新的下载量数据`);
-                            } else {
-                                // 未获取到数据，复制前一日的数据
-                                if (mrData.length > 0 && cfData.length > 0 && totalData.length > 0) {
-                                    mrData.push(mrData[mrData.length - 1]);
-                                    cfData.push(cfData[cfData.length - 1]);
-                                    totalData.push(totalData[totalData.length - 1]);
-                                    console.log(`未获取到数据，复制前一日的下载量数据`);
-                                } else {
-                                    // 如果没有前一日数据，添加0值
-                                    mrData.push(0);
-                                    cfData.push(0);
-                                    totalData.push(0);
-                                    console.log(`无历史数据，添加0值`);
-                                }
-                            }
+                            // 如果是新的一天，添加新的元素到数组
+                            mrData.push(downloads.modrinth);
+                            cfData.push(downloads.curseforge);
+                            totalData.push(total);
+                            console.log(`新的一天，添加新的下载量数据`);
                         } else {
-                            if (mrData.length > 0) {
-                                if (downloads.modrinth > mrData[mrData.length - 1]) {
-                                    mrData[mrData.length - 1] = downloads.modrinth;
-                                    console.log(`Modrinth 下载量更新，从 ${mrData[mrData.length - 1]} 增加到 ${downloads.modrinth}`);
-                                }
+                            // 如果是同一天，只在下载量增加时更新当天的数据
+                            if (mrData.length > 0 && downloads.modrinth > mrData[mrData.length - 1]) {
+                                mrData[mrData.length - 1] = downloads.modrinth;
+                                console.log(`Modrinth 下载量更新，从 ${mrData[mrData.length - 1]} 增加到 ${downloads.modrinth}`);
+                            }
 
-                                if (downloads.curseforge > cfData[cfData.length - 1]) {
-                                    cfData[cfData.length - 1] = downloads.curseforge;
-                                    console.log(`CurseForge 下载量更新，从 ${cfData[cfData.length - 1]} 增加到 ${downloads.curseforge}`);
-                                }
+                            if (cfData.length > 0 && downloads.curseforge > cfData[cfData.length - 1]) {
+                                cfData[cfData.length - 1] = downloads.curseforge;
+                                console.log(`CurseForge 下载量更新，从 ${cfData[cfData.length - 1]} 增加到 ${downloads.curseforge}`);
+                            }
 
-                                if (total > totalData[totalData.length - 1]) {
-                                    totalData[totalData.length - 1] = total;
-                                    console.log(`总下载量更新，从 ${totalData[totalData.length - 1]} 增加到 ${total}`);
-                                }
-                            } else {
-                                mrData.push(downloads.modrinth);
-                                cfData.push(downloads.curseforge);
-                                totalData.push(total);
+                            if (totalData.length > 0 && total > totalData[totalData.length - 1]) {
+                                totalData[totalData.length - 1] = total;
+                                console.log(`总下载量更新，从 ${totalData[totalData.length - 1]} 增加到 ${total}`);
                             }
                         }
                     } else {
-                        mrData = [];
-                        cfData = [];
-                        totalData = [];
-                        mrData.push(downloads.modrinth);
-                        cfData.push(downloads.curseforge);
-                        totalData.push(total);
+                        // 如果项目不存在，创建新数组
+                        mrData = [downloads.modrinth];
+                        cfData = [downloads.curseforge];
+                        totalData = [total];
+                        console.log(`新项目 ${projectName}，初始化数据`);
                     }
 
-                    // 确保数据数组长度一致
-                    const paddedMrData = padDataArray(mrData, maxLength);
-                    const paddedCfData = padDataArray(cfData, maxLength);
-                    const paddedTotalData = padDataArray(totalData, maxLength);
+                    // 确保三个数组长度一致
+                    const maxLength = Math.max(mrData.length, cfData.length, totalData.length);
+                    while (mrData.length < maxLength) mrData.push(mrData[mrData.length - 1] || 0);
+                    while (cfData.length < maxLength) cfData.push(cfData[cfData.length - 1] || 0);
+                    while (totalData.length < maxLength) totalData.push(totalData[totalData.length - 1] || 0);
 
-                    updates.push({
+                    const updateData = {
                         project_name: projectName,
-                        modrinth_downloads: JSON.stringify(paddedMrData),
-                        curseforge_downloads: JSON.stringify(paddedCfData),
-                        total_downloads: JSON.stringify(paddedTotalData)
+                        modrinth_downloads: JSON.stringify(mrData),
+                        curseforge_downloads: JSON.stringify(cfData),
+                        total_downloads: JSON.stringify(totalData)
+                    };
+
+                    // 验证数据格式
+                    const isValid = validateData({
+                        ...updateData,
+                        modrinth_downloads: mrData,
+                        curseforge_downloads: cfData,
+                        total_downloads: totalData
                     });
+
+                    if (isValid) {
+                        updates.push(updateData);
+                    } else {
+                        console.warn(`项目 ${projectName} 的数据验证失败，跳过更新`);
+                        console.warn('无效数据:', updateData);
+                        return;
+                    }
                 });
 
                 console.log('Updates to save:', updates);
+
+                // 在更新前创建备份
+                await backupData();
 
                 for (const update of updates) {
                     const { data, error } = await supabaseClient
@@ -1723,6 +1832,22 @@
 
             } catch (error) {
                 console.error('Error saving download stats:', error);
+                // 尝试恢复备份数据
+                try {
+                    console.log('尝试从备份恢复数据');
+                    const backup = localStorage.getItem('downloadStatsBackup');
+                    if (backup) {
+                        const backupData = JSON.parse(backup);
+                        for (const item of backupData) {
+                            await supabaseClient
+                                .from('project_download_stats')
+                                .upsert([item], { onConflict: 'project_name' });
+                        }
+                        console.log('数据恢复成功');
+                    }
+                } catch (restoreError) {
+                    console.error('数据恢复失败:', restoreError);
+                }
                 throw error;
             }
         }
@@ -1761,8 +1886,67 @@
             }
         }
 
+
+        // 获取前一天的下载量
+        function getPreviousDayDownloads(previousData, projectName, platform) {
+            const projectData = previousData.find(p => p.project_name === projectName);
+
+            if (!projectData) {
+                return 0;
+            }
+
+            try {
+                const downloadsData = JSON.parse(projectData[`${platform}_downloads`]);
+
+                if (Array.isArray(downloadsData) && downloadsData.length > 0) {
+                    return downloadsData[downloadsData.length - 1];
+                } else {
+                    return 0;
+                }
+            } catch (error) {
+                console.error(`解析项目 ${projectName} 的 ${platform} 下载数据失败:`, error);
+                return 0;
+            }
+        }
+
+        // 数据验证函数
+        function validateData(data) {
+            return data &&
+                   data.project_name &&
+                   Array.isArray(data.modrinth_downloads) &&
+                   Array.isArray(data.curseforge_downloads) &&
+                   Array.isArray(data.total_downloads) &&
+                   data.modrinth_downloads.every(value =>
+                       Number.isInteger(value) &&
+                       value >= DATA_VALIDATION_CONFIG.minDownloadsPerDay &&
+                       value <= DATA_VALIDATION_CONFIG.maxDownloadsPerDay) &&
+                   data.curseforge_downloads.every(value =>
+                       Number.isInteger(value) &&
+                       value >= DATA_VALIDATION_CONFIG.minDownloadsPerDay &&
+                       value <= DATA_VALIDATION_CONFIG.maxDownloadsPerDay) &&
+                   data.total_downloads.every(value =>
+                       Number.isInteger(value) &&
+                       value >= DATA_VALIDATION_CONFIG.minDownloadsPerDay &&
+                       value <= DATA_VALIDATION_CONFIG.maxDownloadsPerDay);
+        }
+
+        // 数据备份函数
+        async function backupData() {
+            try {
+                const { data } = await supabaseClient
+                    .from('project_download_stats')
+                    .select('*');
+
+                // 保存到本地存储
+                localStorage.setItem('downloadStatsBackup', JSON.stringify(data));
+                console.log('数据备份成功');
+            } catch (error) {
+                console.error('数据备份失败:', error);
+            }
+        }
+
         // 获取下载计数
-        async function fetchDownloadCount(platform, id) {
+        async function fetchDownloadCount(platform, id, fallbackValue = 0) {
             try {
                 const params = new URLSearchParams();
 
@@ -1783,13 +1967,24 @@
                 const data = await response.json();
                 console.log(`API Response for ${platform}#${id}:`, data);
 
-                return {
-                    raw: (platform === 'modrinth') ? data.modrinth || 0 : data.curseforge || 0,
-                    human: data['total-human'] || '0'
-                };
+                const rawValue = (platform === 'modrinth') ? data.modrinth || 0 : data.curseforge || 0;
+
+                // 验证获取到的值是否有效
+                if (Number.isInteger(rawValue) &&
+                    rawValue >= DATA_VALIDATION_CONFIG.minDownloadsPerDay &&
+                    rawValue <= DATA_VALIDATION_CONFIG.maxDownloadsPerDay) {
+                    return {
+                        raw: rawValue,
+                        human: data['total-human'] || '0'
+                    };
+                } else {
+                    console.warn(`获取到无效的下载量（${rawValue}），使用前一天的下载量作为替代`);
+                    return { raw: fallbackValue, human: '0' };
+                }
             } catch (error) {
                 console.error(`Failed to fetch ${platform}#${id}:`, error);
-                return { raw: 0, human: '0' };
+                console.warn(`使用前一天的下载量作为替代：${fallbackValue}`);
+                return { raw: fallbackValue, human: '0' };
             }
         }
     </script>
