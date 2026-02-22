@@ -56,6 +56,7 @@
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 2rem;
+            align-items: stretch; /* 确保所有网格项高度一致 */
         }
 
         .bottom-row {
@@ -228,28 +229,30 @@
         }
 
         .calendar-weekday {
-            aspect-ratio: 1;
+            aspect-ratio: 1.6;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.65rem;
+            font-size: 1.2rem;
             font-weight: 600;
             color: var(--primary-color);
             opacity: 0.8;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            padding: 0.25rem;
         }
 
         .calendar-day {
-            aspect-ratio: 1;
+            aspect-ratio: 1.6;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 6px;
-            font-size: 0.75rem;
+            font-size: 1.2rem;
             color: var(--secondary-color);
             transition: all 0.3s ease;
             cursor: pointer;
+            padding: 0.25rem;
         }
 
         .calendar-day:hover {
@@ -305,6 +308,41 @@
             font-weight: 600;
             color: var(--secondary-color);
             opacity: 0.3;
+        }
+
+        /* 导航按钮基本样式 */
+        .nav-button {
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        /* 导航按钮悬停效果 */
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        /* 导航按钮点击效果 */
+        .nav-button:active {
+            transform: translateY(0);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 导航按钮选中状态 */
+        .nav-button.active {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+            font-weight: 600;
         }
 
         /* 图表控制按钮样式 */
@@ -392,8 +430,8 @@
                 height: 500px; /* 增加图表高度，防止显示不全 */
             }
 
-            /* 隐藏日历组件 */
-            .top-row .data-card:nth-child(2) {
+            /* 隐藏右列的所有内容（日历和跳转按钮） */
+            .top-row > div:nth-child(2) {
                 display: none !important;
             }
 
@@ -454,10 +492,16 @@
                 grid-column: 1 / 2 !important;
                 grid-row: 4 !important;
                 min-height: 120px !important; /* 添加最小高度，确保与总下载量组件高度相同 */
+                margin-bottom: 1.5rem !important;
             }
-            .bottom-row .stats-container div[data-card-type="today-downloads"] {
+
+            /* 显示手机端专属的跳转按钮组件 */
+            .bottom-row div[data-card-type="mobile-nav-buttons"] {
+                display: block !important;
                 grid-column: 1 / 2 !important;
-                grid-row: 4 !important;
+                grid-row: 5 !important;
+                margin-top: 1.5rem !important;
+                margin-bottom: 1.5rem !important;
             }
 
             /* 确保所有组件都单独一行显示 */
@@ -513,10 +557,10 @@
 
             <!-- 数据卡片网格 -->
             <div class="content-grid">
-                <!-- 上排：折线图和日历 -->
+                <!-- 上排：折线图、日历和跳转按钮 -->
                 <div class="top-row">
                     <!-- 项目下载量（折线图） -->
-                    <div class="data-card">
+                    <div class="data-card" style="grid-column: 1 / 2;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <h3 class="card-title">项目下载趋势</h3>
                             <button id="chart-menu-toggle" class="control-button" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
@@ -538,18 +582,39 @@
                         </div>
                     </div>
 
-                    <!-- 日历表 -->
-                    <div class="data-card">
-<!--                        <h3 class="card-title">日历</h3>-->
-                        <div class="calendar-container">
-                            <div class="calendar-header">
-                                <div class="calendar-month" id="current-month">2024年1月</div>
-                                <div class="calendar-nav">
-                                    <button id="prev-month">‹</button>
-                                    <button id="next-month">›</button>
+                    <!-- 右列：日历和跳转按钮 -->
+                    <div style="grid-column: 2 / 3; display: flex; flex-direction: column; gap: 2rem;">
+                        <!-- 日历表 -->
+                        <div class="data-card" style="flex: 1; max-height: 470px;">
+<!--                            <h3 class="card-title">日历</h3>-->
+                            <div class="calendar-container">
+                                <div class="calendar-header">
+                                    <div class="calendar-month" id="current-month">2024年1月</div>
+                                    <div class="calendar-nav">
+                                        <button id="prev-month">‹</button>
+                                        <button id="next-month">›</button>
+                                    </div>
                                 </div>
+                                <div class="calendar-grid" id="calendar-grid"></div>
                             </div>
-                            <div class="calendar-grid" id="calendar-grid"></div>
+                        </div>
+
+                        <!-- 网页跳转按钮 -->
+                        <div class="data-card" style="display: flex; flex-direction: column; justify-content: flex-end;">
+                            <div class="navigation-buttons" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                                <button class="nav-button" onclick="window.location.href='https://modrinth.com/user/Weatheraintbad'">
+                                    Modrinth
+                                </button>
+                                <button class="nav-button" onclick="window.location.href='https://www.curseforge.com/members/weatheraintbad/projects'">
+                                    Curseforge
+                                </button>
+                                <button class="nav-button" onclick="window.location.href='https://github.com/Weatheraintbad?tab=repositories'">
+                                    Github仓库
+                                </button>
+                                <button class="nav-button" onclick="window.location.href='https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement?LLM=%7B%7D&advancedActiveKey=subscribe'">
+                                    火山引擎
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -584,6 +649,24 @@
 <!--                            <h3 class="card-title">今日新增</h3>-->
                             <div class="stat-value" id="today-downloads">0</div>
                             <div class="stat-label">24小时内增长</div>
+                        </div>
+                    </div>
+
+                    <!-- 手机端专属的网页跳转按钮（只在小屏幕上显示） -->
+                    <div class="data-card" data-card-type="mobile-nav-buttons" style="display: none;">
+                        <div class="navigation-buttons" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                            <button class="nav-button" onclick="window.location.href='https://modrinth.com/user/Weatheraintbad'">
+                                Modrinth
+                            </button>
+                            <button class="nav-button" onclick="window.location.href='https://www.curseforge.com/members/weatheraintbad/projects'">
+                                Curseforge
+                            </button>
+                            <button class="nav-button" onclick="window.location.href='https://github.com/Weatheraintbad?tab=repositories'">
+                                Github仓库
+                            </button>
+                            <button class="nav-button" onclick="window.location.href='https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement?LLM=%7B%7D&advancedActiveKey=subscribe'">
+                                火山引擎
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -913,6 +996,20 @@
             }, 600);
         }
 
+        // 导航按钮选中状态管理
+        function setupNavButtons() {
+            const navButtons = document.querySelectorAll('.nav-button');
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // 移除所有按钮的选中状态
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    // 为当前点击的按钮添加选中状态
+                    this.classList.add('active');
+                });
+            });
+        }
+
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', async function() {
             await initDashboard();
@@ -927,6 +1024,9 @@
                 const chartControls = document.getElementById('chart-controls');
                 chartControls.classList.toggle('active');
             });
+
+            // 初始化导航按钮选中状态管理
+            setupNavButtons();
         });
 
         // 图表控制函数（复用原有代码）
